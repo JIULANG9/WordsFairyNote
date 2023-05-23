@@ -1,0 +1,71 @@
+package com.wordsfairy.note.data
+
+import com.wordsfairy.base.utils.store.DataStoreUtils
+import com.wordsfairy.note.constants.Constants
+
+/**
+ * @Description:
+ * @Author: JIULANG
+ * @Data: 2022/12/28 18:10
+ */
+object AppSystemSetManage {
+    private const val InitialLoad = "initial_load"
+
+    private const val Dark_Mode = "dark_mode"
+    private const val Dark_Mode_FOLLOW_SYSTEM = "dark_mode_follow_system"
+    private const val SearchEnginesUrl = "search_engines_url_key"
+
+    private const val JumpToWeChat = "jump_to_wechat"
+
+    private const val HomeTabRememberPage = "home_tab_remember_page"
+
+    /**
+     * 深色模式
+     */
+    var darkUI: Boolean
+        get() = DataStoreUtils.readBooleanData(Dark_Mode, false)
+        set(value) = DataStoreUtils.saveSyncBooleanData(Dark_Mode, value = value)
+
+    fun setDarkMode(follow: Boolean) {
+        darkUI = follow
+    }
+
+    /**
+     * 深色模式跟随系统
+     */
+    var darkModeFollowSystem: Boolean
+        get() = DataStoreUtils.readBooleanData(Dark_Mode_FOLLOW_SYSTEM, false)
+        set(value) = DataStoreUtils.saveSyncBooleanData(Dark_Mode_FOLLOW_SYSTEM, value = value)
+
+    fun followSystem(follow: Boolean) {
+        darkModeFollowSystem = follow
+    }
+
+    /**
+     * 搜索引擎
+     */
+    var searchEngines: String
+        get() = DataStoreUtils.readStringData(SearchEnginesUrl, Constants.SearchEngines.Baidu)
+        set(value) = DataStoreUtils.saveSyncStringData(SearchEnginesUrl, value = value)
+
+    /**
+     * 转跳微信
+     */
+    var jumpToWeChat: Boolean
+        get() = DataStoreUtils.readBooleanData(JumpToWeChat, false)
+        set(value) = DataStoreUtils.saveSyncBooleanData(JumpToWeChat, value = value)
+
+    /**
+     * 首页索引
+     */
+    var homeTabRememberPage: Int
+        get() = DataStoreUtils.readIntData(HomeTabRememberPage, 0)
+        set(value) = DataStoreUtils.saveSyncIntData(HomeTabRememberPage, value = value)
+
+    /**
+     * 初次加载
+     */
+    var initialLoad: Boolean
+        get() = DataStoreUtils.readBooleanData(InitialLoad, false)
+        set(value) = DataStoreUtils.saveSyncBooleanData(InitialLoad, value = value)
+}

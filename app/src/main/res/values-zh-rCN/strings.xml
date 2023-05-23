@@ -1,0 +1,15 @@
+<resources>
+
+
+    <string name="app_name">词仙笔记</string>
+
+    <string name="app_create_folder">新建文件夹</string>
+    <string name="app_cancel">取消</string>
+    <string name="app_confirm">确定</string>
+    <string name="app_folder_name">文件夹名称</string>
+    <string name="app_note_content_text">笔记内容</string>
+    <string name="app_search">搜索</string>
+    <string name="app_set">设置</string>
+
+
+</resources>

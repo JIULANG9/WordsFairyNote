@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">WordsFairy Note</string>
+
+    <string name="app_create_folder">Create Folder</string>
+    <string name="app_cancel">Cancel</string>
+    <string name="app_confirm">Confirm</string>
+    <string name="app_folder_name">Folder Name</string>
+    <string name="app_note_content_text">NoteContentText</string>
+    <string name="app_search">Search</string>
+    <string name="app_set">Set</string>
+
+
+</resources>
