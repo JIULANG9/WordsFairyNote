@@ -13,8 +13,7 @@ val PrimaryButtonHeight = 36.dp
 val MediumButtonHeight = 28.dp
 val SmallButtonHeight = 28.dp
 
-
-val H1 = 48.sp  //超大号标题
+val H1 = 46.sp  //超大号标题
 val H2 = 36.sp  //大号标题
 val H3 = 24.sp  //主标题
 val H4 = 20.sp  //普通标题

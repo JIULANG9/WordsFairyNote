@@ -17,4 +17,7 @@ object Constants {
     /** 词仙隐私保护指引 */
     const val URL_PRIVACY_PROTECTION = "https://www.wordsfairy.cloud/blackboard/privacy/index.html"
     const val URL_JUEJIN= "https://juejin.cn/user/1943592291019373/posts"
+    /** github */
+    const val URL_GITHUB= "https://github.com/JIULANG9/WordsFairyNote"
+    const val URL_GITEE= "https://gitee.com/JIULANG9/WordsFairyNote"
 }

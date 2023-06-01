@@ -18,6 +18,7 @@ import androidx.navigation.NavHostController
 import com.google.accompanist.navigation.animation.composable
 import com.wordsfairy.base.mvi.core.unit
 import com.wordsfairy.base.tools.toast
+import com.wordsfairy.note.MainActivity
 import com.wordsfairy.note.constants.EventBus
 import com.wordsfairy.note.constants.GlobalData
 import com.wordsfairy.note.constants.NavigateRouter
@@ -47,8 +48,6 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
  * @Author: JIULANG
  * @Data: 2023/4/23 22:39
  */
-
-
 @OptIn(ExperimentalCoroutinesApi::class)
 @ExperimentalAnimationApi
 @Composable
@@ -56,7 +55,7 @@ fun HomePageScreen(navController: NavHostController) {
 
     SlideAnimatedNavHost(
         navController,
-        startDestination = NavigateRouter.HomePage.HOME ,
+        startDestination = NavigateRouter.HomePage.HOME,
     ) {
         composable(
             NavigateRouter.HomePage.HOME
@@ -66,14 +65,14 @@ fun HomePageScreen(navController: NavHostController) {
         composable(
             NavigateRouter.SetPage.Set
         ) {
-            SetPageUI{
+            SetPageUI {
                 navController.navigateUp()
             }
         }
         composable(
             NavigateRouter.DetailPage.Detail
         ) {
-            NoteDetailsUI(onBack={
+            NoteDetailsUI(onBack = {
                 navController.navigateUp()
             })
 
@@ -81,7 +80,7 @@ fun HomePageScreen(navController: NavHostController) {
         composable(
             NavigateRouter.DetailPage.Set
         ) {
-            ContentSetUI(onBack ={
+            ContentSetUI(onBack = {
                 navController.navigateUp()
             })
 
@@ -89,12 +88,12 @@ fun HomePageScreen(navController: NavHostController) {
         composable(
             NavigateRouter.DetailPage.ProgressBarUI
         ) {
-            ProgressBarUI(onBack ={
+            ProgressBarUI(onBack = {
                 navController.navigateUp()
             })
-
         }
     }
+
 }
 
 
@@ -143,11 +142,11 @@ fun HomePageUI(
                     modifier = Modifier
                         .fillMaxSize()
                         .background(WordsFairyTheme.colors.background)
+                        .systemBarsPadding()
                 ) {
                     Row(
                         Modifier
-                            .fillMaxWidth()
-                            .systemBarsPadding(), verticalAlignment = Alignment.CenterVertically
+                            .fillMaxWidth(), verticalAlignment = Alignment.CenterVertically
                     ) {
                         /** 首页搜索框 */
                         HomeSearchView(
@@ -162,7 +161,7 @@ fun HomePageUI(
                         }
                         /** 设置按钮 */
                         MyIconButton(painter = painterResource(id = AppResId.Drawable.Set)) {
-                            postEventValue(EventBus.NavController,  NavigateRouter.SetPage.Set)
+                            postEventValue(EventBus.NavController, NavigateRouter.SetPage.Set)
                         }
                         Spacer(Modifier.width(16.dp))
                     }
@@ -244,6 +243,19 @@ fun HomePageUI(
                 )
             }
         })
+
+    /**
+     * 初次加载 隐私政策弹窗
+     */
+    if (!viewState.consentAgreement) {
+        AgreementUI(disagree = {
+            MainActivity.CONTEXT.finish()
+        },
+            agree = {
+                intentChannel.trySend(HomeViewIntent.ConsentAgreement)
+
+            })
+    }
 }
 
 

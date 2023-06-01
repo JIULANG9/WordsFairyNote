@@ -12,7 +12,11 @@
       "filters": [],
       "attributes": [],
       "versionCode": 1,
+<<<<<<< HEAD
       "versionName": "1.0.0",
+=======
+      "versionName": "1.1.0",
+>>>>>>> ac0367e (1.新增隐私协议同意界面)
       "outputFile": "app-release.apk"
     }
   ],

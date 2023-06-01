@@ -22,14 +22,22 @@ object AppResId {
         const val Arrow_Right =  R.drawable.app_ic_arrow_right
         const val Correct =  R.drawable.app_ic_correct
     }
+    object Mipmap {
+        const val Logo =  R.mipmap.logo
+
+    }
     object String {
         //新建文件夹
         const val CreateFolder =  R.string.app_create_folder
         const val Cancel =  R.string.app_cancel
         const val Confirm =  R.string.app_confirm
+        const val Agree  =  R.string.app_agree
+        const val Disagree  =  R.string.app_disagree
         const val FolderName =  R.string.app_folder_name
         const val NoteContentText =  R.string.app_note_content_text
         const val Search =  R.string.app_search
         const val Set =  R.string.app_set
+
+        const val PrivacyPolicy =  R.string.app_privacy_protection
     }
 }

@@ -9,6 +9,7 @@ import androidx.compose.ui.unit.IntSize
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.wordsfairy.note.base.BaseViewModel
+import com.wordsfairy.note.data.AppSystemSetManage
 import com.wordsfairy.note.data.room.repository.NoteFolderRepository
 import com.wordsfairy.note.data.room.repository.NoteRepository
 import com.wordsfairy.note.ui.page.create.CreateNoteState
@@ -114,12 +115,25 @@ class HomeViewModel @Inject internal constructor(
                 .map {
                     HomePartialChange.NoteData.NoteEntityData(it.noteEntity)
                 }
-
+                .log("[笔记详细]")
+                .map {
+                    HomePartialChange.NoteData.NoteEntityData(it.noteEntity)
+                }
+            /**
+             * 同意隐私政策
+             */
+            val consentAgreementFlow = filterIsInstance<HomeViewIntent.ConsentAgreement>()
+                .log("[同意隐私政策]")
+                .map {
+                    AppSystemSetManage.consentAgreement = true
+                    HomePartialChange.UI.ConsentAgreement
+                }
             return merge(
                 initFlow,
                 currentNoteFolderFlow,
                 openNoteEntityFlow,
-                noteFolders
+                noteFolders,
+                consentAgreementFlow
             )
         }
 

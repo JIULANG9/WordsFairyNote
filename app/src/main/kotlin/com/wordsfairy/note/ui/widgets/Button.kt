@@ -14,6 +14,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.wordsfairy.note.ui.common.composeClick
+
+import com.wordsfairy.note.ui.theme.AppColor
 import com.wordsfairy.note.ui.theme.AppResId
 import com.wordsfairy.note.ui.theme.WordsFairyTheme
 
@@ -87,6 +89,36 @@ fun CancelButton(
         AppResId.String.Confirm,
         modifier,
         containerColor = WordsFairyTheme.colors.themeUi,
+        textColor = WordsFairyTheme.colors.textWhite,
+        onClick = onClick
+    )
+}
+
+/** 不同意按钮 */
+@Composable
+fun DisagreeButton(
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit,
+) {
+    RoundedCornerButton(
+        AppResId.String.Disagree,
+        modifier,
+        containerColor = WordsFairyTheme.colors.immerseBackground,
+        textColor = WordsFairyTheme.colors.textPrimary,
+        onClick = onClick
+    )
+}
+
+/** 同意按钮 */
+@Composable
+fun AgreeButton(
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit,
+) {
+    RoundedCornerButton(
+        AppResId.String.Agree,
+        modifier,
+        containerColor = AppColor.blue,
         textColor = WordsFairyTheme.colors.textWhite,
         onClick = onClick
     )

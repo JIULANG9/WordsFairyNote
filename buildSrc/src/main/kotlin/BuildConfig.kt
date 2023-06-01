@@ -10,7 +10,6 @@ object BuildConfig {
 
     const val applicationId ="com.wordsfairy.note"
     const val testInstrumentationRunner="androidx.test.runner.AndroidJUnitRunner"
-
     var versionName = "1.0.0"
     var versionCode = 1
 }

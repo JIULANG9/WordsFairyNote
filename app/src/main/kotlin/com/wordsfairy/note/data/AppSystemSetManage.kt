@@ -10,6 +10,7 @@ import com.wordsfairy.note.constants.Constants
  */
 object AppSystemSetManage {
     private const val InitialLoad = "initial_load"
+    private const val ConsentAgreement_Key = "consent_agreement_key"
 
     private const val Dark_Mode = "dark_mode"
     private const val Dark_Mode_FOLLOW_SYSTEM = "dark_mode_follow_system"
@@ -68,4 +69,10 @@ object AppSystemSetManage {
     var initialLoad: Boolean
         get() = DataStoreUtils.readBooleanData(InitialLoad, false)
         set(value) = DataStoreUtils.saveSyncBooleanData(InitialLoad, value = value)
+    /**
+     * 同意协议
+     */
+    var consentAgreement : Boolean
+        get() = DataStoreUtils.readBooleanData(ConsentAgreement_Key, false)
+        set(value) = DataStoreUtils.saveSyncBooleanData(ConsentAgreement_Key, value = value)
 }

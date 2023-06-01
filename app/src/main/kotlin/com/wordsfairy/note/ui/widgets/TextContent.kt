@@ -105,6 +105,16 @@ fun MiniText(
 }
 
 @Composable
+fun BigTitle( title: String,
+              modifier: Modifier = Modifier,) {
+    Title(
+        title = title,
+        modifier = modifier,
+        fontSize = H3,
+        color =  WordsFairyTheme.colors.textPrimary
+    )
+}
+@Composable
 fun TextSecondary(
     text: String,
     modifier: Modifier = Modifier,

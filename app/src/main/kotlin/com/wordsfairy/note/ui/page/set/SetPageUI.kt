@@ -1,6 +1,6 @@
 package com.wordsfairy.note.ui.page.set
 
-import androidx.activity.compose.BackHandler
+
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.*
@@ -9,10 +9,10 @@ import androidx.compose.ui.platform.LocalHapticFeedback
 
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.wordsfairy.base.mvi.core.unit
-import com.wordsfairy.note.constants.GlobalData
+
 import com.wordsfairy.note.ext.coreui.rememberFlowWithLifecycle
 import com.wordsfairy.note.ext.flow.noteStartWith
-import com.wordsfairy.note.ui.common.autoCloseKeyboard
+
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
@@ -27,7 +27,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.KeyboardArrowLeft
 
 import androidx.compose.material3.*
-import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 
 import androidx.compose.ui.Modifier
@@ -43,6 +42,9 @@ import com.wordsfairy.base.tools.toast
 import com.wordsfairy.base.tools.toastLONG
 import com.wordsfairy.base.utils.searchInBrowser
 import com.wordsfairy.note.MainActivity
+import com.wordsfairy.note.constants.Constants.URL_GITEE
+import com.wordsfairy.note.constants.Constants.URL_GITHUB
+
 import com.wordsfairy.note.constants.Constants.URL_JUEJIN
 import com.wordsfairy.note.constants.Constants.URL_PRIVACY_PROTECTION
 import com.wordsfairy.note.data.AppSystemSetManage
@@ -165,11 +167,12 @@ fun SetPageUI(
                                 "测试版 v${MainActivity.CONTEXT.getVersionName()}",
                                 horizontalPadding = 0.dp
                             )
-                            CommonTextItem(
-                                "源码",
-                                "即将开源",
-                                horizontalPadding = 0.dp
-                            )
+                            CommonItemIcon("gitee源码") {
+                                context.searchInBrowser(URL_GITEE)
+                            }
+                            CommonItemIcon("github源码") {
+                                context.searchInBrowser(URL_GITHUB)
+                            }
                         }
                         ItemDividerSetUI()
                         AnimateContentIcon("联系作者") {

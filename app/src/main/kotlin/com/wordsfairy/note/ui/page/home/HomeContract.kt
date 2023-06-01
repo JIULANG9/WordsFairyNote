@@ -1,6 +1,7 @@
 package com.wordsfairy.note.ui.page.home
 
 import android.os.Parcelable
+import com.wordsfairy.note.data.AppSystemSetManage
 import com.wordsfairy.note.data.entity.NoteEntity
 import com.wordsfairy.note.data.entity.NoteFolderEntity
 import com.wordsfairy.note.data.entity.NoteInfo
@@ -22,6 +23,8 @@ sealed interface HomeViewIntent : MviIntent {
     object Clean : HomeViewIntent
     data class CurrentNoteFolder(val folderEntity: NoteFolderEntity) : HomeViewIntent
     data class OpenNoteEntity(val noteEntity: NoteEntity) : HomeViewIntent
+    object ConsentAgreement : HomeViewIntent
+
 }
 
 @Parcelize
@@ -29,14 +32,17 @@ data class HomeViewState(
     val searchContent: String,
     val noteInfo: List<NoteInfo>,
     val noteEntity: NoteEntity?,
-    val noteFolder: NoteFolderEntity?
+    val noteFolder: NoteFolderEntity?,
+    val consentAgreement:Boolean,
+
 ) : MviViewState , Parcelable {
     companion object {
         fun initial() = HomeViewState(
             searchContent = "",
             noteInfo = emptyList(),
             noteEntity = null,
-            noteFolder = null
+            noteFolder = null,
+            consentAgreement = AppSystemSetManage.consentAgreement
         )
     }
 }
@@ -75,12 +81,15 @@ internal sealed interface HomePartialChange {
                 is Close -> {
                     vs.copy(searchContent = "")
                 }
+                is ConsentAgreement-> vs.copy(consentAgreement = true)
+
                 is Init-> vs
             }
         }
 
         object Init : UI()
         object Close : UI()
+        object ConsentAgreement : UI()
     }
 
     sealed class Search : HomePartialChange {
