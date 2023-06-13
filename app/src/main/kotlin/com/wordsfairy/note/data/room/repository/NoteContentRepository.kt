@@ -1,5 +1,6 @@
 package com.wordsfairy.note.data.room.repository
 
+import androidx.room.Insert
 import com.wordsfairy.note.data.entity.NoteContentEntity
 import com.wordsfairy.note.data.room.dao.NoteContentDao
 import kotlinx.coroutines.flow.Flow
@@ -17,6 +18,7 @@ class NoteContentRepository @Inject constructor(
     private val noteContentDao: NoteContentDao,
 ) {
     fun getNoteContexts(noteId : Long) : Flow<List<NoteContentEntity>> = noteContentDao.getAllByNoteIdFlow(noteId)
+
 
     fun searchContent(list: List<NoteContentEntity>, keyword: String): List<NoteContentEntity> {
         val result = mutableListOf<NoteContentEntity>()
@@ -46,6 +48,8 @@ class NoteContentRepository @Inject constructor(
     fun update(data: NoteContentEntity) = noteContentDao.update(data)
 
     fun update(data: List<NoteContentEntity>) = noteContentDao.update(data)
+    suspend fun insert(data: NoteContentEntity) = noteContentDao.insert(data)
+    suspend fun insert(data: List<NoteContentEntity>) = noteContentDao.insertNotes(data)
 
     fun recycleAll(noteId: Long) = noteContentDao.recycleNoteContents(noteId)
 

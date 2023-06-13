@@ -30,8 +30,6 @@ class NoteRepository @Inject constructor(
      * 首页
      * @return List<NoteInfo>
      */
-
-
     fun getHomeNoteInfo(): Flow<List<NoteInfo>> {
         return noteDao.getAllNoteInfo().map { noteInfoList ->
             val allNotes = noteDao.getHomeNoteAndNoteContents().map { noteAndNoteContent ->
@@ -48,6 +46,36 @@ class NoteRepository @Inject constructor(
                     noteAndNoteContents = noteInfo.noteAndNoteContents.map { noteAndNoteContent ->
                         noteAndNoteContent.copy(
                             noteContents = noteAndNoteContent.noteContents.filter { !it.isDelete }.takeLast(5).reversed()
+                        )
+                    }
+                )
+            }
+        }.flowOn(Dispatchers.IO)
+    }
+
+    /**
+     * 所有数据据
+     * @return List<NoteInfo>
+     */
+    fun getAllNoteInfo(): Flow<List<NoteInfo>> {
+        return noteDao.getAllNoteInfo().map { noteInfoList ->
+
+            val unclassifiedNotes = noteDao.getHomeNoteAndNoteContents().filter{ it.noteEntity.folderId ==0L }.map { noteAndNoteContent ->
+                noteAndNoteContent.copy(
+                    noteContents = noteAndNoteContent.noteContents.filter { !it.isDelete }.reversed()
+                )
+            }
+
+            val allNoteInfo = NoteInfo(
+                NoteFolderEntity.create(name = "未分类",0L),
+                unclassifiedNotes
+            )
+            listOf(allNoteInfo)
+            noteInfoList.map { noteInfo ->
+                noteInfo.copy(
+                    noteAndNoteContents = noteInfo.noteAndNoteContents.map { noteAndNoteContent ->
+                        noteAndNoteContent.copy(
+                            noteContents = noteAndNoteContent.noteContents.filter { !it.isDelete }.reversed()
                         )
                     }
                 )
@@ -114,6 +142,7 @@ class NoteRepository @Inject constructor(
         return results.distinctBy { it.noteEntity.noteId }
     }
 
+    //查询所有数据
 
 
     companion object {

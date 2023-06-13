@@ -168,7 +168,6 @@ object DataStoreUtils {
         }
         return value
     }
-
     fun readFloatFlow(key: String, default: Float = 0f): Flow<Float> =
         dataStore.data
             .catch {

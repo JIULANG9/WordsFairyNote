@@ -47,7 +47,10 @@ import com.wordsfairy.note.constants.Constants.URL_GITHUB
 
 import com.wordsfairy.note.constants.Constants.URL_JUEJIN
 import com.wordsfairy.note.constants.Constants.URL_PRIVACY_PROTECTION
+import com.wordsfairy.note.constants.EventBus
+import com.wordsfairy.note.constants.NavigateRouter
 import com.wordsfairy.note.data.AppSystemSetManage
+import com.wordsfairy.note.ext.flowbus.postEventValue
 import com.wordsfairy.note.ui.theme.AppResId
 import com.wordsfairy.note.ui.theme.WordsFairyTheme
 import com.wordsfairy.note.ui.theme.WordsFairyThemeLiveData
@@ -98,7 +101,8 @@ fun SetPageUI(
     Scaffold(
         Modifier
             .fillMaxSize()
-            .statusBarsPadding(), containerColor = WordsFairyTheme.colors.background, content = {
+            .statusBarsPadding(),
+        containerColor = WordsFairyTheme.colors.background, content = {
             Column(
                 modifier = Modifier
                     .fillMaxSize()
@@ -141,16 +145,12 @@ fun SetPageUI(
                             intentChannel.trySend(ViewIntent.ThemeFollowSystem(follow))
                         }
                         ItemDividerSetUI()
-                        AnimateContentIcon("数据恢复/备份") {
-                            CommonItemIcon("恢复(即将开发)") {
-                                context.toast("即将开发")
-                            }
-
-                            CommonItemIcon("备份(即将开发)") {
-                                context.toast("即将开发")
-                            }
+                        CommonItemIcon("数据恢复/备份") {
+                            postEventValue(
+                                EventBus.NavController,
+                                NavigateRouter.SetPage.NoteData
+                            )
                         }
-
                     }
                 }
                 ImmerseCard(Modifier.padding(12.dp)) {

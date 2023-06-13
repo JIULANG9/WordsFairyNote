@@ -7,7 +7,6 @@ package com.wordsfairy.note.constants
  */
 object Constants {
 
-
     object SearchEngines {
         const val Baidu = "https://www.baidu.com/s?wd="
         const val Bing = "https://cn.bing.com/search?q="
@@ -20,4 +19,11 @@ object Constants {
     /** github */
     const val URL_GITHUB= "https://github.com/JIULANG9/WordsFairyNote"
     const val URL_GITEE= "https://gitee.com/JIULANG9/WordsFairyNote"
+
+    object File {
+        const val WordsFairy = "WordsFairy"
+        const val Note = "Note"
+        const val WordsFairyNote = "WordsFairy/Note"
+
+    }
 }

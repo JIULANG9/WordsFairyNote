@@ -37,6 +37,7 @@ object AppResId {
         const val NoteContentText =  R.string.app_note_content_text
         const val Search =  R.string.app_search
         const val Set =  R.string.app_set
+        const val DataRecoveryBackup =  R.string.app_data_recovery_backup
 
         const val PrivacyPolicy =  R.string.app_privacy_protection
     }

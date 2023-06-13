@@ -7,22 +7,20 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.map
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
-import com.wordsfairy.note.MainActivity
-import com.wordsfairy.note.constants.EventBus
 import com.wordsfairy.note.data.AppSystemSetManage
-import com.wordsfairy.note.ext.flowbus.observeEvent
 import com.wordsfairy.note.ext.observeAsState
+import com.wordsfairy.note.ui.theme.AppColor.themeAccent
 
 private val LightColorScheme = WordsFairyColors(
     statusBarColor = statusBarColorLight,
     navigationBarColor = white,
     themeUi = themeColor,
+    themeAccent = themeAccent,
     background = backgroundColorLight,
     backgroundSecondary = backgroundSecondaryColorLight,
     whiteBackground = whiteBackgroundColorLight,
@@ -39,6 +37,7 @@ private val LightColorScheme = WordsFairyColors(
     icon = grey,
     iconBlack = black,
     success = green,
+    info = blue,
     error = red2,
     btnBgPrimary = themeColor,
     btnBgSecond = themeColor,
@@ -50,6 +49,7 @@ private val DarkColorScheme = WordsFairyColors(
     statusBarColor = statusBarColorDark,
     navigationBarColor = black,
     themeUi = themeColor,
+    themeAccent = themeAccent,
     background = backgroundColorDark,
     backgroundSecondary = backgroundSecondaryColorDark,
     whiteBackground = whiteBackgroundColorDark,
@@ -66,6 +66,7 @@ private val DarkColorScheme = WordsFairyColors(
     icon = grey,
     iconBlack = grey,
     success = green,
+    info = blueDark,
     error = red2,
     btnBgPrimary = themeColor,
     btnBgSecond = themeColor,
@@ -89,6 +90,7 @@ class WordsFairyColors(
     statusBarColor: Color,
     navigationBarColor: Color,
     themeUi: Color,
+    themeAccent: Color,
     background: Color,
     backgroundSecondary: Color,
     whiteBackground: Color,
@@ -105,6 +107,7 @@ class WordsFairyColors(
     icon: Color,
     iconBlack: Color,
     success: Color,
+    info: Color,
     error: Color,
     btnBgPrimary: Color,
     btnBgSecond: Color,
@@ -116,6 +119,8 @@ class WordsFairyColors(
         internal set
 
     var themeUi: Color by mutableStateOf(themeUi)
+        internal set
+    var themeAccent: Color by mutableStateOf(themeAccent)
         internal set
     var background: Color by mutableStateOf(background)
         internal set
@@ -148,6 +153,8 @@ class WordsFairyColors(
     var iconBlack: Color by mutableStateOf(iconBlack)
         private set
     var success: Color by mutableStateOf(success)
+        private set
+    var info: Color by mutableStateOf(info)
         private set
     var error: Color by mutableStateOf(error)
         private set
@@ -202,6 +209,7 @@ fun WordsFairyNoteTheme(
     val navigationBarColor = animateColorAsState(targetColors.background, TweenSpec(600))
 
     val themeUi = animateColorAsState(targetColors.themeUi, TweenSpec(600))
+    val themeAccent = animateColorAsState(targetColors.themeAccent, TweenSpec(600))
     val background = animateColorAsState(targetColors.background, TweenSpec(600))
     val backgroundSecondary = animateColorAsState(targetColors.backgroundSecondary, TweenSpec(600))
 
@@ -223,6 +231,7 @@ fun WordsFairyNoteTheme(
     val iconBlack = animateColorAsState(targetColors.iconBlack, TweenSpec(600))
 
     val success = animateColorAsState(targetColors.success, TweenSpec(600))
+    val info = animateColorAsState(targetColors.info, TweenSpec(600))
     val error = animateColorAsState(targetColors.error, TweenSpec(600))
     val primaryBtnBg = animateColorAsState(targetColors.primaryBtnBg, TweenSpec(600))
     val secondBtnBg = animateColorAsState(targetColors.secondBtnBg, TweenSpec(600))
@@ -233,6 +242,7 @@ fun WordsFairyNoteTheme(
         statusBarColor = statusBarColor.value,
         navigationBarColor = navigationBarColor.value,
         themeUi = themeUi.value,
+        themeAccent = themeAccent.value,
         background = background.value,
         backgroundSecondary = backgroundSecondary.value,
 
@@ -254,8 +264,8 @@ fun WordsFairyNoteTheme(
         iconBlack = iconBlack.value,
         btnBgPrimary = primaryBtnBg.value,
         btnBgSecond = secondBtnBg.value,
-
         success = success.value,
+        info = info.value,
         error = error.value,
         placeholder = placeholder.value
     )
@@ -288,12 +298,5 @@ fun WordsFairyNoteTheme(
     }
 }
 
-val MyShapes = Shapes(
-    extraSmall = RoundedCornerShape(9.dp),
-    small = RoundedCornerShape(6.dp),
-    medium = RoundedCornerShape(9.dp),
-    large = RoundedCornerShape(16.dp),
-    extraLarge = RoundedCornerShape(9.dp),
-)
 
 

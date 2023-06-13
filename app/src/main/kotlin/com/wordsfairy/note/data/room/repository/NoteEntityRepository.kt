@@ -1,5 +1,6 @@
 package com.wordsfairy.note.data.room.repository
 
+import androidx.room.Insert
 import androidx.room.Update
 import com.wordsfairy.note.data.entity.NoteEntity
 import com.wordsfairy.note.data.room.dao.NoteEntityDao
@@ -22,6 +23,8 @@ class NoteEntityRepository @Inject constructor(
         return noteDao.insert(noteEntity)
     }
 
+
+   suspend fun insert(noteEntity: NoteEntity) = noteDao.insert(noteEntity)
     /**
      * 更新
      * @return Int

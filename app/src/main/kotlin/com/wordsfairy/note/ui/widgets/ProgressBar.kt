@@ -94,9 +94,12 @@ fun IndicatorComponent(
                 fontSize = 16.sp
             )
         )
-        val schedule = foregroundSweepAngle.toInt()
+        //保留两位小数
+        val format = DecimalFormat("0.00")
+        val schedule = format.format(foregroundSweepAngle)
         Text(
-            text = "$schedule",
+            text = "$schedule%",
+            Modifier.padding(start = 3.dp) ,
             style = TextStyle(
                 color = WordsFairyTheme.colors.textPrimary,
                 fontSize = 36.sp,

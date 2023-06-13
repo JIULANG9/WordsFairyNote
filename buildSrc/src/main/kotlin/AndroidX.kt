@@ -206,7 +206,7 @@ object AndroidX {
         const val runtime_ktx = "androidx.work:work-runtime-ktx:$version"
     }
 
-
+    const val Documentfile = "androidx.documentfile:documentfile:1.0.1"
 
     /**
     multidex分包
@@ -214,7 +214,6 @@ object AndroidX {
     21或更高版本默认启用multidex并且您不需要导入multidex库和设置配置文件。
      */
     const val multidex = "androidx.multidex:multidex:2.0.1"
-
     //sdk包下graphics.drawable下有一个VectorDrawable类，对于较高的版本不需要引入此库来支持基于XML矢量图形创建可绘制对象。
     const val vectordrawable = "androidx.vectordrawable:vectordrawable:1.1.0"
 

@@ -58,6 +58,7 @@ fun MyIconButton(
     description: String = "",
     modifier: Modifier = Modifier,
     size: Dp = 24.dp,
+    tint : Color= WordsFairyTheme.colors.icon,
     onClick: () -> Unit = {},
 ) {
     IconButton(onClick = onClick) {
@@ -65,7 +66,7 @@ fun MyIconButton(
             imageVector = imageVector,
             contentDescription =description,
             modifier.size(size),
-            tint = WordsFairyTheme.colors.icon
+            tint =tint
         )
     }
 }

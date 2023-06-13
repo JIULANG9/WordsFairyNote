@@ -18,15 +18,12 @@ import javax.inject.Singleton
 class NoteFolderRepository @Inject constructor(
     private val noteFolderDao: NoteFolderDao,
 ) {
-
     fun getNoteFolder() = noteFolderDao.getNoteFolder()
-
-    fun getNoteFolderById(id:Long) = noteFolderDao.getNoteFolderById(id)
-
-    fun update(noteFolder: NoteFolderEntity) =noteFolderDao.update(noteFolder)
-
-    suspend fun createNoteFolder(noteFolderEntity: NoteFolderEntity)= noteFolderDao.insert(noteFolderEntity)
-
+    fun getNoteFolderById(id: Long) = noteFolderDao.getNoteFolderById(id)
+    suspend fun insert(noteFolder: NoteFolderEntity) = noteFolderDao.insert(noteFolder)
+    suspend fun update(noteFolder: NoteFolderEntity) = noteFolderDao.update(noteFolder)
+    suspend fun createNoteFolder(noteFolderEntity: NoteFolderEntity) =
+        noteFolderDao.insert(noteFolderEntity)
 
     companion object {
         @Volatile

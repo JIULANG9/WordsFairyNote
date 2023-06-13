@@ -154,6 +154,8 @@
 -dontwarn androidx.**
 # Compose Rules
 -keep class androidx.compose.** { *; }
+-keep class androidx.documentfile.** { *; }
+-keepclassmembers class androidx.documentfile.** { *; }
 # ...
 
 # Lifecycle

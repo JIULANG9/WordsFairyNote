@@ -49,7 +49,12 @@ val textSecondaryDark = Color(0xFFD5D5D5)
 val textWhite = Color(0xFFFFFFFF).convert(ColorSpaces.CieXyz)
 val textBlack = Color(0xFF333333).convert(ColorSpaces.CieXyz)
 
-val bule = Color(0xFF51BDFF)
+val blue = Color(0xFF51BDFF)
+val blueLightAccent = Color(0xFFD0E7F8)
+
+val blueDark = Color(0xFF2aa0fe)
+val blueDarkAccent = Color(0xFF224B6F)
+
 val red = Color(0xFFFF5500)
 val red2 = Color(0xFFDD302E)
 val green = Color(0xFF68be8d)

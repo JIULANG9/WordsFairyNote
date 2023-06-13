@@ -21,12 +21,11 @@ interface NoteDao {
      */
 
     @Transaction
-    @Query("SELECT * FROM note_folder_entity ")
+    @Query("SELECT * FROM note_folder_entity WHERE is_delete = 0")
     fun getAllNoteInfo(): Flow<List<NoteInfo>>
 
 
     @Transaction
-
     @Query("SELECT * FROM $NoteTableName WHERE is_delete = 0")
     suspend fun getHomeNoteAndNoteContents(): List<NoteAndNoteContent>
 

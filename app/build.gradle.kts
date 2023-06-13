@@ -125,6 +125,7 @@ dependencies {
     implementation (AndroidX.Work.runtime)
     implementation (AndroidX.Work.runtime_ktx)
     implementation (AndroidX.multidex)
+    implementation (AndroidX.Documentfile)
     //Hilt
     implementation (AndroidX.Hilt.common)
     kapt (AndroidX.Hilt.compiler)

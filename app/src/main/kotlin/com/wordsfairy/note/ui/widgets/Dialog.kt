@@ -1,5 +1,6 @@
 package com.wordsfairy.note.ui.widgets
 
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
@@ -7,6 +8,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -79,16 +82,31 @@ fun GeneralDialogSkeleton(
     negativeBtnText: String? = null,
     onNegativeBtnClicked: (() -> Unit)? = null,
 ) {
+    val shape = RoundedCornerShape(12.dp)
+
+    val bgColor = when (isWaring) {
+        true -> WordsFairyTheme.colors.error
+        false -> WordsFairyTheme.colors.themeUi
+    }
     Box(Modifier.fillMaxSize()) {
         Card(
             modifier = Modifier
                 .align(Alignment.Center)
-                .padding(bottom = 66.dp),
-            shape = RoundedCornerShape(16.dp),
+                .padding(bottom = 66.dp)
+            ,
+            shape =shape,
             colors = CardDefaults.cardColors(containerColor = WordsFairyTheme.colors.dialogBackground)
         ) {
 
             Column(
+                Modifier.drawBehind {
+                    drawLine(
+                        color = bgColor,
+                        start = Offset.Zero,
+                        end = Offset(size.width, 0f),
+                        strokeWidth = 6.dp.toPx(),
+                    )
+                },
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
@@ -121,21 +139,22 @@ fun GeneralDialogSkeleton(
                         horizontalArrangement = Arrangement.Center,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
+                        val buttonColor = if (isWaring) WordsFairyTheme.colors.error else WordsFairyTheme.colors.themeUi
                         if (negativeBtnText != null) {
-                            OutlinedButton(
+                            Button(
                                 modifier = Modifier
                                     .weight(.5f),
                                 onClick = {
                                     onNegativeBtnClicked?.invoke()
-                                }
+                                },
+                                colors = ButtonDefaults.buttonColors(containerColor = buttonColor.copy(alpha = 0.2F)),
                             ) {
-                                Text(negativeBtnText,color = WordsFairyTheme.colors.textPrimary)
+                                Text(negativeBtnText,color = buttonColor,fontWeight = FontWeight.Bold)
                             }
 
                             Spacer(modifier = Modifier.width(16.dp))
                         }
 
-                        val buttonColor = if (isWaring) AppColor.red else AppColor.themeColor
                         Button(
                             modifier = Modifier
                                 .weight(.5f),
@@ -144,7 +163,7 @@ fun GeneralDialogSkeleton(
                                 onPositiveBtnClicked()
                             }
                         ) {
-                            Text(positiveBtnText,color = WordsFairyTheme.colors.textWhite)
+                            Text(positiveBtnText,color = WordsFairyTheme.colors.textWhite,fontWeight = FontWeight.Bold)
                         }
                     }
                 }

@@ -13,6 +13,7 @@
     <string name="app_note_content_text">笔记内容</string>
     <string name="app_search">搜索</string>
     <string name="app_set">设置</string>
+    <string name="app_data_recovery_backup">数据恢复/备份</string>
 
     <string name="app_privacy_protection">隐私政策</string>
 

@@ -11,6 +11,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.wordsfairy.note.ui.common.composeClick
@@ -25,10 +27,12 @@ import com.wordsfairy.note.ui.theme.WordsFairyTheme
  * @Data: 2023/4/29 0:24
  */
 @Composable
-fun MyButton(name: String,
-             color: Color = WordsFairyTheme.colors.themeUi,
-             enabled:Boolean = true,
-             onClick: () -> Unit ) {
+fun MyButton(
+    name: String,
+    color: Color = WordsFairyTheme.colors.themeUi,
+    enabled: Boolean = true,
+    onClick: () -> Unit
+) {
     Button(
         modifier = Modifier.height(31.dp), onClick = composeClick {
             onClick.invoke()
@@ -41,13 +45,43 @@ fun MyButton(name: String,
 }
 
 @Composable
+fun ButtonPrimitive(
+    name: String,
+    primitiveColor: Color = WordsFairyTheme.colors.themeUi,
+    isAccent: Boolean = false,
+    enabled: Boolean = true,
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit
+) {
+    val buttonColors = if (isAccent) {
+        primitiveColor.copy(alpha = 0.2f)
+    } else {
+        primitiveColor
+    }
+    val textColor = if (isAccent) {
+        primitiveColor
+    } else {
+        WordsFairyTheme.colors.textWhite
+    }
+    Button(
+        modifier =modifier, onClick = composeClick {
+            onClick.invoke()
+        },
+        enabled = enabled,
+        colors = ButtonDefaults.buttonColors(buttonColors)
+    ) {
+        Text(text = name, fontSize = 16.sp, color = textColor,fontWeight = FontWeight.Bold)
+    }
+}
+
+@Composable
 fun RoundedCornerButton(
     @StringRes textId: Int,
     modifier: Modifier = Modifier,
     containerColor: Color = WordsFairyTheme.colors.primaryBtnBg,
-    textColor:Color = WordsFairyTheme.colors.textPrimary,
+    textColor: Color = WordsFairyTheme.colors.textPrimary,
     onClick: () -> Unit,
-    ){
+) {
     Button(
         onClick = onClick,
         shape = RoundedCornerShape(26.dp),
@@ -81,7 +115,7 @@ fun CancelButton(
 
 /** 确认按钮 */
 @Composable
- fun ConfirmButton(
+fun ConfirmButton(
     modifier: Modifier = Modifier,
     onClick: () -> Unit,
 ) {

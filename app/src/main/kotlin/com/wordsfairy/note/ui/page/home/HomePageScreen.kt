@@ -22,7 +22,6 @@ import com.wordsfairy.note.MainActivity
 import com.wordsfairy.note.constants.EventBus
 import com.wordsfairy.note.constants.GlobalData
 import com.wordsfairy.note.constants.NavigateRouter
-import com.wordsfairy.note.data.AppSystemSetManage
 import com.wordsfairy.note.ext.coreui.rememberFlowWithLifecycle
 import com.wordsfairy.note.ext.flow.noteStartWith
 import com.wordsfairy.note.ext.flowbus.postEventValue
@@ -32,7 +31,10 @@ import com.wordsfairy.note.ui.page.detail.NoteDetailState
 import com.wordsfairy.note.ui.page.detail.NoteDetailsPage
 import com.wordsfairy.note.ui.page.detail.NoteDetailsUI
 import com.wordsfairy.note.ui.page.detail.set.ContentSetUI
-import com.wordsfairy.note.ui.page.progress.ProgressBarUI
+import com.wordsfairy.note.ui.page.backups.BackupsProgressBarUI
+import com.wordsfairy.note.ui.page.backups.NoteDataUI
+import com.wordsfairy.note.ui.page.backups.NoteDataViewModel
+import com.wordsfairy.note.ui.page.backups.ProgressBarUI
 import com.wordsfairy.note.ui.page.search.SearchPage
 import com.wordsfairy.note.ui.page.search.SearchUIState
 import com.wordsfairy.note.ui.theme.WordsFairyTheme
@@ -52,7 +54,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 @ExperimentalAnimationApi
 @Composable
 fun HomePageScreen(navController: NavHostController) {
-
+    val noteDataViewModel: NoteDataViewModel = hiltViewModel()
     SlideAnimatedNavHost(
         navController,
         startDestination = NavigateRouter.HomePage.HOME,
@@ -83,17 +85,30 @@ fun HomePageScreen(navController: NavHostController) {
             ContentSetUI(onBack = {
                 navController.navigateUp()
             })
-
+        }
+        composable(
+            NavigateRouter.SetPage.NoteData
+        ) {
+            NoteDataUI(onBack = {
+                navController.navigateUp()
+            }, noteDataViewModel)
+        }
+        composable(
+            NavigateRouter.SetPage.BackupsProgressBar
+        ) {
+            BackupsProgressBarUI(onBack = {
+                navController.navigateUp()
+            }, noteDataViewModel)
         }
         composable(
             NavigateRouter.DetailPage.ProgressBarUI
         ) {
             ProgressBarUI(onBack = {
                 navController.navigateUp()
+
             })
         }
     }
-
 }
 
 

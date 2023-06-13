@@ -1,5 +1,6 @@
 package com.wordsfairy.note.ui.page.detail.set
 
+import android.content.Intent
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -67,7 +68,8 @@ fun ContentSetUI(
     val focusManager = LocalFocusManager.current
 
     val txtSelectorLauncher =
-        rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri ->
+        rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            val uri = result.data?.data
             if (uri != null) {
                 context.apply {
                     if (isUTF8(uri)) {
@@ -92,6 +94,10 @@ fun ContentSetUI(
                 context.toast("选择困难！")
             }
         }
+    val txtSelectorIntent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
+        addCategory(Intent.CATEGORY_OPENABLE)
+        type = "text/plain"
+    }
 
 
     LaunchedEffect(viewModel) {
@@ -139,7 +145,8 @@ fun ContentSetUI(
                 Column {
                     AnimateContentIcon("数据批量导出/导入") {
                         CommonItemIcon("导入 [txt]") {
-                            txtSelectorLauncher.launch("text/plain")
+                            txtSelectorLauncher.launch(txtSelectorIntent)
+
                         }
                         CommonItemIcon("导出(即将开发)") {
                             context.toast("即将开发")
@@ -217,7 +224,8 @@ fun ContentSetUI(
                             intentChannel.trySend(ViewIntent.RecycleNoteContents)
                         }
                         ContentSetViewModel.IsNotUTF8Tag ->{
-                            txtSelectorLauncher.launch("text/plain")
+                            txtSelectorLauncher.launch(txtSelectorIntent)
+
                         }
                     }
                 },

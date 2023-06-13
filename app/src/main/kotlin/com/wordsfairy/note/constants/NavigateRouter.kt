@@ -19,6 +19,8 @@ object NavigateRouter {
         private const val ROUTER_GROUP_SET = "set_page"
 
         const val Set = "$ROUTER_GROUP_SET/home"
+        const val NoteData = "$ROUTER_GROUP_SET/notedata"
+        const val BackupsProgressBar = "$ROUTER_GROUP_SET/notedata/backupsprogressbar"
     }
     object DetailPage {
         /** 笔记详细 */

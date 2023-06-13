@@ -30,6 +30,6 @@ data class NoteAndFolder(
         parentColumn = "id",
         entityColumn = "folder_id"
     )
-    val notes: List<NoteEntity>
+    val notes: List<NoteEntity> ?= null
 ) : Parcelable
 

@@ -19,5 +19,10 @@ object GlobalData {
    var importFile : Uri? = null
 
    var createBatchImport : Boolean = false
+
+   //备份文件夹的Uri
+   var backupsSelectFolderUri : Uri? = null
+   var importFolderUri : Uri? = null
+
 }
 

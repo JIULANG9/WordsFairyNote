@@ -16,35 +16,8 @@ import kotlin.experimental.and
  * @Author: JIULANG
  * @Data: 2023/5/17 14:07
  */
-/**
- * uri转File
- */
-@RequiresApi(api = Build.VERSION_CODES.Q)
-fun uriToFile(uri: Uri, context: Context): File? {
-    var file: File? = null
-    //android10以上转换
-    if (uri.scheme == ContentResolver.SCHEME_FILE) {
-        file = File(uri.path)
-    } else if (uri.scheme == ContentResolver.SCHEME_CONTENT) {
-        //把文件复制到沙盒目录
-        val contentResolver = context.contentResolver
-        val displayName: String =
-            (System.currentTimeMillis().toString() + Math.round((Math.random() + 1) * 1000).toString() + "." + MimeTypeMap.getSingleton()
-                .getExtensionFromMimeType(contentResolver.getType(uri)))
-        try {
-            val inputStream = contentResolver.openInputStream(uri)
-            val cache = File(context.cacheDir.absolutePath, displayName)
-            val fos = FileOutputStream(cache)
-            FileUtils.copy(inputStream!!, fos)
-            file = cache
-            fos.close()
-            inputStream.close()
-        } catch (e: IOException) {
-            e.printStackTrace()
-        }
-    }
-    return file
-}
+
+
 
 fun Context.readTxtFileByLinesWithProgress(uri: Uri): Sequence<Pair<String, Float>> {
     val inputStream = this.contentResolver.openInputStream(uri)!!

@@ -36,9 +36,7 @@ import kotlin.math.abs
  */
 
 
-@OptIn(
-    ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class,
-)
+@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun HomeTab(
     noteFolders: List<NoteInfo>,
@@ -176,9 +174,11 @@ fun PagerTabIndicator(
     @FloatRange(from = 0.0, to = 1.0) percent: Float = 0.6f,
     height: Dp = 5.dp,
 ) {
+
     val currentPage by rememberUpdatedState(newValue = pagerState.currentPage)
     val fraction by rememberUpdatedState(newValue = pagerState.currentPageOffsetFraction)
     val currentTab = tabPositions[currentPage]
+
     val previousTab = tabPositions.getOrNull(currentPage - 1)
     val nextTab = tabPositions.getOrNull(currentPage + 1)
     Canvas(

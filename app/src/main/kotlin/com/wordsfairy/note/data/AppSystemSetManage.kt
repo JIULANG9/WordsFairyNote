@@ -75,4 +75,5 @@ object AppSystemSetManage {
     var consentAgreement : Boolean
         get() = DataStoreUtils.readBooleanData(ConsentAgreement_Key, false)
         set(value) = DataStoreUtils.saveSyncBooleanData(ConsentAgreement_Key, value = value)
+
 }

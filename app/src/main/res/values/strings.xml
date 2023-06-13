@@ -12,6 +12,7 @@
     <string name="app_note_content_text">NoteContentText</string>
     <string name="app_search">Search</string>
     <string name="app_set">Set</string>
+    <string name="app_data_recovery_backup">NoteData Recovery/Backup</string>
     <string name="app_privacy_protection">privacy Protection</string>
 
 

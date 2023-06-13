@@ -23,6 +23,8 @@ const val DATE_FORMAT_Month_day_CHINESE = "MM月dd"
 /** 时间格式化 月-日 时:分 */
 const val DATE_FORMAT_Month_Day_Time = "MM-dd HH:mm"
 
+const val DATE_FORMAT_Month_Day_Time_Second = "MM-dd HH:mm:ss"
+
 
 
 /** 根据[format]格式化时间，[format]默认[DATE_FORMAT_DEFAULT] */
