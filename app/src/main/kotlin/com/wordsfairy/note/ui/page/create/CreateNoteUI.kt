@@ -15,6 +15,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
@@ -142,13 +143,23 @@ fun CreateNoteUI(
     }
 
     BackHandler(true) {
-        intentChannel.trySend(ViewIntent.Clean)
-        onBack()
+        when {
+            isShowAddFolderDialog -> {
+                isShowAddFolderDialog = false
+            }
+            else -> {
+                intentChannel.trySend(ViewIntent.Clean)
+                onBack()
+            }
+        }
     }
+
+
     Box {
         Column(
             Modifier
                 .fillMaxSize()
+                .blur(if (isShowAddFolderDialog ) 6.dp else 0.dp)
                 .background(WordsFairyTheme.colors.whiteBackground)
                 .clickableNoIndication(focusManager)
                 .systemBarsPadding()

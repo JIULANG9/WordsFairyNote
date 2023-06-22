@@ -35,6 +35,7 @@ import com.wordsfairy.note.ui.page.backups.BackupsProgressBarUI
 import com.wordsfairy.note.ui.page.backups.NoteDataUI
 import com.wordsfairy.note.ui.page.backups.NoteDataViewModel
 import com.wordsfairy.note.ui.page.backups.ProgressBarUI
+import com.wordsfairy.note.ui.page.home.foldermanage.FolderManageUI
 import com.wordsfairy.note.ui.page.search.SearchPage
 import com.wordsfairy.note.ui.page.search.SearchUIState
 import com.wordsfairy.note.ui.theme.WordsFairyTheme
@@ -65,6 +66,13 @@ fun HomePageScreen(navController: NavHostController) {
             HomePageUI()
         }
         composable(
+            NavigateRouter.HomePage.FolderManage
+        ) {
+            FolderManageUI{
+                navController.navigateUp()
+            }
+        }
+        composable(
             NavigateRouter.SetPage.Set
         ) {
             SetPageUI {
@@ -77,7 +85,6 @@ fun HomePageScreen(navController: NavHostController) {
             NoteDetailsUI(onBack = {
                 navController.navigateUp()
             })
-
         }
         composable(
             NavigateRouter.DetailPage.Set
@@ -105,7 +112,6 @@ fun HomePageScreen(navController: NavHostController) {
         ) {
             ProgressBarUI(onBack = {
                 navController.navigateUp()
-
             })
         }
     }

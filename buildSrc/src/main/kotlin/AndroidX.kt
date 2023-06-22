@@ -36,24 +36,27 @@ object AndroidX {
     //swiperefreshlayout
     const val swiperefreshlayout = "androidx.swiperefreshlayout:swiperefreshlayout:1.2.0-alpha01"
 
-    object Compose{
-        private const val version="1.5.0-alpha03"
-        const val ui= "androidx.compose.ui:ui:$version"
-        const val material="androidx.compose.material:material:$version"
-        const val tooling_preview="androidx.compose.ui:ui-tooling-preview:$version"
+    object Compose {
+        private const val version = "1.5.0-alpha03"
+        const val ui = "androidx.compose.ui:ui:$version"
+        const val material = "androidx.compose.material:material:$version"
+        const val tooling_preview = "androidx.compose.ui:ui-tooling-preview:$version"
+
         //use debugImplementation
-        const val uiTooling="androidx.compose.ui:ui-tooling:$version"
-        const val ui_util="androidx.compose.ui:ui-util:$version"
-        const val material3="androidx.compose.material3:material3:1.1.0-alpha02"
-        const val activity="androidx.activity:activity-compose:1.6.1"
-        const val runtime="androidx.compose.runtime:runtime:1.3.0-beta02"
+        const val uiTooling = "androidx.compose.ui:ui-tooling:$version"
+        const val ui_util = "androidx.compose.ui:ui-util:$version"
+        const val material3 = "androidx.compose.material3:material3:1.1.0-alpha02"
+        const val activity = "androidx.activity:activity-compose:1.6.1"
+        const val runtime = "androidx.compose.runtime:runtime:1.3.0-beta02"
 
-        const val ui_test_manifest="androidx.compose.ui:ui-test-manifest:1.3.3"
+        const val ui_test_manifest = "androidx.compose.ui:ui-test-manifest:1.3.3"
 
-        object accompanist{
-            const val systemuicontroller="com.google.accompanist:accompanist-systemuicontroller:0.30.1"
-            const val insets="com.google.accompanist:accompanist-insets:0.9.1"
-            const val placeholder="com.google.accompanist:accompanist-placeholder-material:0.24.7-alpha"
+        object accompanist {
+            const val systemuicontroller =
+                "com.google.accompanist:accompanist-systemuicontroller:0.30.1"
+            const val insets = "com.google.accompanist:accompanist-insets:0.9.1"
+            const val placeholder =
+                "com.google.accompanist:accompanist-placeholder-material:0.24.7-alpha"
         }
 
         //更多compose工具集查看 accompanist项目#https://github.com/google/accompanist
@@ -90,14 +93,15 @@ object AndroidX {
 
 
         const val common = "com.google.dagger:hilt-android:$version"
+
         //use kapt
-        const val compiler ="com.google.dagger:hilt-android-compiler:$version"
+        const val compiler = "com.google.dagger:hilt-android-compiler:$version"
 
-        const val gradlePlugin ="com.google.dagger:hilt-android-gradle-plugin:$version"
+        const val gradlePlugin = "com.google.dagger:hilt-android-gradle-plugin:$version"
 
-        const val androidx_compiler ="androidx.hilt:hilt-compiler:$version"
-        const val lifecycle_viewmodel ="androidx.hilt:hilt-lifecycle-viewmodel:$hiltCompose"
-        const val navigation_compose ="androidx.hilt:hilt-navigation-compose:1.1.0-alpha01"
+        const val androidx_compiler = "androidx.hilt:hilt-compiler:$version"
+        const val lifecycle_viewmodel = "androidx.hilt:hilt-lifecycle-viewmodel:$hiltCompose"
+        const val navigation_compose = "androidx.hilt:hilt-navigation-compose:1.1.0-alpha01"
     }
 
     object Lifecycle {
@@ -149,7 +153,8 @@ object AndroidX {
             "androidx.navigation:navigation-safe-args-generator:$version"
 
         //classpath("${AndroidX.Navigation.safeArgsGradlePlugin}")
-        const val safeArgsGradlePlugin = "androidx.navigation:navigation-safe-args-gradle-plugin:$version"
+        const val safeArgsGradlePlugin =
+            "androidx.navigation:navigation-safe-args-gradle-plugin:$version"
 
         // Dynamic Feature Module Support
         const val dynamic =
@@ -200,11 +205,14 @@ object AndroidX {
 
 
     }
-    object Work{
+
+    object Work {
         private const val version = "2.8.1"
         const val runtime = "androidx.work:work-runtime:$version"
         const val runtime_ktx = "androidx.work:work-runtime-ktx:$version"
     }
+
+
 
     const val Documentfile = "androidx.documentfile:documentfile:1.0.1"
 
@@ -214,6 +222,7 @@ object AndroidX {
     21或更高版本默认启用multidex并且您不需要导入multidex库和设置配置文件。
      */
     const val multidex = "androidx.multidex:multidex:2.0.1"
+
     //sdk包下graphics.drawable下有一个VectorDrawable类，对于较高的版本不需要引入此库来支持基于XML矢量图形创建可绘制对象。
     const val vectordrawable = "androidx.vectordrawable:vectordrawable:1.1.0"
 

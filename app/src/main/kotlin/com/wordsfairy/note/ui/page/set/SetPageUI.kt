@@ -144,7 +144,7 @@ fun SetPageUI(
                             //  开启/关闭系统跟随
                             intentChannel.trySend(ViewIntent.ThemeFollowSystem(follow))
                         }
-                        ItemDividerSetUI()
+                        ItemDivider()
                         CommonItemIcon("数据恢复/备份") {
                             postEventValue(
                                 EventBus.NavController,
@@ -159,7 +159,7 @@ fun SetPageUI(
                         CommonItemIcon("隐私政策") {
                             context.searchInBrowser(URL_PRIVACY_PROTECTION)
                         }
-                            ItemDividerSetUI()
+                            ItemDivider()
 
                         AnimateContentIcon("应用信息") {
                             CommonTextItem(
@@ -174,7 +174,7 @@ fun SetPageUI(
                                 context.searchInBrowser(URL_GITHUB)
                             }
                         }
-                        ItemDividerSetUI()
+                        ItemDivider()
                         AnimateContentIcon("联系作者") {
                             CommonTextItem(
                                 "微信",
@@ -194,7 +194,7 @@ fun SetPageUI(
                                 context.searchInBrowser(URL_JUEJIN)
                             }
                         }
-                        ItemDividerSetUI()
+                        ItemDivider()
                         CommonTextItem("开发者", "九狼WENJIE") {
                             context.toastLONG("祝你有美好的一天  ＼(^▽^＠)ノ ")
                         }
@@ -202,18 +202,4 @@ fun SetPageUI(
                 }
             }
         })
-}
-
-/**
- * 分割线
- */
-@Composable
-private fun ItemDividerSetUI() {
-    Divider(
-        Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 20.dp),
-        color = WordsFairyTheme.colors.textSecondary,
-        thickness = 0.3.dp
-    )
 }

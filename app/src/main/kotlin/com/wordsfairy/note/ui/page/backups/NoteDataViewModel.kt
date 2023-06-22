@@ -35,8 +35,6 @@ import javax.inject.Inject
  * @Author: JIULANG
  * @Data: 2023/6/12 11:13
  */
-
-
 @HiltViewModel
 class NoteDataViewModel @Inject internal constructor(
     private val noteRepository: NoteRepository,
@@ -50,20 +48,12 @@ class NoteDataViewModel @Inject internal constructor(
     init {
         val initialVS = ViewState.initial()
 
-        viewStateFlow = merge(
-            intentFlow.filterIsInstance<ViewIntent.Initial>().take(1),
-            intentFlow.filterNot { it is ViewIntent.Initial }
-        )
-            .toPartialChangeFlow()
-            .sendSingleEvent()
-            .scan(initialVS) { vs, change -> change.reduce(vs) }
-            .catch {
+        viewStateFlow = merge(intentFlow.filterIsInstance<ViewIntent.Initial>().take(1),
+            intentFlow.filterNot { it is ViewIntent.Initial }).toPartialChangeFlow()
+            .sendSingleEvent().scan(initialVS) { vs, change -> change.reduce(vs) }.catch {
                 Log.e(logTag, "[CreateNoteViewModel] Throwable:", it)
-            }
-            .stateIn(
-                viewModelScope,
-                SharingStarted.Eagerly,
-                initialVS
+            }.stateIn(
+                viewModelScope, SharingStarted.Eagerly, initialVS
             )
     }
 
@@ -94,16 +84,14 @@ class NoteDataViewModel @Inject internal constructor(
             }.cancellable().onCompletion {
                 println("导入完成")
             }
-            val importFlow = filterIsInstance<ViewIntent.Import>()
-                .log("[导入]")
-                .flatMapLatest {
-                    importFileFlow
-                }.flowOn(Dispatchers.IO).map {
-                    when (it) {
-                        100F -> PartialChange.UI.Success
-                        else -> PartialChange.UI.Progress(it)
-                    }
+            val importFlow = filterIsInstance<ViewIntent.Import>().log("[导入]").flatMapLatest {
+                importFileFlow
+            }.flowOn(Dispatchers.IO).map {
+                when (it) {
+                    100F -> PartialChange.UI.Success
+                    else -> PartialChange.UI.Progress(it)
                 }
+            }
             val backupsFileFlow = flow {
                 exportFile {
                     emit(it)
@@ -113,20 +101,20 @@ class NoteDataViewModel @Inject internal constructor(
                 println("备份完成")
             }
             val backupsFlow = filterIsInstance<ViewIntent.Backups>()
-                .onEach { println("[备份]") }
-                .flatMapLatest { backupsFileFlow }
-                .flowOn(Dispatchers.IO)
-                .map {
+                .log("[备份]")
+                .flatMapLatest { backupsFileFlow }.flowOn(Dispatchers.IO).map {
                     when (it) {
                         100F -> PartialChange.UI.Success
                         else -> PartialChange.UI.Progress(it)
                     }
                 }
+
+
             return merge(
-                backupsFlow,
-                importFlow
+                backupsFlow, importFlow
             )
         }
+    //全部数据转二维码
 
     /**
      * 导入文件
@@ -139,34 +127,34 @@ class NoteDataViewModel @Inject internal constructor(
         var currentSchedule = 0
         val createdAt = System.currentTimeMillis()
         files.forEach { (fileName, lines) ->
+            //文件夹位置递增
+            val folderPosition = folderRepository.getMaxPosition()+ 1
             val noteFolder = NoteFolderEntity.create(
-                fileName,
-                createdAt
+                fileName, createdAt,folderPosition
             )
             val folderId = folderRepository.insert(noteFolder)
+            var position = 0
             lines.forEach { (title, contents) ->
                 val note = NoteEntity.create(
-                    folderId,
-                    title,
-                    contents.size,
-                    createdAt
+                    folderId, title, contents.size, createdAt
                 )
                 val noteId = noteEntityRepository.insert(note)
 
                 val noteContents = contents.reversed().mapIndexed { _, content ->
+                    //进度递增,回调进度
                     currentSchedule++
                     callBackSchedule(
                         currentSchedule.toFloat() / total.toFloat() * 100
                     )
+                    //位置递增,解决排序问题
+                    position++
                     NoteContentEntity.create(
-                        noteId,
-                        content,
-                        createdAt
+                        noteId, content, createdAt
                     )
+                    NoteContentEntity.create(noteId, content, createdAt, position)
                 }
                 contentRepository.insert(noteContents)
             }
-
 
             lines.forEach(::println)
         }
@@ -208,8 +196,7 @@ class NoteDataViewModel @Inject internal constructor(
                         val contentTitle = noteAndContentToTitle(noteAndContent)
                         // 创建笔记内容txt文件
                         contentEntityToTxtFile(
-                            noteAndContent.noteContents, contentTitle,
-                            noteFolder.uri
+                            noteAndContent.noteContents, contentTitle, noteFolder.uri
                         ) {
                             currentSchedule++
                             callBackSchedule(
@@ -246,21 +233,19 @@ class NoteDataViewModel @Inject internal constructor(
 private fun noteAndContentToTitle(noteAndContent: NoteAndNoteContent): String {
     var contentTitle = noteAndContent.noteEntity.title
     if (contentTitle.isEmpty()) {
-        contentTitle =
-            if (noteAndContent.noteContents.isNotEmpty()) {
-                //判断内容字符是否大于5 大于就截取前5个字符作为标题  小于5就取全部
-                if (noteAndContent.noteContents[0].content.length > 5) {
-                    noteAndContent.noteContents[0].content.substring(
-                        0,
-                        5
-                    )
-                } else {
-                    noteAndContent.noteContents[0].content
-                }
+        contentTitle = if (noteAndContent.noteContents.isNotEmpty()) {
+            //判断内容字符是否大于5 大于就截取前5个字符作为标题  小于5就取全部
+            if (noteAndContent.noteContents[0].content.length > 5) {
+                noteAndContent.noteContents[0].content.substring(
+                    0, 5
+                )
             } else {
-                //如果内容为空  无标题
-                "无标题"
+                noteAndContent.noteContents[0].content
             }
+        } else {
+            //如果内容为空  无标题
+            "无标题"
+        }
     }
     return contentTitle
 }

@@ -29,6 +29,7 @@ object AppResId {
     object String {
         //新建文件夹
         const val CreateFolder =  R.string.app_create_folder
+        const val RenameFolder =  R.string.app_rename_folder
         const val Cancel =  R.string.app_cancel
         const val Confirm =  R.string.app_confirm
         const val Agree  =  R.string.app_agree
@@ -37,6 +38,7 @@ object AppResId {
         const val NoteContentText =  R.string.app_note_content_text
         const val Search =  R.string.app_search
         const val Set =  R.string.app_set
+        const val FolderManage =  R.string.app_folder_manage
         const val DataRecoveryBackup =  R.string.app_data_recovery_backup
 
         const val PrivacyPolicy =  R.string.app_privacy_protection

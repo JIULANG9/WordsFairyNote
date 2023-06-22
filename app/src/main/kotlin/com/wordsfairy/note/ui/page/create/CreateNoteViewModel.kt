@@ -138,9 +138,12 @@ class CreateNoteViewModel @Inject internal constructor(
                 .withLatestFrom(addFolderNameChanged) { _, title -> title }
                 .filter { it.isNotEmpty() }
                 .map { folderName ->
+                    //文件夹位置递增
+                    val position = folderRepository.getMaxPosition()+ 1
                     val noteFolderEntity = NoteFolderEntity.create(
                         folderName,
-                        System.currentTimeMillis()
+                        System.currentTimeMillis(),
+                        position = position
                     )
                     val id = folderRepository.createNoteFolder(noteFolderEntity)
                     noteFolderEntity.folderId = id

@@ -30,7 +30,7 @@ import java.util.*
         NoteContentEntity::class,
         NoteEntity::class,
         SearchRecordEntity::class,
-    ], version = 1, exportSchema = false
+    ], version = 2, exportSchema = false
 )
 @TypeConverters(Converters::class)
 abstract class AppDataBase : RoomDatabase() {
@@ -69,14 +69,13 @@ abstract class AppDataBase : RoomDatabase() {
                         }
                     }
                 )
-//                .addMigrations(migration_1_2) // 添加 Migration 对象
-//                .addMigrations(migration_2_3) // 添加 Migration 对象
+                .addMigrations(migration_1_2) // 添加 Migration 对象
                 .build()
         }
-        val migration_1_2 = object : Migration(1, 2) {
+        private val migration_1_2 = object : Migration(1, 2) {
             override fun migrate(database: SupportSQLiteDatabase) {
-                // 在 note_content_entity 表中添加新字段
-                database.execSQL("ALTER TABLE $NoteContentTableName ADD COLUMN `position` INTEGER NOT NULL DEFAULT 0")
+                // 在 note_folder_entity 表中将order字段改名为position
+                database.execSQL("ALTER TABLE $NoteFolder_TableName RENAME COLUMN `order` TO `position`")
             }
         }
         val migration_2_3 = object : Migration(2, 3) {

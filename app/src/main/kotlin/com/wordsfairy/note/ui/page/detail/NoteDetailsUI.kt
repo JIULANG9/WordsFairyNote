@@ -13,6 +13,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.blur
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.unit.dp
@@ -67,11 +68,18 @@ fun NoteDetailsUI(
 
     val focusManager = LocalFocusManager.current
 
-
     BackHandler(true) {
-        intentChannel.trySend(ViewIntent.Clean)
-        onBack()
+        when {
+            isShowContentModifierDialog -> {
+                isShowContentModifierDialog = false
+            }
+            else -> {
+                intentChannel.trySend(ViewIntent.Clean)
+                onBack()
+            }
+        }
     }
+
     LaunchedEffect(viewModel) {
         intentChannel
             .consumeAsFlow()
@@ -99,6 +107,7 @@ fun NoteDetailsUI(
     Column(
         Modifier
             .fillMaxSize()
+            .blur(if (isShowContentModifierDialog ) 6.dp else 0.dp)
             .background(WordsFairyTheme.colors.whiteBackground)
             .clickableNoIndication(focusManager)
             .systemBarsPadding()

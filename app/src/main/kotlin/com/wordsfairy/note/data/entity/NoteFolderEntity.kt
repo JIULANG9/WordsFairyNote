@@ -4,6 +4,7 @@ import android.os.Parcelable
 import androidx.room.*
 import com.wordsfairy.note.data.room.NoteFolder_TableName
 import kotlinx.parcelize.Parcelize
+import java.io.Serializable
 
 /**
  * @Description:
@@ -14,11 +15,11 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 @Entity(tableName = NoteFolder_TableName)
 data class NoteFolderEntity(
-    val name: String,
+    var name: String,
     val noteCount: Int,
     val createdAt: Long,
     //顺序
-    val order: Int,
+    var position: Int,
     //笔记数
     @ColumnInfo(name = "note_context_count")
     var noteContextCount: Int,
@@ -27,8 +28,8 @@ data class NoteFolderEntity(
     val isTopping: Boolean,
     //删除
     @ColumnInfo(name = "is_delete")
-    val isDelete: Boolean
-) : Parcelable {
+    var isDelete: Boolean
+) : Parcelable ,Serializable {
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id")
     var folderId: Long = 0
@@ -37,16 +38,18 @@ data class NoteFolderEntity(
         fun create(
             name: String,
             createdAt: Long,
+            position: Int = 0,
         ):NoteFolderEntity {
             return NoteFolderEntity(
                 name,
                 0,createdAt,
-                0,
+                position,
                 0,
                 isTopping=false,
                 isDelete=false,
             )
         }
     }
+
 }
 

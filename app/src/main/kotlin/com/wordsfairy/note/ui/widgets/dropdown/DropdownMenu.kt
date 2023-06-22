@@ -10,6 +10,7 @@ import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.interaction.MutableInteractionSource
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Check
@@ -17,6 +18,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.blur
 import androidx.compose.ui.input.pointer.pointerInput
 
 import androidx.compose.ui.tooling.preview.Preview
@@ -29,6 +31,7 @@ import com.wordsfairy.note.data.entity.NoteFolderEntity
 import com.wordsfairy.note.ui.common.click
 import com.wordsfairy.note.ui.theme.AppColor
 import com.wordsfairy.note.ui.theme.WordsFairyTheme
+import com.wordsfairy.note.ui.widgets.ImmerseCard
 import com.wordsfairy.note.ui.widgets.Title
 
 
@@ -56,7 +59,7 @@ fun FolderDropdownMenu(
             val name = item.name
             val isSelect = selectedFolder?.folderId == item.folderId
             val background =
-                if (isSelect) AppColor.themeAccent else WordsFairyTheme.colors.dialogBackground
+                if (isSelect) WordsFairyTheme.colors.themeUi.copy(alpha = 0.3f) else WordsFairyTheme.colors.dialogBackground
             val textColor = if (isSelect) AppColor.themeColor else WordsFairyTheme.colors.textPrimary
 
             Row(
@@ -139,7 +142,7 @@ fun AnimatedVisibilitySlide(
                     modifier = Modifier
                         .fillMaxWidth()
                         .systemBarsPadding()
-                        .padding(9.dp, 3.dp, 9.dp, 0.dp)
+                        .padding(9.dp, 66.dp, 9.dp, 0.dp)
                         .pointerInput(Unit) {
                             detectDragGestures(
                                 onDrag = { change, dragAmount ->
@@ -151,6 +154,7 @@ fun AnimatedVisibilitySlide(
                                     }
                                 })
                         },
+                    shape = RoundedCornerShape(16.dp),
                     colors = CardDefaults.cardColors(WordsFairyTheme.colors.dialogBackground),
                     elevation = CardDefaults.cardElevation(3.dp), content = content
                 )
@@ -221,6 +225,7 @@ fun AnimatedSlideFormBottom(
                                     }
                                 })
                         },
+                    shape = RoundedCornerShape(16.dp),
                     colors = CardDefaults.cardColors(WordsFairyTheme.colors.dialogBackground),
                     elevation = CardDefaults.cardElevation(3.dp), content = content
                 )

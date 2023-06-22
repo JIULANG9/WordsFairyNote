@@ -1,9 +1,12 @@
 package com.wordsfairy.note.data.entity
 
+import android.os.Parcel
 import android.os.Parcelable
 import androidx.room.Embedded
 import androidx.room.Relation
+import kotlinx.parcelize.Parceler
 import kotlinx.parcelize.Parcelize
+import java.io.Serializable
 
 /**
  * @Description:
@@ -20,7 +23,7 @@ data class NoteInfo(
         entityColumn = "folder_id"
     )
     val noteAndNoteContents: List<NoteAndNoteContent>
-) : Parcelable
+) : Parcelable,Serializable
 
 @Parcelize
 data class NoteAndFolder(

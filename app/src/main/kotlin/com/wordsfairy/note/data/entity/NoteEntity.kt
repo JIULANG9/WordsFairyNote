@@ -4,6 +4,7 @@ import android.os.Parcelable
 import androidx.room.*
 import com.wordsfairy.note.data.room.NoteTableName
 import kotlinx.parcelize.Parcelize
+import java.io.Serializable
 
 /**
  * @Description:
@@ -31,7 +32,7 @@ data class NoteEntity(
     //删除
     @ColumnInfo(name = "is_delete")
     var isDelete: Boolean
-    ) : Parcelable {
+    ) : Parcelable , Serializable {
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id")
     var noteId: Long = 0

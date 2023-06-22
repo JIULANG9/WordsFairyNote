@@ -37,33 +37,18 @@ fun SearchEdit(
     searchContent:String,
     onSearch: (String) -> Unit,
 ) {
-    var isLoadingCompleted by remember { mutableStateOf(false) }
-    var fullSize by remember { mutableStateOf(IntSize(0, 0)) }
-
-    val size by animateIntSizeAsState(
-        if (isLoadingCompleted) fullSize else IntSize(390, 0),
-        animationSpec = tween(36)
-    )
-    LaunchedEffect(Unit) {
-        delay(100)
-        isLoadingCompleted = true
-    }
-
 
     var searchContent by remember { mutableStateOf(searchContent) }
 
     Box(
         modifier = Modifier
-            .onSizeChanged {
-                fullSize = it
-            }
             .statusBarsPadding()
             .padding(horizontal = 16.dp)
     ) {
         SearchEditView(
             searchContent,
             stringResource(id = AppResId.String.Search),
-            Modifier.width(with(LocalDensity.current) { size.width.toDp() }),
+            Modifier.fillMaxWidth(),
             onValueChanged = {
                 searchContent = it
                 onSearch.invoke(searchContent)

@@ -37,7 +37,8 @@ class SeedDatabaseWorker(
             val createdAt = System.currentTimeMillis()
             val noteFolder = NoteFolderEntity.create(
                 NoteFolder_Name,
-                createdAt
+                createdAt,
+                position = 1
             )
             val database = AppDataBase.getInstance()
            val folderId = database.noteFolderDao().insert(noteFolder)

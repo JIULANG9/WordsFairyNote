@@ -5,6 +5,7 @@ import androidx.room.*
 import com.wordsfairy.note.data.room.NoteContentTableName
 import com.wordsfairy.note.data.room.NoteTableName
 import kotlinx.parcelize.Parcelize
+import java.io.Serializable
 
 /**
  * @Description:
@@ -37,7 +38,7 @@ data class NoteContentEntity(
     var isDelete: Boolean,
     @ColumnInfo(name = "is_complete")
     val isComplete: Boolean
-) : Parcelable {
+) : Parcelable ,Serializable{
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id")
     var noteContextId: Long = 0
@@ -74,7 +75,7 @@ data class NoteAndNoteContent(
         entityColumn = "note_id"
     )
     val noteContents: List<NoteContentEntity>
-) : Parcelable
+) : Parcelable , Serializable
 
 @Parcelize
 data class SearchNoteEntity(

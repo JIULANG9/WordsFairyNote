@@ -3,6 +3,7 @@ package com.wordsfairy.note.ui.widgets
 import androidx.annotation.FloatRange
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
@@ -16,14 +17,21 @@ import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.*
+import com.wordsfairy.note.constants.EventBus
+import com.wordsfairy.note.constants.NavigateRouter
 import com.wordsfairy.note.data.AppSystemSetManage
 import com.wordsfairy.note.data.entity.NoteEntity
 import com.wordsfairy.note.data.entity.NoteFolderEntity
 
 import com.wordsfairy.note.data.entity.NoteInfo
+import com.wordsfairy.note.ext.flowbus.postEventValue
+import com.wordsfairy.note.ui.theme.AppResId
 import com.wordsfairy.note.ui.theme.WordsFairyTheme
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -40,10 +48,10 @@ import kotlin.math.abs
 @Composable
 fun HomeTab(
     noteFolders: List<NoteInfo>,
-    currentFolderCallback : (NoteFolderEntity) -> Unit ={},
-    itemOnClick: (entity: NoteEntity, offset: IntOffset, cardSize: IntSize)  -> Unit
+    currentFolderCallback: (NoteFolderEntity) -> Unit = {},
+    itemOnClick: (entity: NoteEntity, offset: IntOffset, cardSize: IntSize) -> Unit
 ) {
-    // 创建 CoroutineScope
+    val context = LocalContext.current
 
     val pagerState = rememberPagerState(initialPage = AppSystemSetManage.homeTabRememberPage)
     val scope = rememberCoroutineScope()
@@ -55,42 +63,56 @@ fun HomeTab(
             AppSystemSetManage.homeTabRememberPage = currentIndex
         }
     }
-    ScrollableTabRow(
-        modifier = Modifier.fillMaxWidth(),
-        selectedTabIndex = pagerState.currentPage,
-        edgePadding = 0.dp,
-        indicator = { tabPositions ->
-            if (tabPositions.isNotEmpty()) {
-                PagerTabIndicator(tabPositions = tabPositions, pagerState = pagerState)
-            }
-        },
-        containerColor = WordsFairyTheme.colors.background,
-        divider = {
-
-        }
-    ) {
-        // Add tabs for all of our pages
-        noteFolders.forEachIndexed { index, title ->
-            val selected = (pagerState.currentPage == index)
-            Tab(
-                selected = selected,
-                selectedContentColor = WordsFairyTheme.colors.textPrimary,
-                unselectedContentColor = WordsFairyTheme.colors.textSecondary,
-                onClick = {
-                    scope.launch {
-                        pagerState.animateScrollToPage(index)
-                    }
+    Row {
+        ScrollableTabRow(
+            modifier = Modifier.weight(1f),
+            selectedTabIndex = pagerState.currentPage,
+            edgePadding = 0.dp,
+            indicator = { tabPositions ->
+                if (tabPositions.isNotEmpty()) {
+                    PagerTabIndicator(tabPositions = tabPositions, pagerState = pagerState)
                 }
-            ) {
-                Text(
-                    text = title.noteFolder.name,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.padding(9.dp)
-                )
+            },
+            containerColor = WordsFairyTheme.colors.background,
+            divider = {
+
+            }
+        ) {
+            // Add tabs for all of our pages
+            noteFolders.forEachIndexed { index, title ->
+                val selected = (pagerState.currentPage == index)
+                Tab(
+                    selected = selected,
+                    selectedContentColor = WordsFairyTheme.colors.textPrimary,
+                    unselectedContentColor = WordsFairyTheme.colors.textSecondary,
+                    onClick = {
+                        scope.launch {
+                            pagerState.animateScrollToPage(index)
+                        }
+                    }
+                ) {
+                    Text(
+                        text = title.noteFolder.name,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.padding(9.dp)
+                    )
+                }
             }
         }
+        IconButton(onClick = {
+            context.postEventValue(
+                EventBus.NavController,
+                NavigateRouter.HomePage.FolderManage
+            )
+        }) {
+            Image(
+                painter = painterResource(AppResId.Drawable.Folder),
+                modifier = Modifier.size(26.dp),
+                contentDescription = "Folder"
+            )
+        }
+        Spacer(Modifier.width(6.dp))
     }
-
     HorizontalPager(
         pageCount = noteFolders.size,
         state = pagerState,
@@ -108,8 +130,8 @@ fun HomeTab(
 
                 noteFolders[page].noteAndNoteContents.forEachIndexed { index, route ->
 
-                    HomeItemCard(index,route){ entity, offset, cardSize->
-                        itemOnClick.invoke(entity,offset,cardSize)
+                    HomeItemCard(index, route) { entity, offset, cardSize ->
+                        itemOnClick.invoke(entity, offset, cardSize)
                         currentFolderCallback.invoke(noteFolders[page].noteFolder)
                     }
                 }

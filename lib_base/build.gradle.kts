@@ -32,7 +32,6 @@ dependencies {
 
     // Kotlin 支持
     implementation(Kotlin.stdlib)
-    implementation(Kotlin.reflect)
     implementation(AndroidX.coreKtx)
     implementation(AndroidX.DataStore.preferences)
     implementation(AndroidX.DataStore.core)

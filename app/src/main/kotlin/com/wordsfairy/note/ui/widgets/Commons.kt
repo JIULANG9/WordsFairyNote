@@ -2,19 +2,49 @@ package com.wordsfairy.note.ui.widgets
 
 
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.KeyboardArrowLeft
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.*
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.wordsfairy.note.ui.theme.AppResId
 import com.wordsfairy.note.ui.theme.WordsFairyTheme
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun TopLayout(onBack: () -> Unit = {},
+              @StringRes titleId: Int) {
+    Row(
+        Modifier
+            .fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Spacer(Modifier.width(12.dp))
+        MyIconButton(imageVector = Icons.Rounded.KeyboardArrowLeft, size = 39.dp) {
+            onBack.invoke()
+        }
+        Title(stringResource(id = titleId), fontSize = 21.sp)
+    }
+}
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -55,6 +85,15 @@ fun ImmerseCard(
         elevation = CardDefaults.cardElevation(defaultElevation = elevation),
         border = border,
         content = content)
+}
+
+@Composable
+fun ImmerseCardItem( modifier: Modifier = Modifier,
+    content: @Composable ColumnScope.() -> Unit
+){
+    ImmerseCard(modifier) {
+        Column(modifier = Modifier.padding(vertical = 6.dp),content = content)
+    }
 }
 /**
  * 增加未读小红点

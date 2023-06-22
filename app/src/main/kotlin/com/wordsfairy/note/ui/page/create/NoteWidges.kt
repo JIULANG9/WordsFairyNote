@@ -53,8 +53,9 @@ fun ChooseClassifyButton(
     onClick: () -> Unit,
 ) {
     val folderName = text ?: "未分类"
-    val containerColor = if (text == null) WordsFairyTheme.colors.immerseBackground else AppColor.themeAccent
-    val textColor = if (text == null) WordsFairyTheme.colors.textPrimary else WordsFairyTheme.colors.textBlack
+
+    val containerColor = if (text == null) WordsFairyTheme.colors.immerseBackground else WordsFairyTheme.colors.themeUi.copy(alpha = 0.3f)
+    val textColor = WordsFairyTheme.colors.textPrimary
 
     Button(
         onClick = onClick,

@@ -13,6 +13,7 @@ object NavigateRouter {
         private const val ROUTER_GROUP_HOME = "homepage"
 
         const val HOME = "$ROUTER_GROUP_HOME/home"
+        const val FolderManage = "$ROUTER_GROUP_HOME/home/FolderManage"
     }
     object SetPage {
         /** 全局设置 */
@@ -21,6 +22,8 @@ object NavigateRouter {
         const val Set = "$ROUTER_GROUP_SET/home"
         const val NoteData = "$ROUTER_GROUP_SET/notedata"
         const val BackupsProgressBar = "$ROUTER_GROUP_SET/notedata/backupsprogressbar"
+        const val BackupsQRCode = "$ROUTER_GROUP_SET/notedata/backupsqrcode"
+
     }
     object DetailPage {
         /** 笔记详细 */

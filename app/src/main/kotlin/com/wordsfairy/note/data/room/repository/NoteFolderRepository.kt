@@ -20,8 +20,18 @@ class NoteFolderRepository @Inject constructor(
 ) {
     fun getNoteFolder() = noteFolderDao.getNoteFolder()
     fun getNoteFolderById(id: Long) = noteFolderDao.getNoteFolderById(id)
+
+    fun getMaxPosition() = noteFolderDao.getMaxPosition()
     suspend fun insert(noteFolder: NoteFolderEntity) = noteFolderDao.insert(noteFolder)
     suspend fun update(noteFolder: NoteFolderEntity) = noteFolderDao.update(noteFolder)
+    suspend fun update(noteFolder: List<NoteFolderEntity>) = noteFolderDao.update(noteFolder)
+
+    suspend fun delete(noteFolder: NoteFolderEntity)  {
+        noteFolder.isDelete = true
+        noteFolderDao.update(noteFolder)
+    }
+
+
     suspend fun createNoteFolder(noteFolderEntity: NoteFolderEntity) =
         noteFolderDao.insert(noteFolderEntity)
 

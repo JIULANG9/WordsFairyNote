@@ -4,6 +4,7 @@
     <string name="app_name">词仙笔记</string>
 
     <string name="app_create_folder">新建文件夹</string>
+    <string name="app_rename_folder">重命名文件夹</string>
     <string name="app_cancel">取消</string>
     <string name="app_confirm">确定</string>
     <string name="app_agree">同意</string>
@@ -13,6 +14,7 @@
     <string name="app_note_content_text">笔记内容</string>
     <string name="app_search">搜索</string>
     <string name="app_set">设置</string>
+    <string name="app_folder_manage">文件夹管理</string>
     <string name="app_data_recovery_backup">数据恢复/备份</string>
 
     <string name="app_privacy_protection">隐私政策</string>
