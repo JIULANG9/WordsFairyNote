@@ -177,8 +177,6 @@ fun AnnotatedText(
     }
 }
 
-
-
 @Composable
 fun Title(
     title: String,

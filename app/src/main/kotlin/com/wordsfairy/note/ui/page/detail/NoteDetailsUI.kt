@@ -22,17 +22,21 @@ import com.wordsfairy.base.mvi.core.unit
 import com.wordsfairy.note.constants.EventBus
 import com.wordsfairy.note.constants.GlobalData
 import com.wordsfairy.note.constants.NavigateRouter
+import com.wordsfairy.note.data.entity.NoteEntity
 import com.wordsfairy.note.ext.coreui.rememberFlowWithLifecycle
 import com.wordsfairy.note.ext.flow.noteStartWith
 import com.wordsfairy.note.ext.flowbus.postEventValue
 import com.wordsfairy.note.ui.common.clickableNoIndication
-import com.wordsfairy.note.ui.common.vibrationFeedback
+import com.wordsfairy.note.ui.common.vibration
+
 import com.wordsfairy.note.ui.page.create.ChooseClassifyButton
 import com.wordsfairy.note.ui.page.create.CreateNoteEditView
 import com.wordsfairy.note.ui.page.detail.wifgets.*
 import com.wordsfairy.note.ui.theme.WordsFairyTheme
 import com.wordsfairy.note.ui.widgets.*
 import com.wordsfairy.note.ui.widgets.dropdown.FolderDropdownMenu
+import com.wordsfairy.note.ui.widgets.toast.ToastUI
+import com.wordsfairy.note.ui.widgets.toast.ToastUIState
 
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.Channel
@@ -46,8 +50,9 @@ import kotlinx.coroutines.flow.onEach
  * @Author: JIULANG
  * @Data: 2023/5/9 16:20
  */
-@OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterial3Api::class,
-    ExperimentalAnimationApi::class
+@OptIn(
+    ExperimentalComposeUiApi::class,
+    ExperimentalMaterial3Api::class
 )
 @ExperimentalCoroutinesApi
 @Composable
@@ -68,6 +73,7 @@ fun NoteDetailsUI(
 
     val focusManager = LocalFocusManager.current
 
+
     BackHandler(true) {
         when {
             isShowContentModifierDialog -> {
@@ -75,7 +81,7 @@ fun NoteDetailsUI(
             }
             else -> {
                 intentChannel.trySend(ViewIntent.Clean)
-                onBack()
+                onBack.invoke()
             }
         }
     }
@@ -104,139 +110,141 @@ fun NoteDetailsUI(
     val noteContents by viewModel.noteContents(noteEntity.noteId)
         .collectAsState(initial = emptyList())
 
-    Column(
-        Modifier
-            .fillMaxSize()
-            .blur(if (isShowContentModifierDialog ) 6.dp else 0.dp)
-            .background(WordsFairyTheme.colors.whiteBackground)
-            .clickableNoIndication(focusManager)
-            .systemBarsPadding()
-    ) {
-        Row(
-            Modifier.fillMaxWidth()
+    Box() {
+        Column(
+            Modifier
+                .fillMaxSize()
+                .blur(if (isShowContentModifierDialog) 6.dp else 0.dp)
+                .background(WordsFairyTheme.colors.whiteBackground)
+                .clickableNoIndication(focusManager) //点击无涟漪效果
+                .systemBarsPadding()
         ) {
-            Spacer(Modifier.width(12.dp))
-            /** 返回 */
-            MyIconButton(imageVector = Icons.Rounded.KeyboardArrowLeft,size = 36.dp) {
-                intentChannel.trySend(ViewIntent.Clean)
-                onBack.invoke()
-            }
-            /** 文件夹 */
-            Box(Modifier.align(Alignment.CenterVertically)) {
-                var expanded by remember { mutableStateOf(false) }
-                /** 文件夹弹窗 */
-                FolderDropdownMenu(expanded, noteFolders, viewState.selectedFolder, onDismiss = {
-                    expanded = false
-                }, onClick = {
-                    //选择分类文件夹
-                    intentChannel.trySend(ViewIntent.SelectFolder(it))
-                })
-                /** 选择文件夹 */
-                ChooseClassifyButton(viewState.selectedFolder?.name, onClick = {
-                    expanded = true
-                })
-            }
-
-            Spacer(Modifier.weight(1f))
-
-            /** 切换阅读模式 */
-            ReadButton(viewState.uiState == UIState.Read) {
-                val isAdd = viewState.uiState != UIState.Add
-                val state = if (isAdd) UIState.Add else UIState.Read
-                intentChannel.trySend(ViewIntent.UIStateChanged(state))
-                vibrationFeedback(feedback)
-            }
-            /** 切换搜索模式 */
-            SearchButton(viewState.uiState == UIState.Search) {
-                val isAdd = viewState.uiState != UIState.Add
-                if (isAdd) {
-                    intentChannel.trySend(ViewIntent.UIStateChanged(UIState.Add))
-                    focusManager.clearFocus()
-                } else {
-                    intentChannel.trySend(ViewIntent.InitSearch)
-                    intentChannel.trySend(ViewIntent.UIStateChanged(UIState.Search))
-                }
-                vibrationFeedback(feedback)
-            }
-
-            /** 右上角  修改标题 */
-            SaveTitleAndSet(viewState.canSaveTitle, saveClick = {
-                intentChannel.trySend(ViewIntent.ModifyTitle)
-            }, setClick = {
-                postEventValue(EventBus.NavController,  NavigateRouter.DetailPage.Set)
-
-            })
-            Spacer(Modifier.width(16.dp))
-        }
-
-        VisibilityViewColumn(visible = viewState.uiState != UIState.Read) {
-            /** 标题输入框 */
-            CreateNoteEditView(
-                text = viewState.title,
-                placeholder = "标题"
+            Row(
+                Modifier.fillMaxWidth()
             ) {
-                intentChannel.trySend(ViewIntent.TitleChanged(it))
-            }
-            Spacer(Modifier.height(3.dp))
-            Row {
-                Spacer(Modifier.width(24.dp))
-                /** 时间 */
-                MiniText(text = viewState.recentUpdates)
-                Spacer(Modifier.width(6.dp))
-                /** 条数 */
-                MiniText(text = noteContents.size.toString() + "条")
-            }
-            val isSearch = viewState.uiState == UIState.Search
-            /** 笔记输入框 */
-            ContentEditView(
-                viewState.noteContent,
-                isSearch,
-                viewState.canSaveContent,
-                onContentChange = {
-                    intentChannel.trySend(ViewIntent.ContentChanged(it))
-                },
-                onSearch = {
-                    intentChannel.trySend(ViewIntent.SearchContent(it))
-                },
-                saveNote = {
-                    intentChannel.trySend(ViewIntent.AddNoteContent)
-                    vibrationFeedback(feedback)
+                Spacer(Modifier.width(12.dp))
+                /** 返回 */
+                MyIconButton(imageVector = Icons.Rounded.KeyboardArrowLeft,size = 36.dp) {
+                    feedback.vibration()
+                    intentChannel.trySend(ViewIntent.Clean)
+                    onBack.invoke()
+                }
+                /** 文件夹 */
+                Box(Modifier.align(Alignment.CenterVertically)) {
+                    var expanded by remember { mutableStateOf(false) }
+                    /** 文件夹弹窗 */
+                    FolderDropdownMenu(expanded, noteFolders, viewState.selectedFolder, onDismiss = {
+                        expanded = false
+                    }, onClick = {
+                        //选择分类文件夹
+                        intentChannel.trySend(ViewIntent.SelectFolder(it))
+                    })
+                    /** 选择文件夹 */
+                    ChooseClassifyButton(viewState.selectedFolder?.name, onClick = {
+                        expanded = true
+                    })
+                }
+
+                Spacer(Modifier.weight(1f))
+
+                /** 切换阅读模式 */
+                ReadButton(viewState.uiState == UIState.Read) {
+                    val isAdd = viewState.uiState != UIState.Add
+                    val state = if (isAdd) UIState.Add else UIState.Read
+                    intentChannel.trySend(ViewIntent.UIStateChanged(state))
+                    feedback.vibration()
+                }
+                /** 切换搜索模式 */
+                SearchButton(viewState.uiState == UIState.Search) {
+                    val isAdd = viewState.uiState != UIState.Add
+                    if (isAdd) {
+                        intentChannel.trySend(ViewIntent.UIStateChanged(UIState.Add))
+                        focusManager.clearFocus()
+                    } else {
+                        intentChannel.trySend(ViewIntent.InitSearch)
+                        intentChannel.trySend(ViewIntent.UIStateChanged(UIState.Search))
+                    }
+                    feedback.vibration()
+                }
+
+                /** 右上角  修改标题 */
+                SaveTitleAndSet(viewState.canSaveTitle, saveClick = {
+                    intentChannel.trySend(ViewIntent.ModifyTitle)
+                }, setClick = {
+                    postEventValue(EventBus.NavController,  NavigateRouter.DetailPage.Set)
+
                 })
-        }
+                Spacer(Modifier.width(16.dp))
+            }
 
-        /**
-         * 笔记内容
-         */
-        val searchResultTransition = updateTransition(viewState.uiState== UIState.Search, "showCommentArrangementTransition")
+            VisibilityViewColumn(visible = viewState.uiState != UIState.Read) {
+                /** 标题输入框 */
+                CreateNoteEditView(
+                    text = viewState.title,
+                    placeholder = "标题"
+                ) {
+                    intentChannel.trySend(ViewIntent.TitleChanged(it))
+                }
+                Spacer(Modifier.height(3.dp))
+                Row {
+                    Spacer(Modifier.width(24.dp))
+                    /** 时间 */
+                    MiniText(text = viewState.recentUpdates)
+                    Spacer(Modifier.width(6.dp))
+                    /** 条数 */
+                    MiniText(text = noteContents.size.toString() + "条")
+                }
+                val isSearch = viewState.uiState == UIState.Search
+                /** 笔记输入框 */
+                ContentEditView(
+                    viewState.noteContent,
+                    isSearch,
+                    viewState.canSaveContent,
+                    onContentChange = {
+                        intentChannel.trySend(ViewIntent.ContentChanged(it))
+                    },
+                    onSearch = {
+                        intentChannel.trySend(ViewIntent.SearchContent(it))
+                    },
+                    saveNote = {
+                        intentChannel.trySend(ViewIntent.AddNoteContent)
+                        feedback.vibration()
+                    })
+            }
+
+            /**
+             * 笔记内容
+             */
+            val searchResultTransition = updateTransition(viewState.uiState== UIState.Search, "showCommentArrangementTransition")
 
 
 
-        searchResultTransition.AnimatedContent { isSearchUI->
-            if (isSearchUI){
-                /**
-                 * 搜索结果
-                 */
-                SearchResultList(viewState.searchResultData, onDelete = {
-                    intentChannel.trySend(ViewIntent.DeleteContent(it))
-                }, onModify = {
-                    //准备修改
-                    intentChannel.trySend(ViewIntent.ModifyContentChanged(it))
-                    isShowContentModifierDialog = true
-                })
-            }else{
-                ContentList(noteContents,
-                    onMove = { moveContents ->
-                        intentChannel.trySend(ViewIntent.MovePosition(moveContents))
-                    }, onDelete = {
+            searchResultTransition.AnimatedContent { isSearchUI->
+                if (isSearchUI){
+                    /**
+                     * 搜索结果
+                     */
+                    SearchResultList(viewState.searchResultData, onDelete = {
                         intentChannel.trySend(ViewIntent.DeleteContent(it))
                     }, onModify = {
                         //准备修改
                         intentChannel.trySend(ViewIntent.ModifyContentChanged(it))
                         isShowContentModifierDialog = true
                     })
+                }else{
+                    ContentList(noteContents,
+                        onMove = { moveContents ->
+                            intentChannel.trySend(ViewIntent.MovePosition(moveContents))
+                        }, onDelete = {
+                            intentChannel.trySend(ViewIntent.DeleteContent(it))
+                        }, onModify = {
+                            //准备修改
+                            intentChannel.trySend(ViewIntent.ModifyContentChanged(it))
+                            isShowContentModifierDialog = true
+                        })
+                }
             }
         }
-
     }
     ModifyContentDialog(
         isVisible = isShowContentModifierDialog,
@@ -248,3 +256,10 @@ fun NoteDetailsUI(
         }
     )
 }
+
+
+fun ColumnScope.toNoteDetailsUI(it: NoteEntity) {
+    GlobalData.noteDetailsNoteEntity = it
+    postEventValue(EventBus.NavController, NavigateRouter.DetailPage.Detail)
+}
+

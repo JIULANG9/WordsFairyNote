@@ -40,6 +40,7 @@ data class ViewState(
 sealed interface SingleEvent : MviSingleEvent {
     sealed interface UI : SingleEvent {
         object ShowDialog : UI
+
     }
 }
 
@@ -49,6 +50,7 @@ internal sealed interface PartialChange {
         override fun reduce(vs: ViewState): ViewState {
             return when (this) {
                 is Init -> vs
+                is Dialog -> vs
                 is SetSearchEngines -> vs.copy(currentUrl = url)
                 is CopyJumpToWeChat -> vs.copy(jumpToWeChat = jump)
                 is ShowDialog -> vs.copy(dialogDataBean = dialogDataBean)
@@ -58,6 +60,7 @@ internal sealed interface PartialChange {
         data class SetSearchEngines(val url:String) : UI()
         data class CopyJumpToWeChat(val jump:Boolean) : UI()
         data class ShowDialog(val dialogDataBean :DialogDataBean) : UI()
+        data class Dialog(val dialogDataBean :DialogDataBean) : UI()
     }
     sealed class NoteData : PartialChange {
         override fun reduce(vs: ViewState): ViewState {

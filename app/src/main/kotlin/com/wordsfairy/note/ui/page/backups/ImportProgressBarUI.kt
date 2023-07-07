@@ -8,7 +8,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import com.wordsfairy.base.tools.toast
 
 import com.wordsfairy.base.utils.readTxtFileByLinesWithProgress
 import com.wordsfairy.note.constants.EventBus
@@ -20,6 +19,8 @@ import com.wordsfairy.note.ext.flowbus.postEventValue
 
 import com.wordsfairy.note.ui.theme.WordsFairyTheme
 import com.wordsfairy.note.ui.widgets.IndicatorComponent
+import com.wordsfairy.note.ui.widgets.toast.ToastModel
+import com.wordsfairy.note.ui.widgets.toast.showToast
 import kotlinx.coroutines.*
 
 /**
@@ -60,8 +61,6 @@ fun ProgressBarUI(
                 AppDataBase.getInstance().noteContentDao().insertNotes(contents)
             }
             progress = 100F
-            //[CreateNoteUI] 批量创建
-
             if (GlobalData.createBatchImport) {
                 contents.reverse()
                 postEventValue(EventBus.CreateBatchImport, contents)
@@ -69,7 +68,7 @@ fun ProgressBarUI(
             delay(30)
             onBack.invoke()
         } catch (e: Exception) {
-            context.toast(e.message.toString())
+            ToastModel(e.message.toString(), ToastModel.Type.Error).showToast()
         }
     }
     Column(

@@ -34,7 +34,7 @@ class HomeViewModel @Inject internal constructor(
     var fullSize by mutableStateOf(IntSize(0, 0))
 
     /** 笔记搜索 */
-    var searchCaedSize by mutableStateOf(IntSize(0, 0))
+    var searchCardSize by mutableStateOf(IntSize(0, 0))
     var searchUIOffset by mutableStateOf(IntOffset(0, 0))
     var searchUIState by mutableStateOf(SearchUIState.Closed)
 
@@ -45,7 +45,7 @@ class HomeViewModel @Inject internal constructor(
 
     /** 笔记详细 */
     var noteDetailUISize by mutableStateOf(IntSize(0, 0))
-    var createNoteDetailUIOffset by mutableStateOf(IntOffset(0, 0))
+    var noteDetailUIOffset by mutableStateOf(IntOffset(0, 0))
     var currentNoteDetailsState by mutableStateOf(NoteDetailState.Closed)
 
     override val viewStateFlow: StateFlow<HomeViewState>
@@ -115,10 +115,7 @@ class HomeViewModel @Inject internal constructor(
                 .map {
                     HomePartialChange.NoteData.NoteEntityData(it.noteEntity)
                 }
-                .log("[笔记详细]")
-                .map {
-                    HomePartialChange.NoteData.NoteEntityData(it.noteEntity)
-                }
+
             /**
              * 同意隐私政策
              */

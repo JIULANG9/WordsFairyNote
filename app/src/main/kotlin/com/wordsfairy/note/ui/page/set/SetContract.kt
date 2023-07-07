@@ -2,6 +2,7 @@ package com.wordsfairy.note.ui.page.set
 
 import com.wordsfairy.note.data.AppSystemSetManage
 import com.wordsfairy.note.mvi.MviIntent
+
 import com.wordsfairy.note.mvi.MviSingleEvent
 import com.wordsfairy.note.mvi.MviViewState
 
@@ -12,18 +13,21 @@ import com.wordsfairy.note.mvi.MviViewState
  */
 sealed interface ViewIntent : MviIntent {
     object Initial : ViewIntent
-    data class SwitchTheme(val isDark:Boolean) : ViewIntent
-    data class ThemeFollowSystem(val isFollow:Boolean) : ViewIntent
+    data class SwitchTheme(val isDark: Boolean) : ViewIntent
+    data class ThemeFollowSystem(val isFollow: Boolean) : ViewIntent
+    data class CloseAnimation(val isClose: Boolean) : ViewIntent
 
 }
 
 data class ViewState(
     val darkUI: Boolean,
+    val closeAnimation: Boolean,
     val themeFollowSystem: Boolean
 ) : MviViewState {
     companion object {
         fun initial() = ViewState(
             darkUI = AppSystemSetManage.darkUI,
+            closeAnimation = AppSystemSetManage.closeAnimation,
             themeFollowSystem = AppSystemSetManage.darkModeFollowSystem
         )
     }
@@ -45,10 +49,13 @@ internal sealed interface PartialChange {
                 is Success -> vs.copy()
                 is DarkUI -> vs.copy(darkUI = darkUI)
                 is FollowSystem -> vs.copy(themeFollowSystem = follow)
+                is CloseAnimation -> vs.copy(closeAnimation = isClose)
             }
         }
-        data class DarkUI(val darkUI:Boolean) : UI()
-        data class FollowSystem(val follow:Boolean,) : UI()
+
+        data class DarkUI(val darkUI: Boolean) : UI()
+        data class FollowSystem(val follow: Boolean) : UI()
         object Success : UI()
+        data class CloseAnimation(val isClose: Boolean) : UI()
     }
 }

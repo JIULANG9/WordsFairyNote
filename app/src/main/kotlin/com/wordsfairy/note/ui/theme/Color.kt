@@ -12,10 +12,10 @@ val Transparent = Color(0x00000000)
 
 val themeColor = Color(0xFF92E2c7)
 
-val white = Color(0xFFFFFFFF).convert(ColorSpaces.CieXyz)
+val white = Color(0xFFFFFFFF)
 val white3 = Color(0xFFAE5E5E)
 
-val black = Color(0xFF000000).convert(ColorSpaces.CieXyz)
+val black = Color(0xFF000000)
 
 val statusBarColorLight = Color(0xFFFFFFFF)
 val statusBarColorDark = Color(0xFF1C1C28)
@@ -46,8 +46,8 @@ val textPrimaryDark = Color(0xFFE8E8F0)
 val textSecondaryLight = Color(0xFF999999)
 val textSecondaryDark = Color(0xFFD5D5D5)
 
-val textWhite = Color(0xFFFFFFFF).convert(ColorSpaces.CieXyz)
-val textBlack = Color(0xFF333333).convert(ColorSpaces.CieXyz)
+val textWhite = Color(0xFFFFFFFF)
+val textBlack = Color(0xFF333333)
 
 val blue = Color(0xFF51BDFF)
 val blueLightAccent = Color(0xFFD0E7F8)
@@ -62,9 +62,11 @@ val grey = Color(0xFF888888)
 val grey1 = Color(0xFF888888)
 val themeAccentColor = Color(0xFFE7FBF7)
 
+
 object AppColor {
     val blue = Color(0xFF51BDFF).convert(ColorSpaces.CieXyz)
     val red = Color(0xFFFF5500).convert(ColorSpaces.CieXyz)
     val themeAccent = Color(0xFFe9f9f4).convert(ColorSpaces.CieXyz)
     val themeColor = Color(0xFF92E2c7).convert(ColorSpaces.CieXyz)
+    val warning = Color(0xFFDF7B00).convert(ColorSpaces.CieXyz)
 }

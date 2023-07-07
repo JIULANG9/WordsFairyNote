@@ -21,11 +21,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.*
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.wordsfairy.note.ui.common.vibration
 import com.wordsfairy.note.ui.theme.AppResId
 import com.wordsfairy.note.ui.theme.WordsFairyTheme
 
@@ -33,6 +35,7 @@ import com.wordsfairy.note.ui.theme.WordsFairyTheme
 @Composable
 fun TopLayout(onBack: () -> Unit = {},
               @StringRes titleId: Int) {
+
     Row(
         Modifier
             .fillMaxWidth(),
@@ -40,7 +43,9 @@ fun TopLayout(onBack: () -> Unit = {},
     ) {
         Spacer(Modifier.width(12.dp))
         MyIconButton(imageVector = Icons.Rounded.KeyboardArrowLeft, size = 39.dp) {
+
             onBack.invoke()
+
         }
         Title(stringResource(id = titleId), fontSize = 21.sp)
     }

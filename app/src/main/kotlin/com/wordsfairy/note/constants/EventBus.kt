@@ -19,13 +19,10 @@ object EventBus {
     const val NoteFolderEntity = "NoteFolderEntity"
 
     const val NavController = "NavController"
+    const val ShowToast = "ShowToast"
 
-    const val CreateNoteContents= "CreateNoteContents"
 
     const val CreateBatchImport= "CreateBatchImport"
 
-    const val ThemeMode = "ThemeMode"
-
-    const val ThemeFollowSystem = "ThemeFollowSystem"
 
 }

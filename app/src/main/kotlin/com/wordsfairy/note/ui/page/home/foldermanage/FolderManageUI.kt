@@ -17,6 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.wordsfairy.base.mvi.core.unit
 import com.wordsfairy.note.ext.coreui.rememberFlowWithLifecycle
@@ -26,6 +27,7 @@ import com.wordsfairy.note.ui.page.home.foldermanage.widgets.FolderList
 import com.wordsfairy.note.ui.page.home.foldermanage.widgets.ModifyFolderDialog
 import com.wordsfairy.note.ui.theme.AppResId
 import com.wordsfairy.note.ui.theme.WordsFairyTheme
+import com.wordsfairy.note.ui.widgets.GeneralDialog
 import com.wordsfairy.note.ui.widgets.TopLayout
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.collect
@@ -52,6 +54,7 @@ fun FolderManageUI(
     val feedback = LocalHapticFeedback.current
     val focusManager = LocalFocusManager.current
 
+    val showDeleteWarningDialog = remember { mutableStateOf(false) }
 
     LaunchedEffect(viewModel) {
         intentChannel
@@ -114,8 +117,8 @@ fun FolderManageUI(
                 isShowModifierDialog = true
             },
             onDelete = {
-                intentChannel.trySend(ViewIntent.DeleteFolder(it))
-
+                viewModel.beDeletedFolder = it
+                showDeleteWarningDialog.value = true
             },
             onMove = {
                 //修改位置
@@ -153,4 +156,21 @@ fun FolderManageUI(
         onConfirm = {
             intentChannel.trySend(ViewIntent.CreateFolder)
         })
+
+    if (showDeleteWarningDialog.value) {
+        GeneralDialog(
+            dialogState = showDeleteWarningDialog,
+            title = "请谨慎操作",
+            message = "清除该文件夹下的笔记和内容，不可恢复，是否继续？",
+            isWaring = true,
+            positiveBtnText = stringResource(id = AppResId.String.Confirm),
+            onPositiveBtnClicked = {
+                intentChannel.trySend(ViewIntent.DeleteFolder(viewModel.beDeletedFolder))
+            },
+            negativeBtnText = stringResource(id = AppResId.String.Cancel),
+            onNegativeBtnClicked = {
+
+            }
+        )
+    }
 }

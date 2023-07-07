@@ -13,6 +13,8 @@ import com.wordsfairy.note.constants.GlobalData
 import com.wordsfairy.note.data.AppSystemSetManage
 import com.wordsfairy.note.data.room.repository.NoteContentRepository
 import com.wordsfairy.note.data.room.repository.NoteEntityRepository
+import com.wordsfairy.note.ui.widgets.toast.ToastModel
+import com.wordsfairy.note.ui.widgets.toast.showToast
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
@@ -96,6 +98,7 @@ class ContentSetViewModel @Inject internal constructor(
                 .map {
                     val note = GlobalData.noteDetailsNoteEntity!!
                     noteRepository.recycle(note)
+                    ToastModel("已回收笔记", ToastModel.Type.Success).showToast()
                     PartialChange.NoteData.RecycleNote
                 }.flowOn(Dispatchers.IO).distinctUntilChanged()
 

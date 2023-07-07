@@ -6,8 +6,8 @@ plugins {
     id("kotlin-parcelize")
     id("dagger.hilt.android.plugin")
     id("org.jetbrains.kotlin.android")
-
 }
+
 android {
     namespace = BuildConfig.applicationId
     compileSdk = BuildConfig.compileSdk
@@ -83,30 +83,32 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
     kotlinOptions {
-        jvmTarget = "11"
+        jvmTarget = "17"
     }
+
     buildFeatures {
         compose = true
     }
     composeOptions {
         kotlinCompilerExtensionVersion = "1.4.3"
     }
-    packagingOptions {
+
+    packaging {
         resources {
-            excludes += "/META-INF/{AL2.0,LGPL2.1}"
+            excludes.add("/META-INF/{AL2.0,LGPL2.1}")
         }
     }
-    buildToolsVersion = "33.0.0"
+
 }
 
 dependencies {
 
     implementation (AndroidX.coreKtx)
-
+    implementation (AndroidX.coresplashscreen)
     implementation (AndroidX.Lifecycle.runtimeKtx)
     implementation (AndroidX.Compose.activity)
     implementation (AndroidX.Compose.ui)

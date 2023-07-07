@@ -19,6 +19,7 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -31,6 +32,7 @@ import com.wordsfairy.note.data.entity.NoteFolderEntity
 
 import com.wordsfairy.note.data.entity.NoteInfo
 import com.wordsfairy.note.ext.flowbus.postEventValue
+import com.wordsfairy.note.ui.common.vibration
 import com.wordsfairy.note.ui.theme.AppResId
 import com.wordsfairy.note.ui.theme.WordsFairyTheme
 import kotlinx.coroutines.Dispatchers
@@ -53,8 +55,15 @@ fun HomeTab(
 ) {
     val context = LocalContext.current
 
-    val pagerState = rememberPagerState(initialPage = AppSystemSetManage.homeTabRememberPage)
+    val pagerState = rememberPagerState(
+        initialPage = AppSystemSetManage.homeTabRememberPage, pageCount = {
+            noteFolders.size
+        })
     val scope = rememberCoroutineScope()
+    val feedback = LocalHapticFeedback.current
+
+    var isVibration by remember { mutableStateOf(0) }
+
 
     val currentIndex = pagerState.currentPage
     LaunchedEffect(currentIndex) {
@@ -63,6 +72,7 @@ fun HomeTab(
             AppSystemSetManage.homeTabRememberPage = currentIndex
         }
     }
+
     Row {
         ScrollableTabRow(
             modifier = Modifier.weight(1f),
@@ -87,6 +97,7 @@ fun HomeTab(
                     unselectedContentColor = WordsFairyTheme.colors.textSecondary,
                     onClick = {
                         scope.launch {
+                            feedback.vibration()
                             pagerState.animateScrollToPage(index)
                         }
                     }
@@ -100,6 +111,7 @@ fun HomeTab(
             }
         }
         IconButton(onClick = {
+            feedback.vibration()
             context.postEventValue(
                 EventBus.NavController,
                 NavigateRouter.HomePage.FolderManage
@@ -113,23 +125,31 @@ fun HomeTab(
         }
         Spacer(Modifier.width(6.dp))
     }
+
     HorizontalPager(
-        pageCount = noteFolders.size,
         state = pagerState,
         beyondBoundsPageCount = 20,
         modifier = Modifier.fillMaxSize()
     ) { page ->
+        val scrollState = rememberScrollState()
+        LaunchedEffect(scrollState.value) {
+            if (isVibration < noteFolders.size) {
+                isVibration++
+                return@LaunchedEffect
+            }
+            if (scrollState.value == 0 || scrollState.value == scrollState.maxValue) {
+                feedback.vibration()
+            }
 
+        }
         Box(modifier = Modifier.fillMaxSize()) {
             StaggeredVerticalGrid(
                 maxColumnWidth = 220.dp,
                 modifier = Modifier
                     .padding(4.dp)
-                    .verticalScroll(rememberScrollState())
+                    .verticalScroll(scrollState)
             ) {
-
                 noteFolders[page].noteAndNoteContents.forEachIndexed { index, route ->
-
                     HomeItemCard(index, route) { entity, offset, cardSize ->
                         itemOnClick.invoke(entity, offset, cardSize)
                         currentFolderCallback.invoke(noteFolders[page].noteFolder)

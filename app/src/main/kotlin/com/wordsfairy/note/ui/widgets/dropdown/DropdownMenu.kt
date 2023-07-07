@@ -24,7 +24,6 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.google.accompanist.insets.imePadding
 
 
 import com.wordsfairy.note.data.entity.NoteFolderEntity
@@ -102,7 +101,7 @@ fun AnimatedVisibilitySlide(
 
     Column(
         modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Top,
+        verticalArrangement = Arrangement.Bottom,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
@@ -142,7 +141,9 @@ fun AnimatedVisibilitySlide(
                     modifier = Modifier
                         .fillMaxWidth()
                         .systemBarsPadding()
-                        .padding(9.dp, 66.dp, 9.dp, 0.dp)
+                        .imePadding()
+                        .align(Alignment.BottomCenter)
+                        .padding(16.dp)
                         .pointerInput(Unit) {
                             detectDragGestures(
                                 onDrag = { change, dragAmount ->
@@ -212,7 +213,7 @@ fun AnimatedSlideFormBottom(
                     modifier = Modifier
                         .imePadding()
                         .fillMaxWidth()
-                        .padding(9.dp, 3.dp, 9.dp, 360.dp)
+                        .padding(9.dp)
                         .align(Alignment.BottomCenter)
                         .pointerInput(Unit) {
                             detectDragGestures(

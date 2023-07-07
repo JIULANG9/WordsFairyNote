@@ -32,6 +32,7 @@ class FolderManageViewModel @Inject internal constructor(
     // 查询笔记信息并只显示最新5条笔记内容
     val noteInfoList = folderRepository.getNoteFolder()
 
+    lateinit var beDeletedFolder :NoteFolderEntity
     init {
         val initialVS = ViewState.initial()
 

@@ -27,7 +27,6 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.consumeAsFlow
 import kotlinx.coroutines.flow.onEach
 
-
 /**
  * @Description:
  * @Author: JIULANG
@@ -45,7 +44,6 @@ fun SearchUI(
     val intentChannel = remember { Channel<ViewIntent>(Channel.UNLIMITED) }
     val feedback = LocalHapticFeedback.current
     val focusManager = LocalFocusManager.current
-
 
     LaunchedEffect(viewModel) {
         intentChannel
@@ -85,8 +83,6 @@ fun SearchUI(
             GlobalData.noteDetailsNoteEntity = it
             postEventValue(EventBus.NavController,  NavigateRouter.DetailPage.Detail)
         }
-
-
     }
 }
 

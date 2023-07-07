@@ -15,11 +15,17 @@ import androidx.compose.ui.platform.LocalHapticFeedback
 
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.wordsfairy.base.mvi.core.unit
-import com.wordsfairy.base.tools.toast
+import com.wordsfairy.note.constants.EventBus
 import com.wordsfairy.note.ext.coreui.rememberFlowWithLifecycle
+import com.wordsfairy.note.ext.flowbus.postEventValue
 import com.wordsfairy.note.ui.theme.WordsFairyTheme
 import com.wordsfairy.note.ui.widgets.IndicatorComponent
 import com.wordsfairy.note.ui.widgets.TextContent
+import com.wordsfairy.note.ui.widgets.toast.ToastModel
+import com.wordsfairy.note.ui.widgets.toast.ToastUI
+import com.wordsfairy.note.ui.widgets.toast.ToastUIState
+import com.wordsfairy.note.ui.widgets.toast.showToast
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 
 /**
@@ -38,21 +44,24 @@ fun BackupsProgressBarUI(
     val feedback = LocalHapticFeedback.current
     val context = LocalContext.current
 
+
     LaunchedEffect(singleEvent) {
         singleEvent.collectLatest { event ->
             when (event) {
                 is SingleEvent.UI.Success -> {
                     feedback.performHapticFeedback(HapticFeedbackType.LongPress)
-                    context.toast("完成")
+
+                    ToastModel("完成!", ToastModel.Type.Normal).showToast()
                     onBack.invoke()
                 }
+
+                else -> {}
             }.unit
         }
     }
     BackHandler(true) {
         onBack()
     }
-
     val progress = viewState.progress
 
     Column(

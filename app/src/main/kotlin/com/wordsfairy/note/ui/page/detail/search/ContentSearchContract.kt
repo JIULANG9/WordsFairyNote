@@ -1,7 +1,6 @@
 package com.wordsfairy.note.ui.page.detail.search
 
 import com.wordsfairy.note.data.entity.NoteEntity
-import com.wordsfairy.note.data.entity.SearchNoteEntity
 import com.wordsfairy.note.mvi.MviIntent
 import com.wordsfairy.note.mvi.MviSingleEvent
 import com.wordsfairy.note.mvi.MviViewState

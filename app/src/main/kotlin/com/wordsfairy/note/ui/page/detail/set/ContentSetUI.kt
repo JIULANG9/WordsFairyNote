@@ -4,6 +4,7 @@ import android.content.Intent
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.KeyboardArrowLeft
@@ -19,7 +20,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.wordsfairy.base.mvi.core.unit
-import com.wordsfairy.base.tools.toast
+
 import com.wordsfairy.base.utils.isUTF8
 
 import com.wordsfairy.note.constants.Constants
@@ -37,6 +38,10 @@ import com.wordsfairy.note.ui.theme.AppColor
 import com.wordsfairy.note.ui.theme.AppResId
 import com.wordsfairy.note.ui.theme.WordsFairyTheme
 import com.wordsfairy.note.ui.widgets.*
+import com.wordsfairy.note.ui.widgets.toast.ToastModel
+import com.wordsfairy.note.ui.widgets.toast.ToastUI
+import com.wordsfairy.note.ui.widgets.toast.ToastUIState
+import com.wordsfairy.note.ui.widgets.toast.showToast
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
@@ -84,14 +89,15 @@ fun ContentSetUI(
                             title = "文件编码不符",
                             message = "文件编码不是UTF-8字符, 导入可能出现乱码，请重新选择UTF-8字符的文件，或者切换文件编码",
                             isWaring = false,
-                            clackTag =  ContentSetViewModel.IsNotUTF8Tag
+                            clackTag = ContentSetViewModel.IsNotUTF8Tag
                         )
                         intentChannel.trySend(ViewIntent.ShowDialog(dialogDataBean))
 
                     }
                 }
             } else {
-                context.toast("选择困难！")
+                ToastModel("选择困难 ƪ(˘⌣˘)ʃ", ToastModel.Type.Info).showToast()
+
             }
         }
     val txtSelectorIntent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
@@ -112,8 +118,9 @@ fun ContentSetUI(
         singleEvent.collectLatest { event ->
             when (event) {
                 is SingleEvent.UI.ShowDialog -> {
-                    showDialog.value =true
+                    showDialog.value = true
                 }
+
             }.unit
         }
     }
@@ -121,120 +128,122 @@ fun ContentSetUI(
     BackHandler(true) {
         onBack()
     }
-    Box() {
-        Column(
+
+
+    Column(
+        Modifier
+            .fillMaxSize()
+            .background(WordsFairyTheme.colors.background)
+            .systemBarsPadding(),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Row(
             Modifier
-                .fillMaxSize()
-                .systemBarsPadding(),
-            horizontalAlignment = Alignment.CenterHorizontally
+                .fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Row(
-                Modifier
-                    .fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Spacer(Modifier.width(12.dp))
-                MyIconButton(imageVector = Icons.Rounded.KeyboardArrowLeft, size = 39.dp) {
-                    onBack.invoke()
-                }
-                Title(stringResource(id = AppResId.String.Set), fontSize = 21.sp)
-                Spacer(Modifier.weight(1f))
+            Spacer(Modifier.width(12.dp))
+            MyIconButton(imageVector = Icons.Rounded.KeyboardArrowLeft, size = 39.dp) {
+                onBack.invoke()
             }
+            Title(stringResource(id = AppResId.String.Set), fontSize = 21.sp)
+            Spacer(Modifier.weight(1f))
+        }
 
-            ImmerseCard(Modifier.padding(12.dp)) {
-                Column {
-                    AnimateContentIcon("数据批量导出/导入") {
-                        CommonItemIcon("导入 [txt]") {
-                            txtSelectorLauncher.launch(txtSelectorIntent)
-
-                        }
-                        CommonItemIcon("导出(即将开发)") {
-                            context.toast("即将开发")
-                        }
+        ImmerseCard(Modifier.padding(12.dp)) {
+            Column {
+                AnimateContentIcon("数据批量导出/导入") {
+                    CommonItemIcon("导入 [txt]") {
+                        txtSelectorLauncher.launch(txtSelectorIntent)
                     }
-                    ItemDividerSetUI()
-                    CommonItemSwitch(
-                        "复制后转跳微信",
-                        viewState.jumpToWeChat
-                    ) { jump ->
-                        intentChannel.trySend(ViewIntent.CopyJumpToWeChat(jump))
+                    CommonItemIcon("导出(即将开发)") {
+                        ToastModel("即将开发", ToastModel.Type.Normal).showToast()
                     }
-                    ItemDividerSetUI()
+                }
+                ItemDividerSetUI()
+                CommonItemSwitch(
+                    "复制后转跳微信",
+                    viewState.jumpToWeChat
+                ) { jump ->
+                    intentChannel.trySend(ViewIntent.CopyJumpToWeChat(jump))
+                }
+                ItemDividerSetUI()
 
-                    AnimateContentIcon("搜索引擎") {
-                        val baidu = Constants.SearchEngines.Baidu
-                        val bing = Constants.SearchEngines.Bing
-                        val google = Constants.SearchEngines.Google
+                AnimateContentIcon("搜索引擎") {
+                    val baidu = Constants.SearchEngines.Baidu
+                    val bing = Constants.SearchEngines.Bing
+                    val google = Constants.SearchEngines.Google
 
-                        val baiduIcon =
-                            if (viewState.currentUrl == baidu) AppResId.Drawable.Correct else null
-                        CommonItemIcon("百度", iconId = baiduIcon) {
-                            intentChannel.trySend(ViewIntent.SearchEngines(baidu))
-                        }
-                        val bingIcon =
-                            if (viewState.currentUrl == bing) AppResId.Drawable.Correct else null
-                        CommonItemIcon("必应", iconId = bingIcon) {
-                            intentChannel.trySend(ViewIntent.SearchEngines(bing))
-                        }
-                        val googleIcon =
-                            if (viewState.currentUrl == google) AppResId.Drawable.Correct else null
-                        CommonItemIcon("谷歌", iconId = googleIcon) {
-                            intentChannel.trySend(ViewIntent.SearchEngines(google))
-                        }
+                    val baiduIcon =
+                        if (viewState.currentUrl == baidu) AppResId.Drawable.Correct else null
+                    CommonItemIcon("百度", iconId = baiduIcon) {
+                        intentChannel.trySend(ViewIntent.SearchEngines(baidu))
                     }
-                    ItemDividerSetUI()
+                    val bingIcon =
+                        if (viewState.currentUrl == bing) AppResId.Drawable.Correct else null
+                    CommonItemIcon("必应", iconId = bingIcon) {
+                        intentChannel.trySend(ViewIntent.SearchEngines(bing))
+                    }
+                    val googleIcon =
+                        if (viewState.currentUrl == google) AppResId.Drawable.Correct else null
+                    CommonItemIcon("谷歌", iconId = googleIcon) {
+                        intentChannel.trySend(ViewIntent.SearchEngines(google))
+                    }
+                }
+                ItemDividerSetUI()
 
-                    AnimateContentIcon("清除数据") {
-                        CommonItemIcon("清除此笔记", textColor = AppColor.red) {
-                            val dialogDataBean = DialogDataBean.create(
-                                title = "清除数据",
-                                message = "清除此笔记",
-                                isWaring = true,
-                                clackTag =  ContentSetViewModel.RecycleNoteTag
-                            )
-                            intentChannel.trySend(ViewIntent.ShowDialog(dialogDataBean))
-                        }
-                        CommonItemIcon("清除此笔记所有内容", textColor = AppColor.red) {
+                AnimateContentIcon("清除数据") {
+                    CommonItemIcon("清除此笔记", textColor = AppColor.red) {
+                        val dialogDataBean = DialogDataBean.create(
+                            title = "清除数据",
+                            message = "清除此笔记",
+                            isWaring = true,
+                            clackTag = ContentSetViewModel.RecycleNoteTag
+                        )
+                        intentChannel.trySend(ViewIntent.ShowDialog(dialogDataBean))
+                    }
+                    CommonItemIcon("清除此笔记所有内容", textColor = AppColor.red) {
 
-                            val dialogDataBean = DialogDataBean.create(
-                                title = "清除数据",
-                                message = "清除此笔记所有内容",
-                                isWaring = true,
-                                clackTag =  ContentSetViewModel.RecycleNoteContentsTag
-                            )
-                            intentChannel.trySend(ViewIntent.ShowDialog(dialogDataBean))
-                        }
+                        val dialogDataBean = DialogDataBean.create(
+                            title = "清除数据",
+                            message = "清除此笔记所有内容",
+                            isWaring = true,
+                            clackTag = ContentSetViewModel.RecycleNoteContentsTag
+                        )
+                        intentChannel.trySend(ViewIntent.ShowDialog(dialogDataBean))
                     }
                 }
             }
         }
-        if (showDialog.value) {
-            GeneralDialog(
-                dialogState = showDialog,
-                title = viewState.dialogDataBean.title,
-                message = viewState.dialogDataBean.message,
-                isWaring = viewState.dialogDataBean.isWaring,
-                positiveBtnText = stringResource(id = AppResId.String.Confirm),
-                onPositiveBtnClicked = {
-                    when (viewState.dialogDataBean.clackTag) {
-                        ContentSetViewModel.RecycleNoteTag ->{
-                            intentChannel.trySend(ViewIntent.RecycleNote)
-                        }
-                        ContentSetViewModel.RecycleNoteContentsTag ->{
-                            intentChannel.trySend(ViewIntent.RecycleNoteContents)
-                        }
-                        ContentSetViewModel.IsNotUTF8Tag ->{
-                            txtSelectorLauncher.launch(txtSelectorIntent)
-
-                        }
+    }
+    if (showDialog.value) {
+        GeneralDialog(
+            dialogState = showDialog,
+            title = viewState.dialogDataBean.title,
+            message = viewState.dialogDataBean.message,
+            isWaring = viewState.dialogDataBean.isWaring,
+            positiveBtnText = stringResource(id = AppResId.String.Confirm),
+            onPositiveBtnClicked = {
+                when (viewState.dialogDataBean.clackTag) {
+                    ContentSetViewModel.RecycleNoteTag -> {
+                        intentChannel.trySend(ViewIntent.RecycleNote)
                     }
-                },
-                negativeBtnText = stringResource(id = AppResId.String.Cancel),
-                onNegativeBtnClicked = {
 
+                    ContentSetViewModel.RecycleNoteContentsTag -> {
+                        intentChannel.trySend(ViewIntent.RecycleNoteContents)
+                    }
+
+                    ContentSetViewModel.IsNotUTF8Tag -> {
+                        txtSelectorLauncher.launch(txtSelectorIntent)
+
+                    }
                 }
-            )
-        }
+            },
+            negativeBtnText = stringResource(id = AppResId.String.Cancel),
+            onNegativeBtnClicked = {
+
+            }
+        )
     }
 }
 

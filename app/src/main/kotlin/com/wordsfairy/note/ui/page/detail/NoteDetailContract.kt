@@ -5,6 +5,7 @@ import com.wordsfairy.note.data.entity.NoteContentEntity
 import com.wordsfairy.note.data.entity.NoteEntity
 import com.wordsfairy.note.data.entity.NoteFolderEntity
 import com.wordsfairy.note.mvi.MviIntent
+
 import com.wordsfairy.note.mvi.MviSingleEvent
 import com.wordsfairy.note.mvi.MviViewState
 import kotlinx.parcelize.Parcelize
@@ -18,6 +19,7 @@ import kotlinx.parcelize.Parcelize
 enum class UIState {
     Add, Read, Search
 }
+
 @Parcelize
 data class ViewState(
     val isLoading: Boolean,
@@ -30,8 +32,8 @@ data class ViewState(
     val selectedFolder: NoteFolderEntity?,
     val noteEntity: NoteEntity?,
     val modifyNoteContent: NoteContentEntity?,
-    val uiState:UIState,
-    val searchResultData:List<NoteContentEntity>,
+    val uiState: UIState,
+    val searchResultData: List<NoteContentEntity>,
 ) : MviViewState, Parcelable {
     companion object {
         fun initial() = ViewState(
@@ -63,10 +65,11 @@ sealed interface ViewIntent : MviIntent {
     object ModifyTitle : ViewIntent
 
     data class ContentChanged(val content: String) : ViewIntent
+
     //选择文件夹
     data class SelectFolder(val selectFolder: NoteFolderEntity) : ViewIntent
-    data class SearchContent(val keyword:String) : ViewIntent
-    object InitSearch: ViewIntent
+    data class SearchContent(val keyword: String) : ViewIntent
+    object InitSearch : ViewIntent
     object AddNoteContent : ViewIntent
     data class MovePosition(val noteContents: List<NoteContentEntity>) : ViewIntent
 
@@ -82,6 +85,8 @@ sealed interface ViewIntent : MviIntent {
 sealed interface SingleEvent : MviSingleEvent {
     sealed interface UI : SingleEvent {
         object Close : UI
+
+
     }
 }
 
@@ -91,7 +96,11 @@ internal sealed interface PartialChange {
     sealed class UI : PartialChange {
         override fun reduce(vs: ViewState): ViewState {
             return when (this) {
-                is Init -> vs.copy( noteEntity = noteEntity, selectedFolder = noteFolder,title = noteEntity.title)
+                is Init -> vs.copy(
+                    noteEntity = noteEntity,
+                    selectedFolder = noteFolder,
+                    title = noteEntity.title
+                )
                 is Clean -> vs.copy(canSaveTitle = false)
                 is UIStateChanged -> vs.copy(uiState = uiState)
                 is Title -> vs.copy(title = title, canSaveTitle = canSave)
@@ -99,9 +108,8 @@ internal sealed interface PartialChange {
                 is RecentUpdates -> vs.copy(recentUpdates = recentUpdates)
             }
         }
-        data class Init(val noteEntity: NoteEntity,val noteFolder: NoteFolderEntity?) : UI()
 
-
+        data class Init(val noteEntity: NoteEntity, val noteFolder: NoteFolderEntity?) : UI()
         data class RecentUpdates(val recentUpdates: String) : UI()
         object Clean : UI()
         data class UIStateChanged(val uiState: UIState) : UI()
@@ -132,6 +140,6 @@ internal sealed interface PartialChange {
         object UpDataNoteContent : NoteData()
         object DeleteContent : NoteData()
         data class SearchResultData(val resultData: List<NoteContentEntity>) : NoteData()
-        data class InitSearch(val resultData: List<NoteContentEntity>)  : NoteData()
+        data class InitSearch(val resultData: List<NoteContentEntity>) : NoteData()
     }
 }

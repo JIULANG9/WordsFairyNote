@@ -48,8 +48,10 @@ class NoteDataViewModel @Inject internal constructor(
     init {
         val initialVS = ViewState.initial()
 
-        viewStateFlow = merge(intentFlow.filterIsInstance<ViewIntent.Initial>().take(1),
-            intentFlow.filterNot { it is ViewIntent.Initial }).toPartialChangeFlow()
+        viewStateFlow = merge(
+            intentFlow.filterIsInstance<ViewIntent.Initial>().take(1),
+            intentFlow.filterNot { it is ViewIntent.Initial })
+            .toPartialChangeFlow()
             .sendSingleEvent().scan(initialVS) { vs, change -> change.reduce(vs) }.catch {
                 Log.e(logTag, "[CreateNoteViewModel] Throwable:", it)
             }.stateIn(
@@ -76,6 +78,8 @@ class NoteDataViewModel @Inject internal constructor(
 
     private fun Flow<ViewIntent>.toPartialChangeFlow(): Flow<PartialChange> =
         shareWhileSubscribed().run {
+
+
             val importFileFlow = flow {
                 importFile {
                     emit(it)
@@ -109,7 +113,6 @@ class NoteDataViewModel @Inject internal constructor(
                     }
                 }
 
-
             return merge(
                 backupsFlow, importFlow
             )
@@ -128,9 +131,9 @@ class NoteDataViewModel @Inject internal constructor(
         val createdAt = System.currentTimeMillis()
         files.forEach { (fileName, lines) ->
             //文件夹位置递增
-            val folderPosition = folderRepository.getMaxPosition()+ 1
+            val folderPosition = folderRepository.getMaxPosition() + 1
             val noteFolder = NoteFolderEntity.create(
-                fileName, createdAt,folderPosition
+                fileName, createdAt, folderPosition
             )
             val folderId = folderRepository.insert(noteFolder)
             var position = 0

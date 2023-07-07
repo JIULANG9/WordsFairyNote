@@ -13,6 +13,7 @@ object AppSystemSetManage {
     private const val ConsentAgreement_Key = "consent_agreement_key"
 
     private const val Dark_Mode = "dark_mode"
+    private const val Close_Animation = "close_animation"
     private const val Dark_Mode_FOLLOW_SYSTEM = "dark_mode_follow_system"
     private const val SearchEnginesUrl = "search_engines_url_key"
 
@@ -26,11 +27,15 @@ object AppSystemSetManage {
     var darkUI: Boolean
         get() = DataStoreUtils.readBooleanData(Dark_Mode, false)
         set(value) = DataStoreUtils.saveSyncBooleanData(Dark_Mode, value = value)
-
     fun setDarkMode(follow: Boolean) {
         darkUI = follow
     }
-
+    /**
+     * 关闭动画
+     */
+    var closeAnimation: Boolean
+        get() = DataStoreUtils.readBooleanData(Close_Animation, false)
+        set(value) = DataStoreUtils.saveSyncBooleanData(Close_Animation, value = value)
     /**
      * 深色模式跟随系统
      */

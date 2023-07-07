@@ -32,6 +32,7 @@ import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.wordsfairy.note.data.entity.NoteFolderEntity
+import com.wordsfairy.note.ui.common.vibration
 import com.wordsfairy.note.ui.theme.AppResId
 import com.wordsfairy.note.ui.widgets.ImmerseCard
 import com.wordsfairy.note.ui.widgets.MyIconButton
@@ -132,9 +133,10 @@ fun FolderList(
                         shape = RoundedCornerShape(12.dp)
                     ) {
                         ItemView(item.content, state, onModify = {
+                            feedback.vibration()
                             onModify.invoke(noteFoldersCache[index])
                         }, onDelete = {
-                            deletedRouteList.add(item.id)
+                            feedback.vibration()
                             onDelete.invoke(noteFoldersCache[index])
                         })
                     }
@@ -145,6 +147,8 @@ fun FolderList(
             //创建文件夹
             ImmerseCard( Modifier .padding(horizontal = 66.dp, vertical = 5.dp),onClick ={
                 onCreate.invoke()
+                feedback.vibration()
+
             }){
                 Box(Modifier.fillMaxWidth().padding(16.dp)) {
                     TextContent(text = "创建文件夹",Modifier.align(Alignment.Center))

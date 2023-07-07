@@ -17,6 +17,7 @@ object AndroidX {
 
     //core包+ktx扩展函数
     const val coreKtx = "androidx.core:core-ktx:1.9.0"
+    const val coresplashscreen = "androidx.core:core-splashscreen:1.0.0"
 
     //activity+ktx扩展函数
     const val activityKtx = "androidx.activity:activity-ktx:1.3.1"
@@ -39,6 +40,7 @@ object AndroidX {
     object Compose {
         private const val version = "1.5.0-alpha03"
         const val ui = "androidx.compose.ui:ui:$version"
+        const val foundation = "androidx.compose.foundation:foundation:1.3.1"
         const val material = "androidx.compose.material:material:$version"
         const val tooling_preview = "androidx.compose.ui:ui-tooling-preview:$version"
 
@@ -54,7 +56,8 @@ object AndroidX {
         object accompanist {
             const val systemuicontroller =
                 "com.google.accompanist:accompanist-systemuicontroller:0.30.1"
-            const val insets = "com.google.accompanist:accompanist-insets:0.9.1"
+            const val insets = "com.google.accompanist:accompanist-insets:0.31.5-beta"
+            const val insets_ui = "com.google.accompanist:accompanist-insets-ui:0.31.5-beta"
             const val placeholder =
                 "com.google.accompanist:accompanist-placeholder-material:0.24.7-alpha"
         }
@@ -95,7 +98,8 @@ object AndroidX {
         const val common = "com.google.dagger:hilt-android:$version"
 
         //use kapt
-        const val compiler = "com.google.dagger:hilt-android-compiler:$version"
+        const val android_compiler = "com.google.dagger:hilt-android-compiler:$version"
+        const val compiler = "com.google.dagger:hilt-compiler:$version"
 
         const val gradlePlugin = "com.google.dagger:hilt-android-gradle-plugin:$version"
 

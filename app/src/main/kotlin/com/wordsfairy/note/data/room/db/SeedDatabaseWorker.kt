@@ -61,25 +61,6 @@ class SeedDatabaseWorker(
 
             Result.success()
 
-//            val filename = inputData.getString(KEY_FILENAME)
-//            if (filename != null) {
-////                applicationContext.assets.open(filename).use { inputStream ->
-////                    JsonReader(inputStream.reader()).use { jsonReader ->
-//////                        val plantType = object : TypeToken<List<Plant>>() {}.type
-//////                        val plantList: List<Plant> = Gson().fromJson(jsonReader, plantType)
-//////
-//////                        val database = AppDatabase.getInstance(applicationContext)
-//////                        database.plantDao().insertAll(plantList)
-////
-////                        Result.success()
-////                    }
-////                }
-//
-//            } else {
-//                Log.e(TAG, "\n" +
-//                        "设定数据库种子时出错-没有有效的文件名")
-//                Result.failure()
-//            }
         } catch (ex: Exception) {
             Log.e(TAG, "Error seeding database", ex)
             Result.failure()

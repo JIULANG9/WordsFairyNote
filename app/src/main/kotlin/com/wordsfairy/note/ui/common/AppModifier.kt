@@ -127,6 +127,9 @@ fun Modifier.clickableNoIndication(focusManager: FocusManager) =
         }
     )
 
-fun vibrationFeedback(feedback: HapticFeedback) {
-    feedback.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+fun HapticFeedback.vibration() {
+    this.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+}
+fun HapticFeedback.vibrationLongPress() {
+    this.performHapticFeedback(HapticFeedbackType.LongPress)
 }

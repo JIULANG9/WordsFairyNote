@@ -12,7 +12,7 @@ buildscript {
         classpath(Gradle.plugin)
         classpath(Kotlin.plugin)
         classpath(AndroidX.Hilt.gradlePlugin)
-        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.8.10")
+
     }
 }
 

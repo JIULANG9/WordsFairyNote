@@ -1,6 +1,7 @@
 package com.wordsfairy.note.ui.page.detail
 
 
+import android.util.Log
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
@@ -12,9 +13,11 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
+import com.wordsfairy.note.ui.common.vibration
 import com.wordsfairy.note.ui.theme.AppColor
 import com.wordsfairy.note.ui.theme.WordsFairyTheme
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -36,6 +39,8 @@ fun NoteDetailsPage(
     onPageClosed: () -> Unit
 ) {
 
+    //震动
+    val feedback = LocalHapticFeedback.current
     var animReady by remember { mutableStateOf(false) }
     var animFinish by remember { mutableStateOf(false) }
     var visible by remember { mutableStateOf(false) }
@@ -47,6 +52,7 @@ fun NoteDetailsPage(
         if (pageState > NoteDetailState.Closed) fullSize else cardSize,
         animationSpec = tween(DEPLOYMENT_DURATION)
     )
+    Log.d("NoteDetailsPage", "cardSize : $cardSize size : $size")
 
     val fullOffset = remember { IntOffset(0, 0) }
 
@@ -78,8 +84,6 @@ fun NoteDetailsPage(
                     offsetInimitable.value
                 }
                 .clip(RoundedCornerShape(cornerSize))
-                .defaultMinSize(minWidth = with(LocalDensity.current) { cardSize.width.toDp() },
-                    minHeight = with(LocalDensity.current) { cardSize.height.toDp() })
                 .width(with(LocalDensity.current) { size.width.toDp() })
                 .height(with(LocalDensity.current) { size.height.toDp() })
 

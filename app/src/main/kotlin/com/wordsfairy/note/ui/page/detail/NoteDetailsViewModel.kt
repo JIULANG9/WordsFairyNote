@@ -103,7 +103,6 @@ class NoteDetailsViewModel @Inject internal constructor(
                     PartialChange.UI.Init(noteEntity,folderEntity)
                 }.flowOn(Dispatchers.IO).distinctUntilChanged()
 
-
             /** clean */
             val cleanFlow = filterIsInstance<ViewIntent.Clean>()
                 .log("[clean]")
@@ -260,7 +259,8 @@ class NoteDetailsViewModel @Inject internal constructor(
 
 
             return merge(
-                initFlow, cleanFlow,uiStateFlow, recentUpdatesFlow,
+                initFlow,
+                cleanFlow,uiStateFlow, recentUpdatesFlow,
                 titleContentChangeFlow,
                 modifyTitleFlow,
                 noteContentChangesFlow,

@@ -4,11 +4,10 @@ plugins {
     kotlin("kapt")
 }
 
-
-
 android {
     // 编译 SDK 版本
     compileSdk = BuildConfig.compileSdk
+    namespace = "com.wordsfairy.base"
 
     // 资源前缀
     resourcePrefix("base")
@@ -20,11 +19,11 @@ android {
 
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
     kotlinOptions {
-        jvmTarget = "11"
+        jvmTarget = "17"
     }
 }
 

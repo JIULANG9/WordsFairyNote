@@ -7,7 +7,6 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
@@ -17,14 +16,16 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.google.accompanist.navigation.animation.composable
 import com.wordsfairy.base.mvi.core.unit
-import com.wordsfairy.base.tools.toast
+
 import com.wordsfairy.note.MainActivity
 import com.wordsfairy.note.constants.EventBus
 import com.wordsfairy.note.constants.GlobalData
 import com.wordsfairy.note.constants.NavigateRouter
+import com.wordsfairy.note.data.AppSystemSetManage
 import com.wordsfairy.note.ext.coreui.rememberFlowWithLifecycle
 import com.wordsfairy.note.ext.flow.noteStartWith
 import com.wordsfairy.note.ext.flowbus.postEventValue
+import com.wordsfairy.note.ui.common.vibration
 import com.wordsfairy.note.ui.page.create.CreateNoteState
 import com.wordsfairy.note.ui.page.create.CreateNotePage
 import com.wordsfairy.note.ui.page.detail.NoteDetailState
@@ -35,6 +36,7 @@ import com.wordsfairy.note.ui.page.backups.BackupsProgressBarUI
 import com.wordsfairy.note.ui.page.backups.NoteDataUI
 import com.wordsfairy.note.ui.page.backups.NoteDataViewModel
 import com.wordsfairy.note.ui.page.backups.ProgressBarUI
+import com.wordsfairy.note.ui.page.detail.toNoteDetailsUI
 import com.wordsfairy.note.ui.page.home.foldermanage.FolderManageUI
 import com.wordsfairy.note.ui.page.search.SearchPage
 import com.wordsfairy.note.ui.page.search.SearchUIState
@@ -56,6 +58,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 @Composable
 fun HomePageScreen(navController: NavHostController) {
     val noteDataViewModel: NoteDataViewModel = hiltViewModel()
+
     SlideAnimatedNavHost(
         navController,
         startDestination = NavigateRouter.HomePage.HOME,
@@ -68,7 +71,7 @@ fun HomePageScreen(navController: NavHostController) {
         composable(
             NavigateRouter.HomePage.FolderManage
         ) {
-            FolderManageUI{
+            FolderManageUI {
                 navController.navigateUp()
             }
         }
@@ -76,6 +79,7 @@ fun HomePageScreen(navController: NavHostController) {
             NavigateRouter.SetPage.Set
         ) {
             SetPageUI {
+
                 navController.navigateUp()
             }
         }
@@ -147,7 +151,7 @@ fun HomePageUI(
         singleEvent.collectLatest { event ->
             when (event) {
                 is HomeSingleEvent.Refresh.Success -> {
-                    context.toast("")
+
                 }
             }.unit
         }
@@ -174,7 +178,7 @@ fun HomePageUI(
                             Modifier
                                 .padding(start = 16.dp)
                                 .weight(1f), onSizedChanged = {
-                                viewModel.searchCaedSize = it
+                                viewModel.searchCardSize = it
                             }) { offset ->
                             //点击事件
                             viewModel.searchUIState = SearchUIState.Opening
@@ -189,13 +193,15 @@ fun HomePageUI(
                     HomeTab(noteInfoList, currentFolderCallback = {
                         GlobalData.noteDetailsNoteFolderEntity = it
                     }, itemOnClick = { entity, offset, cardSize ->
-                        viewModel.createNoteDetailUIOffset = offset
-                        GlobalData.noteDetailsNoteEntity = entity
-
-                        intentChannel.trySend(HomeViewIntent.OpenNoteEntity(entity))
-                        viewModel.noteDetailUISize = cardSize
-                        viewModel.currentNoteDetailsState = NoteDetailState.Opening
-
+                        //关闭过度动画
+                        if (AppSystemSetManage.closeAnimation){
+                            toNoteDetailsUI(entity)
+                        }else{
+                            viewModel.noteDetailUISize = cardSize
+                            viewModel.noteDetailUIOffset = offset
+                            GlobalData.noteDetailsNoteEntity = entity
+                            viewModel.currentNoteDetailsState = NoteDetailState.Opening
+                        }
                     })
                 }
                 /**
@@ -213,8 +219,9 @@ fun HomePageUI(
                     viewModel.currentCreateNoteState = CreateNoteState.Opening
                     viewModel.createNoteUIOffset = offset
                     //震动
-                    feedback.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+                    feedback.vibration()
                 }
+
                 /**
                  * 帖子创建
                  */
@@ -233,26 +240,24 @@ fun HomePageUI(
                 /**
                  * 帖子详细
                  */
-                if (viewState.noteEntity != null) {
+                NoteDetailsPage(
+                    viewModel.currentNoteDetailsState,
+                    viewModel.noteDetailUISize,
+                    viewModel.fullSize,
+                    viewModel.noteDetailUIOffset,
+                    {
+                        viewModel.currentNoteDetailsState = NoteDetailState.Closing
+                    },
+                    {
+                        viewModel.currentNoteDetailsState = NoteDetailState.Closed
+                    })
 
-                    NoteDetailsPage(
-                        viewModel.currentNoteDetailsState,
-                        viewModel.noteDetailUISize,
-                        viewModel.fullSize,
-                        viewModel.createNoteDetailUIOffset,
-                        {
-                            viewModel.currentNoteDetailsState = NoteDetailState.Closing
-                        },
-                        {
-                            viewModel.currentNoteDetailsState = NoteDetailState.Closed
-                        })
-                }
                 /**
                  * 搜索
                  */
                 SearchPage(
                     viewModel.searchUIState,
-                    viewModel.searchCaedSize,
+                    viewModel.searchCardSize,
                     viewModel.fullSize,
                     viewModel.searchUIOffset,
                     {
@@ -274,7 +279,6 @@ fun HomePageUI(
         },
             agree = {
                 intentChannel.trySend(HomeViewIntent.ConsentAgreement)
-
             })
     }
 }

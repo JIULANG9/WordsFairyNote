@@ -1,9 +1,6 @@
 package com.wordsfairy.note.ui.page.detail.wifgets
 
-import android.content.Context
-import android.content.Intent
 import android.os.Parcelable
-import android.widget.Toast
 import androidx.compose.animation.*
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.animateDpAsState
@@ -31,14 +28,15 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
-import com.wordsfairy.base.tools.toast
 import com.wordsfairy.base.utils.jumpToWeChat
 import com.wordsfairy.base.utils.searchInBrowser
 import com.wordsfairy.base.utils.systemShare
 import com.wordsfairy.note.data.AppSystemSetManage
 import com.wordsfairy.note.data.entity.NoteContentEntity
+
 import com.wordsfairy.note.ui.common.click
-import com.wordsfairy.note.ui.common.vibrationFeedback
+import com.wordsfairy.note.ui.common.vibration
+
 import com.wordsfairy.note.ui.page.create.CreateNoteContentEditView
 import com.wordsfairy.note.ui.theme.AppColor
 import com.wordsfairy.note.ui.theme.AppResId
@@ -46,6 +44,8 @@ import com.wordsfairy.note.ui.theme.WordsFairyTheme
 import com.wordsfairy.note.ui.widgets.*
 
 import com.wordsfairy.note.ui.widgets.reorderable.*
+import com.wordsfairy.note.ui.widgets.toast.ToastModel
+import com.wordsfairy.note.ui.widgets.toast.showToast
 import kotlinx.coroutines.*
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -180,7 +180,7 @@ fun ContentEditView(
                 if (!isSearch) {
                     MyButton("保存", enabled = canSaved) {
                         saveNote.invoke()
-                        vibrationFeedback(feedback)
+                        feedback.vibration()
                     }
                 }
                 Spacer(Modifier.width(6.dp))
@@ -202,7 +202,7 @@ fun ContentList(
 
     var showProgress by remember { mutableStateOf(false) }
     LaunchedEffect(Unit) {
-        delay(290)
+        delay(460)
         showProgress = true
     }
     var data by remember { mutableStateOf<List<NoteContentItem>>(mutableListOf()) }
@@ -332,7 +332,6 @@ fun SearchResultList(
         val feedback = LocalHapticFeedback.current
         val state = rememberLazyListState()
 
-
         LaunchedEffect(noteContents.hashCode()) {
             //过滤其他数据 减少内存开销
             data = noteContents.map {
@@ -400,7 +399,7 @@ private fun ContentLayout(
             Modifier.padding(vertical = 9.dp),
             color = WordsFairyTheme.colors.textPrimary
         )
-        if (state != null){
+        if (state != null) {
             IconButtonWithHiddenIcon(
                 imageVector = Icons.Rounded.Menu,
                 modifier = Modifier
@@ -418,21 +417,26 @@ private fun ContentLayout(
                     //搜索
                     context.searchInBrowser(AppSystemSetManage.searchEngines, content)
                 }
+
                 2 -> {
                     //复制
                     clipboardManager.setText(AnnotatedString(content))
-                    context.toast("已复制")
+
+                    ToastModel("已复制", ToastModel.Type.Normal).showToast()
                     if (AppSystemSetManage.jumpToWeChat) {
                         context.jumpToWeChat()
                     }
                 }
+
                 3 -> {
                     //文本分享
                     context.systemShare(content)
                 }
+
                 4 -> {
                     onDelete.invoke(item.id)
                 }
+
                 5 -> {
                     onModify.invoke()
                 }

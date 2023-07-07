@@ -43,7 +43,7 @@ class NoteRepository @Inject constructor(
             )
             listOf(allNoteInfo) + noteInfoList.map { noteInfo ->
                 noteInfo.copy(
-                    noteAndNoteContents = noteInfo.noteAndNoteContents.map { noteAndNoteContent ->
+                    noteAndNoteContents = noteInfo.noteAndNoteContents.filter { !it.noteEntity.isDelete }.map { noteAndNoteContent ->
                         noteAndNoteContent.copy(
                             noteContents = noteAndNoteContent.noteContents.filter { !it.isDelete }.takeLast(5).reversed()
                         )
@@ -161,3 +161,4 @@ class NoteRepository @Inject constructor(
             }
     }
 }
+

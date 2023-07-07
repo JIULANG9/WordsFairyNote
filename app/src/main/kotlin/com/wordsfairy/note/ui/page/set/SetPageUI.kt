@@ -38,7 +38,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 import com.google.accompanist.insets.statusBarsPadding
-import com.wordsfairy.base.tools.toast
 import com.wordsfairy.base.tools.toastLONG
 import com.wordsfairy.base.utils.searchInBrowser
 import com.wordsfairy.note.MainActivity
@@ -51,10 +50,13 @@ import com.wordsfairy.note.constants.EventBus
 import com.wordsfairy.note.constants.NavigateRouter
 import com.wordsfairy.note.data.AppSystemSetManage
 import com.wordsfairy.note.ext.flowbus.postEventValue
+import com.wordsfairy.note.ui.common.vibration
 import com.wordsfairy.note.ui.theme.AppResId
 import com.wordsfairy.note.ui.theme.WordsFairyTheme
 import com.wordsfairy.note.ui.theme.WordsFairyThemeLiveData
 import com.wordsfairy.note.ui.widgets.*
+import com.wordsfairy.note.ui.widgets.toast.ToastModel
+import com.wordsfairy.note.ui.widgets.toast.showToast
 import com.wordsfairy.note.utils.getVersionName
 
 /**
@@ -125,8 +127,10 @@ fun SetPageUI(
                         intentChannel.trySend(ViewIntent.SwitchTheme(isDark))
                         //关闭系统跟随
                         intentChannel.trySend(ViewIntent.ThemeFollowSystem(false))
+                        feedback.vibration()
 
                     })
+
                     Spacer(Modifier.width(12.dp))
 
                 }
@@ -145,6 +149,15 @@ fun SetPageUI(
                             intentChannel.trySend(ViewIntent.ThemeFollowSystem(follow))
                         }
                         ItemDivider()
+                        CommonItemSwitch(
+                            "关闭部分动画提升流畅度",
+                            viewState.closeAnimation
+                        ) { follow ->
+                            AppSystemSetManage.closeAnimation = follow
+                            intentChannel.trySend(ViewIntent.CloseAnimation(follow))
+
+                        }
+                        ItemDivider()
                         CommonItemIcon("数据恢复/备份") {
                             postEventValue(
                                 EventBus.NavController,
@@ -159,12 +172,12 @@ fun SetPageUI(
                         CommonItemIcon("隐私政策") {
                             context.searchInBrowser(URL_PRIVACY_PROTECTION)
                         }
-                            ItemDivider()
+                        ItemDivider()
 
                         AnimateContentIcon("应用信息") {
                             CommonTextItem(
                                 "版本号",
-                                "测试版 v${MainActivity.CONTEXT.getVersionName()}",
+                                "v${MainActivity.CONTEXT.getVersionName()}",
                                 horizontalPadding = 0.dp
                             )
                             CommonItemIcon("gitee源码") {
@@ -190,13 +203,18 @@ fun SetPageUI(
                                 "博客",
                                 "掘金",
                                 horizontalPadding = 0.dp
-                            ){
+                            ) {
                                 context.searchInBrowser(URL_JUEJIN)
                             }
                         }
                         ItemDivider()
                         CommonTextItem("开发者", "九狼WENJIE") {
-                            context.toastLONG("祝你有美好的一天  ＼(^▽^＠)ノ ")
+
+                            ToastModel(
+                                "祝你有美好的一天  ＼(^▽^＠)ノ ",
+                                ToastModel.Type.Success,
+                                2000L
+                            ).showToast()
                         }
                     }
                 }

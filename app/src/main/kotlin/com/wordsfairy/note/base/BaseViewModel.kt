@@ -1,7 +1,6 @@
 package com.wordsfairy.note.base
 
 import com.wordsfairy.note.mvi.*
-import com.wordsfairy.note.mvi.AbstractMviViewModel
 
 /**
  * @Description:

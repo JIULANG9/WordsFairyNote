@@ -5,52 +5,58 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.addCallback
 import androidx.activity.compose.setContent
-import androidx.activity.viewModels
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
+
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
+import androidx.lifecycle.lifecycleScope
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import com.wordsfairy.note.constants.EventBus
 import com.wordsfairy.note.ext.flowbus.observeEvent
 import com.wordsfairy.note.ui.page.home.HomePageScreen
-import com.wordsfairy.note.ui.theme.WordsFairyTheme
 import com.wordsfairy.note.ui.theme.WordsFairyNoteTheme
+import com.wordsfairy.note.ui.widgets.toast.ToastModel
+import com.wordsfairy.note.ui.widgets.toast.ToastUI
+import com.wordsfairy.note.ui.widgets.toast.ToastUIState
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 import kotlin.system.exitProcess
 
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-
-    private val mViewModel: MainViewModel by viewModels()
-
     @OptIn(ExperimentalAnimationApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
+        installSplashScreen()
         super.onCreate(savedInstanceState)
         WindowCompat.setDecorFitsSystemWindows(window, false)
         CONTEXT = this
 
         setContent {
             val navController = rememberAnimatedNavController()
-            WordsFairyNoteTheme() {
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = WordsFairyTheme.colors.background
-                ) {
+            val toastState = remember { ToastUIState() }
+
+            WordsFairyNoteTheme {
+                Box(modifier = Modifier.fillMaxSize()) {
                     HomePageScreen(navController)
+                    ToastUI(toastState)
                 }
             }
+
             observeEvent(key = EventBus.NavController) {
                 val route = it as String
                 navController.navigate(route)
+            }
+            /** toast */
+            observeEvent(key = EventBus.ShowToast) {
+                lifecycleScope.launch {
+                    val data = it as ToastModel
+                    toastState.show(data)
+                }
             }
         }
 
@@ -58,9 +64,7 @@ class MainActivity : ComponentActivity() {
             finish()
             exitProcess(0)
         }
-
     }
-
 
     companion object {
         @JvmStatic
@@ -68,3 +72,5 @@ class MainActivity : ComponentActivity() {
         lateinit var CONTEXT: MainActivity
     }
 }
+
+

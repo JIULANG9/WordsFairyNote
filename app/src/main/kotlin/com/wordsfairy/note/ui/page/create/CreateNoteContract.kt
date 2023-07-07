@@ -11,6 +11,7 @@ import com.wordsfairy.note.data.entity.NoteContentEntity
 import com.wordsfairy.note.data.entity.NoteEntity
 import com.wordsfairy.note.data.entity.NoteFolderEntity
 import com.wordsfairy.note.mvi.MviIntent
+
 import com.wordsfairy.note.mvi.MviSingleEvent
 import com.wordsfairy.note.mvi.MviViewState
 
@@ -54,6 +55,7 @@ sealed interface ViewIntent : MviIntent {
     object Initial : ViewIntent
     object Clean : ViewIntent
     object CreateFolder : ViewIntent
+
     //创建笔记 实体
     object CreateNoteEntity : ViewIntent
 
@@ -74,10 +76,12 @@ sealed interface ViewIntent : MviIntent {
 
     object NoteEntityChanged : ViewIntent
     object SaveNote : ViewIntent
+
     //批量导入
     object BatchImport : ViewIntent
+
     //显示弹窗
-    data class ShowDialog(val  dialogDataBean: DialogDataBean) : ViewIntent
+    data class ShowDialog(val dialogDataBean: DialogDataBean) : ViewIntent
 }
 
 
@@ -98,14 +102,21 @@ internal sealed interface PartialChange {
             return when (this) {
                 is CreateFolder -> vs.copy(selectedFolder = selectFolder)
                 is SelectFolder -> vs.copy(selectedFolder = selectFolder)
-                is CreateNoteEntity -> vs.copy(noteEntity = noteEntity,canSaveTitle = false)
-                is SaveNote -> vs.copy(noteContent = "", noteEntity = noteEntity, canSaveTitle = false,canSaved = false)
+                is CreateNoteEntity -> vs.copy(noteEntity = noteEntity, canSaveTitle = false)
+                is SaveNote -> vs.copy(
+                    noteContent = "",
+                    noteEntity = noteEntity,
+                    canSaveTitle = false,
+                    canSaved = false
+                )
             }
         }
 
         data class CreateFolder(val selectFolder: NoteFolderEntity) : NoteData()
         data class SelectFolder(val selectFolder: NoteFolderEntity) : NoteData()
-        data class SaveNote(val noteContent: NoteContentEntity,val noteEntity: NoteEntity) : NoteData()
+        data class SaveNote(val noteContent: NoteContentEntity, val noteEntity: NoteEntity) :
+            NoteData()
+
         data class CreateNoteEntity(val noteEntity: NoteEntity) : NoteData()
     }
 
@@ -114,7 +125,7 @@ internal sealed interface PartialChange {
             return when (this) {
                 is Title -> vs.copy(title = title, canSaveTitle = canSave)
                 is Time -> vs.copy(currentTime = time)
-                is NoteContent -> vs.copy(noteContent = note,canSaved = canSaveNote)
+                is NoteContent -> vs.copy(noteContent = note, canSaved = canSaveNote)
                 is AddFolderName -> vs.copy(addNoteFolderName = addFolderName)
                 is Init -> vs
                 is Clean -> vs.copy(
@@ -131,17 +142,18 @@ internal sealed interface PartialChange {
                     canSaveTitle = false,
                     isRefreshing = false
                 )
-                is ShowDialog -> vs.copy(dialogDataBean=dialog)
+
+                is ShowDialog -> vs.copy(dialogDataBean = dialog)
             }
         }
 
-        data class Title(val title: String,val canSave: Boolean) : UI()
+        data class Title(val title: String, val canSave: Boolean) : UI()
 
         data class Time(val time: String) : UI()
-        data class NoteContent(val note: String,val canSaveNote : Boolean) : UI()
+        data class NoteContent(val note: String, val canSaveNote: Boolean) : UI()
         data class AddFolderName(val addFolderName: String) : UI()
-        object Init: UI()
-        object Clean: UI()
-        data class  ShowDialog(val dialog: DialogDataBean): UI()
+        object Init : UI()
+        object Clean : UI()
+        data class ShowDialog(val dialog: DialogDataBean) : UI()
     }
 }

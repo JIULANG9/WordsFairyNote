@@ -32,6 +32,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.wordsfairy.note.data.entity.NoteContentEntity
 import com.wordsfairy.note.ui.common.click
+import com.wordsfairy.note.ui.common.vibration
 import com.wordsfairy.note.ui.theme.AppColor
 import com.wordsfairy.note.ui.theme.AppResId
 import com.wordsfairy.note.ui.theme.WordsFairyTheme
@@ -45,16 +46,18 @@ import kotlinx.coroutines.delay
  * @Data: 2023/4/29 0:13
  */
 
-
 @Composable
 fun ChooseClassifyButton(
     text: String?,
-    longClick: () -> Unit={},
+    longClick: () -> Unit = {},
     onClick: () -> Unit,
 ) {
     val folderName = text ?: "未分类"
 
-    val containerColor = if (text == null) WordsFairyTheme.colors.immerseBackground else WordsFairyTheme.colors.themeUi.copy(alpha = 0.3f)
+    val containerColor =
+        if (text == null) WordsFairyTheme.colors.immerseBackground else WordsFairyTheme.colors.themeUi.copy(
+            alpha = 0.3f
+        )
     val textColor = WordsFairyTheme.colors.textPrimary
 
     Button(
@@ -86,6 +89,8 @@ fun AddFolderDialog(
     var isError by rememberSaveable { mutableStateOf(false) }
     val focusRequester = remember { FocusRequester() }
     val keyboardController = LocalSoftwareKeyboardController.current
+    val feedback = LocalHapticFeedback.current
+
     AnimatedVisibilitySlide(isVisible, onDismiss = {
         onDismiss.invoke()
         isError = false
@@ -135,7 +140,6 @@ fun AddFolderDialog(
                 }
                 Spacer(Modifier.width(12.dp))
                 /** 确认按钮 */
-                val feedback = LocalHapticFeedback.current
                 ConfirmButton(Modifier.weight(1f)) {
                     if (text.isEmpty()) {
                         isError = true
@@ -145,7 +149,7 @@ fun AddFolderDialog(
                         onDismiss.invoke()
                     }
                     //震动
-                    feedback.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+                    feedback.vibration()
                     focusRequester.freeFocus()
                 }
             }
@@ -197,7 +201,7 @@ fun CreateNoteContentEditView(
     text: String,
     addendText: String,
     placeholder: String,
-    isAutoFocused :Boolean =true,
+    isAutoFocused: Boolean = true,
     keyboardType: KeyboardType = KeyboardType.Text,
     onValueChange: (String) -> Unit = {},
 ) {
@@ -235,13 +239,13 @@ fun CreateNoteContentEditView(
 }
 
 @Composable
-fun NoteContentLazyColumn(noteContentItems: List<NoteContentEntity>){
+fun NoteContentLazyColumn(noteContentItems: List<NoteContentEntity>) {
     LazyColumn(
         Modifier
             .fillMaxWidth()
             .animateContentSize()
     ) {
-        itemsIndexed(items = noteContentItems) { index,item ->
+        itemsIndexed(items = noteContentItems) { index, item ->
             ImmerseCard(
                 modifier = Modifier
                     .fillMaxWidth()

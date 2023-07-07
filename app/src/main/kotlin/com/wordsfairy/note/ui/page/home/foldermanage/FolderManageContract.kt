@@ -1,6 +1,5 @@
 package com.wordsfairy.note.ui.page.home.foldermanage
 
-import com.wordsfairy.note.data.entity.NoteContentEntity
 import com.wordsfairy.note.data.entity.NoteFolderEntity
 import com.wordsfairy.note.mvi.MviIntent
 import com.wordsfairy.note.mvi.MviSingleEvent

@@ -9,7 +9,9 @@ import android.widget.Toast
  * @Data: 2022/11/18 17:02
  */
 @Suppress("NOTHING_TO_INLINE")
-inline fun Context.toast(text: CharSequence) = Toast.makeText(this, text, Toast.LENGTH_SHORT).show()
+inline fun Context.toast(text: CharSequence) =
+    Toast.makeText(this, text, Toast.LENGTH_SHORT).show()
 
 @Suppress("NOTHING_TO_INLINE")
-inline fun Context.toastLONG(text: CharSequence) = Toast.makeText(this, text, Toast.LENGTH_LONG).show()
+inline fun Context.toastLONG(text: CharSequence) =
+    Toast.makeText(this, text, Toast.LENGTH_LONG).show()

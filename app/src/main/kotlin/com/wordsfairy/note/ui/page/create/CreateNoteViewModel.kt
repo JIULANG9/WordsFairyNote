@@ -42,7 +42,7 @@ class CreateNoteViewModel @Inject internal constructor(
     val noteFolders: Flow<List<NoteFolderEntity>> = folderRepository.getNoteFolder()
 
     var noteContents: (Long) -> Flow<List<NoteContentEntity>> = { id ->
-         contentRepository.getNoteContexts(id)
+        contentRepository.getNoteContexts(id)
     }
 
     init {
@@ -65,6 +65,7 @@ class CreateNoteViewModel @Inject internal constructor(
     private fun Flow<PartialChange>.sendSingleEvent(): Flow<PartialChange> {
         return onEach { change ->
             val event = when (change) {
+
                 is PartialChange.NoteData.CreateFolder -> SingleEvent.UI.Toast("添加成功")
                 is PartialChange.NoteData.SaveNote -> SingleEvent.UI.AddNoteContent(change.noteContent)
                 is PartialChange.UI.ShowDialog -> SingleEvent.UI.ShowDialog
@@ -139,7 +140,7 @@ class CreateNoteViewModel @Inject internal constructor(
                 .filter { it.isNotEmpty() }
                 .map { folderName ->
                     //文件夹位置递增
-                    val position = folderRepository.getMaxPosition()+ 1
+                    val position = folderRepository.getMaxPosition() + 1
                     val noteFolderEntity = NoteFolderEntity.create(
                         folderName,
                         System.currentTimeMillis(),
@@ -267,6 +268,7 @@ class CreateNoteViewModel @Inject internal constructor(
                 .log("[showDialog]").map {
                     PartialChange.UI.ShowDialog(it.dialogDataBean)
                 }
+
             return merge(
                 initFlow,
                 cleanFlow,

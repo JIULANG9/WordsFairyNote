@@ -26,7 +26,7 @@ import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.wordsfairy.base.mvi.core.unit
-import com.wordsfairy.base.tools.toast
+
 import com.wordsfairy.base.utils.isUTF8
 import com.wordsfairy.note.MainActivity
 import com.wordsfairy.note.constants.EventBus
@@ -39,13 +39,15 @@ import com.wordsfairy.note.ext.flow.noteStartWith
 import com.wordsfairy.note.ext.flowbus.observeEvent
 import com.wordsfairy.note.ext.flowbus.postEventValue
 import com.wordsfairy.note.ui.common.clickableNoIndication
-import com.wordsfairy.note.ui.common.vibrationFeedback
-import com.wordsfairy.note.ui.page.detail.set.ContentSetViewModel
+import com.wordsfairy.note.ui.common.vibration
+
 import com.wordsfairy.note.ui.theme.AppColor
 import com.wordsfairy.note.ui.theme.AppResId
 import com.wordsfairy.note.ui.theme.WordsFairyTheme
 import com.wordsfairy.note.ui.widgets.*
 import com.wordsfairy.note.ui.widgets.dropdown.FolderDropdownMenu
+import com.wordsfairy.note.ui.widgets.toast.ToastModel
+import com.wordsfairy.note.ui.widgets.toast.showToast
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.*
@@ -113,7 +115,8 @@ fun CreateNoteUI(
                     }
                 }
             } else {
-                context.toast("选择困难！")
+
+                ToastModel("清除成功!", ToastModel.Type.Normal).showToast()
             }
         }
 
@@ -130,14 +133,17 @@ fun CreateNoteUI(
         singleEvent.collectLatest { event ->
             when (event) {
                 is SingleEvent.UI.Toast -> {
-                    context.toast(event.content)
+                    ToastModel(event.content, ToastModel.Type.Success).showToast()
                 }
+
                 is SingleEvent.UI.AddNoteContent -> {
                     noteContentItems.add(0, event.noteContent)
                 }
+
                 is SingleEvent.UI.ShowDialog -> {
                     showDialog.value = true
                 }
+
             }.unit
         }
     }
@@ -147,6 +153,7 @@ fun CreateNoteUI(
             isShowAddFolderDialog -> {
                 isShowAddFolderDialog = false
             }
+
             else -> {
                 intentChannel.trySend(ViewIntent.Clean)
                 onBack()
@@ -154,112 +161,112 @@ fun CreateNoteUI(
         }
     }
 
-
-    Box {
-        Column(
-            Modifier
-                .fillMaxSize()
-                .blur(if (isShowAddFolderDialog ) 6.dp else 0.dp)
-                .background(WordsFairyTheme.colors.whiteBackground)
-                .clickableNoIndication(focusManager)
-                .systemBarsPadding()
+    Column(
+        Modifier
+            .fillMaxSize()
+            .blur(if (isShowAddFolderDialog) 6.dp else 0.dp)
+            .background(WordsFairyTheme.colors.whiteBackground)
+            .clickableNoIndication(focusManager)
+            .systemBarsPadding()
+    ) {
+        Row(
+            Modifier.fillMaxWidth()
         ) {
-            Row(
-                Modifier.fillMaxWidth()
-            ) {
-                Spacer(Modifier.width(16.dp))
-                /** 返回 */
-                MyIconButton(imageVector = Icons.Rounded.ArrowBack) {
-                    intentChannel.trySend(ViewIntent.Clean)
-                    onBack.invoke()
-                }
-                Spacer(Modifier.width(16.dp))
-                /** 文件夹 */
-                Box(Modifier.align(Alignment.CenterVertically)) {
-                    var expanded by remember { mutableStateOf(false) }
-                    /** 文件夹弹窗 */
-                    FolderDropdownMenu(
-                        expanded,
-                        noteFolders,
-                        viewState.selectedFolder,
-                        onDismiss = {
-                            expanded = false
-                        },
-                        onClick = {
-                            //选择分类文件夹
-                            intentChannel.trySend(ViewIntent.SelectFolder(it))
-                        })
+            Spacer(Modifier.width(16.dp))
+            /** 返回 */
+            MyIconButton(imageVector = Icons.Rounded.ArrowBack) {
 
-                    ChooseClassifyButton(viewState.selectedFolder?.name, onClick = {
-                        expanded = true
-                    }, longClick = {
-                        isShowAddFolderDialog = true
-                        feedback.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+                intentChannel.trySend(ViewIntent.Clean)
+                onBack.invoke()
+            }
+            Spacer(Modifier.width(16.dp))
+            /** 文件夹 */
+            Box(Modifier.align(Alignment.CenterVertically)) {
+                var expanded by remember { mutableStateOf(false) }
+                /** 文件夹弹窗 */
+                FolderDropdownMenu(
+                    expanded,
+                    noteFolders,
+                    viewState.selectedFolder,
+                    onDismiss = {
+                        expanded = false
+                    },
+                    onClick = {
+                        //选择分类文件夹
+                        intentChannel.trySend(ViewIntent.SelectFolder(it))
                     })
-                }
-                Spacer(Modifier.weight(1f))
-                /** 右上角  保存标题 */
-                ButtonSaveTitle(viewState.canSaveTitle) {
-                    intentChannel.trySend(ViewIntent.CreateNoteEntity)
-                }
-                Spacer(Modifier.width(16.dp))
 
+                ChooseClassifyButton(viewState.selectedFolder?.name, onClick = {
+                    expanded = true
+                }, longClick = {
+                    isShowAddFolderDialog = true
+                    feedback.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+                })
             }
-            /** 标题输入框 */
-            CreateNoteEditView(
-                text = viewState.title,
-                placeholder = "标题"
-            ) {
-                intentChannel.trySend(ViewIntent.TitleChanged(it))
+            Spacer(Modifier.weight(1f))
+            /** 右上角  保存标题 */
+            ButtonSaveTitle(viewState.canSaveTitle) {
+                intentChannel.trySend(ViewIntent.CreateNoteEntity)
             }
-            Spacer(Modifier.height(3.dp))
-            Row {
-                Spacer(Modifier.width(24.dp))
-                /** 时间 */
-                MiniText(text = viewState.currentTime)
-                Spacer(Modifier.width(6.dp))
-                /** 字数 */
-                MiniText(text = viewState.wordNumber)
-            }
-            /** 笔记输入框 */
-            NoteContentEditView(viewState, intentChannel, txtSelector = {
-                txtSelectorLauncher.launch("text/plain")
-            })
-
-            /** 笔记 列表 */
-            NoteContentLazyColumn(noteContentItems)
+            Spacer(Modifier.width(16.dp))
 
         }
-        /** 添加笔记文件夹名称 */
-        AddFolderDialog(isShowAddFolderDialog, viewState.addNoteFolderName,
-            onValueChange = {
-                intentChannel.trySend(ViewIntent.NoteFolderNameChanged(it))
-            },
-            onDismiss = {
-                isShowAddFolderDialog = false
-                intentChannel.trySend(ViewIntent.NoteFolderNameChanged(""))
-            },
-            onConfirm = { name ->
-                intentChannel.trySend(ViewIntent.CreateFolder)
-            })
-        if (showDialog.value) {
-            GeneralDialog(
-                dialogState = showDialog,
-                title = viewState.dialogDataBean.title,
-                message = viewState.dialogDataBean.message,
-                isWaring = viewState.dialogDataBean.isWaring,
-                positiveBtnText = stringResource(id = AppResId.String.Confirm),
-                onPositiveBtnClicked = {
-                    when (viewState.dialogDataBean.clackTag) {
-                        CreateNoteViewModel.IsNotUTF8Tag -> {
-                            txtSelectorLauncher.launch("text/plain")
-                        }
-                    }
-                },
-                negativeBtnText = stringResource(id = AppResId.String.Cancel)
-            )
+        /** 标题输入框 */
+        CreateNoteEditView(
+            text = viewState.title,
+            placeholder = "标题"
+        ) {
+            intentChannel.trySend(ViewIntent.TitleChanged(it))
         }
+        Spacer(Modifier.height(3.dp))
+        Row {
+            Spacer(Modifier.width(24.dp))
+            /** 时间 */
+            MiniText(text = viewState.currentTime)
+            Spacer(Modifier.width(6.dp))
+            /** 字数 */
+            MiniText(text = viewState.wordNumber)
+        }
+        /** 笔记输入框 */
+        NoteContentEditView(viewState, intentChannel, txtSelector = {
+            txtSelectorLauncher.launch("text/plain")
+        })
+
+        /** 笔记 列表 */
+        NoteContentLazyColumn(noteContentItems)
+
     }
+    /** 添加笔记文件夹名称 */
+    AddFolderDialog(isShowAddFolderDialog, viewState.addNoteFolderName,
+        onValueChange = {
+            intentChannel.trySend(ViewIntent.NoteFolderNameChanged(it))
+        },
+        onDismiss = {
+            isShowAddFolderDialog = false
+            intentChannel.trySend(ViewIntent.NoteFolderNameChanged(""))
+        },
+        onConfirm = { name ->
+            intentChannel.trySend(ViewIntent.CreateFolder)
+        })
+    if (showDialog.value) {
+        GeneralDialog(
+            dialogState = showDialog,
+            title = viewState.dialogDataBean.title,
+            message = viewState.dialogDataBean.message,
+            isWaring = viewState.dialogDataBean.isWaring,
+            positiveBtnText = stringResource(id = AppResId.String.Confirm),
+            onPositiveBtnClicked = {
+                when (viewState.dialogDataBean.clackTag) {
+                    CreateNoteViewModel.IsNotUTF8Tag -> {
+                        txtSelectorLauncher.launch("text/plain")
+                    }
+                }
+            },
+            negativeBtnText = stringResource(id = AppResId.String.Cancel)
+        )
+    }
+
+
 }
 
 @OptIn(ExperimentalComposeUiApi::class)
@@ -350,7 +357,7 @@ fun NoteContentEditView(
                 Spacer(Modifier.width(6.dp))
                 MyButton("保存", enabled = canSaved) {
                     saveNote.invoke()
-                    vibrationFeedback(feedback)
+                    feedback.vibration()
                 }
                 Spacer(Modifier.width(6.dp))
             }
@@ -371,19 +378,22 @@ fun CreateNotePage(
     var animReady by remember { mutableStateOf(false) }
     var animFinish by remember { mutableStateOf(false) }
     val background by animateColorAsState(
-        if (pageState == CreateNoteState.Closing) AppColor.themeColor else Color.Transparent)
+        if (pageState == CreateNoteState.Closing) AppColor.themeColor else Color.Transparent
+    )
     val alpha by animateFloatAsState(
         targetValue = if (pageState == CreateNoteState.Closing) 1f else 0.6f,
         animationSpec = tween(durationMillis = 300)
     )
 
     val DEPLOYMENT_DURATION = 500
-    val size by animateIntSizeAsState(if (pageState > CreateNoteState.Closed) fullSize else cardSize,
-        animationSpec = tween(DEPLOYMENT_DURATION))
+    val size by animateIntSizeAsState(
+        if (pageState > CreateNoteState.Closed) fullSize else cardSize,
+        animationSpec = tween(DEPLOYMENT_DURATION)
+    )
 
     val fullOffset = remember { IntOffset(0, 0) }
     val offsetAnimatable = remember { Animatable(IntOffset(0, 0), IntOffset.VectorConverter) }
-    val cornerSize by animateDpAsState(if (animFinish) 0.dp  else 16.dp)
+    val cornerSize by animateDpAsState(if (animFinish) 0.dp else 16.dp)
 
 
     LaunchedEffect(pageState) {
@@ -391,16 +401,18 @@ fun CreateNotePage(
             CreateNoteState.Opening -> {
                 animReady = true
                 offsetAnimatable.snapTo(cardOffset)
-                offsetAnimatable.animateTo(fullOffset,animationSpec = tween(DEPLOYMENT_DURATION))
+                offsetAnimatable.animateTo(fullOffset, animationSpec = tween(DEPLOYMENT_DURATION))
                 animFinish = true
             }
+
             CreateNoteState.Closing -> {
                 animFinish = false
                 offsetAnimatable.snapTo(fullOffset)
-                offsetAnimatable.animateTo(cardOffset,animationSpec = tween(DEPLOYMENT_DURATION))
+                offsetAnimatable.animateTo(cardOffset, animationSpec = tween(DEPLOYMENT_DURATION))
                 animReady = false
                 onPageClosed()
             }
+
             else -> {}
         }
     }
@@ -414,10 +426,13 @@ fun CreateNotePage(
 
         ) {
             CreateNoteUI(onBack = onPageClosing)
-            if (pageState == CreateNoteState.Closing){
-                Box(Modifier.fillMaxSize()
-                    .alpha(alpha)
-                    .background(background))
+            if (pageState == CreateNoteState.Closing) {
+                Box(
+                    Modifier
+                        .fillMaxSize()
+                        .alpha(alpha)
+                        .background(background)
+                )
             }
         }
     }
