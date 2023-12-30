@@ -10,8 +10,8 @@ object BuildConfig {
 
     const val applicationId ="com.wordsfairy.note"
     const val testInstrumentationRunner="androidx.test.runner.AndroidJUnitRunner"
-    var versionName = "1.4.2"
-    var versionCode = 6
+    var versionName = "1.5.0"
+    var versionCode = 7
 }
 object SigningConfigs{
     /** 密钥别名 */

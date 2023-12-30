@@ -110,7 +110,19 @@ fun HomeTab(
                 }
             }
         }
-
+        IconButton(onClick = {
+            feedback.vibration()
+            context.postEventValue(
+                EventBus.NavController,
+                NavigateRouter.HomePage.FolderManage
+            )
+        }) {
+            Image(
+                painter = painterResource(AppResId.Drawable.Folder),
+                modifier = Modifier.size(26.dp),
+                contentDescription = "Folder"
+            )
+        }
         Spacer(Modifier.width(6.dp))
     }
 
