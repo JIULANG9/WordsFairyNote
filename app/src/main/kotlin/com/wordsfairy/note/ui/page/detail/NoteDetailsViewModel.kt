@@ -2,6 +2,7 @@ package com.wordsfairy.note.ui.page.detail
 
 
 import android.util.Log
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.wordsfairy.common.tools.timestampToString
 import com.wordsfairy.note.base.BaseViewModel
@@ -41,14 +42,15 @@ class NoteDetailsViewModel @Inject internal constructor(
     //笔记文件夹
     val noteFolders: Flow<List<NoteFolderEntity>> = folderRepository.getNoteFolder()
 
-    var searchResultDataCache : MutableList<NoteContentEntity> = ArrayList()
+    private var searchResultDataCache: MutableList<NoteContentEntity> = ArrayList()
+
     //searchResultDataCache初始长度为126,list长度超过126,addAll()无法自动扩容,导致下标越界
-    var totalSize = 0
+    private var totalSize = 0
     var noteContents: (Long) -> Flow<List<NoteContentEntity>> = { id ->
-        val data =contentRepository.getNoteContexts(id)
+        val data = contentRepository.getNoteContexts(id)
 
         viewModelScope.launch(Dispatchers.IO) {
-            data.collect{ list ->
+            data.collect { list ->
                 totalSize += list.size
                 searchResultDataCache.clear()
                 //在addAll()前检查searchResultDataCache长度,并手动扩容至足够大小
@@ -88,33 +90,33 @@ class NoteDetailsViewModel @Inject internal constructor(
     }
 
     private fun Flow<ViewIntent>.toPartialChangeFlow(): Flow<PartialChange> =
-        shareWhileSubscribed().run {
-
+       run {
             /** 初始化 */
             val initFlow = filterIsInstance<ViewIntent.Initial>()
                 .log("[Intent]")
                 .map {
                     val noteEntity = it.noteEntity
-                    val folderEntity = if (noteEntity.folderId == 0L){
+                    val folderEntity = if (noteEntity.folderId == 0L) {
                         null
-                    }else{
+                    } else {
                         folderRepository.getNoteFolderById(noteEntity.folderId)
                     }
-                    PartialChange.UI.Init(noteEntity,folderEntity)
-                }.flowOn(Dispatchers.IO).distinctUntilChanged()
+                    PartialChange.UI.Init(noteEntity, folderEntity)
+                }.flowOn(Dispatchers.IO).shareWhileSubscribed()
 
             /** clean */
             val cleanFlow = filterIsInstance<ViewIntent.Clean>()
                 .log("[clean]")
                 .map {
                     PartialChange.UI.Clean
-                }
+                }.shareWhileSubscribed()
+
             /**切换状态*/
             val uiStateFlow = filterIsInstance<ViewIntent.UIStateChanged>()
                 .log("[clean]")
                 .map {
                     PartialChange.UI.UIStateChanged(it.uiState)
-                }
+                }.shareWhileSubscribed()
 
             /** 最近更新时间 */
             val recentUpdatesFlow = filterIsInstance<ViewIntent.RecentUpdates>()
@@ -122,7 +124,7 @@ class NoteDetailsViewModel @Inject internal constructor(
                 .zip(initFlow) { _, init ->
                     val time = init.noteEntity.updateAt.timestampToString()
                     PartialChange.UI.RecentUpdates(time)
-                }
+                }.shareWhileSubscribed()
 
             /** 移动笔记文件夹 */
             val selectFolderFlow = filterIsInstance<ViewIntent.SelectFolder>()
@@ -136,12 +138,12 @@ class NoteDetailsViewModel @Inject internal constructor(
                         noteRepository.update(noteEntity)
                     }
                     PartialChange.NoteData.SelectFolder(note)
-                }.flowOn(Dispatchers.IO)
+                }.flowOn(Dispatchers.IO).shareWhileSubscribed()
 
 
             val titleContentFlow = filterIsInstance<ViewIntent.TitleChanged>()
                 .log("[标题内容]:titleContentFlow")
-                .map { it.title }
+                .map { it.title }.shareWhileSubscribed()
 
             val titleContentChangeFlow = titleContentFlow.map { title ->
                 val canSave = if (viewStateFlow.value.title == title) {
@@ -149,30 +151,30 @@ class NoteDetailsViewModel @Inject internal constructor(
                 } else title.isNotEmpty()
 
                 PartialChange.UI.Title(title, canSave)
-            }.distinctUntilChanged()
+            }.shareWhileSubscribed()
 
 
             /** 修改标题 */
             val modifyTitleFlow = filterIsInstance<ViewIntent.ModifyTitle>()
                 .log("[修改标题]")
                 .withLatestFrom(titleContentFlow) { _, title ->
-                   val noteEntity = viewStateFlow.value.noteEntity!!
-                    noteEntity.title =title
+                    val noteEntity = viewStateFlow.value.noteEntity!!
+                    noteEntity.title = title
                     noteRepository.update(noteEntity)
                     PartialChange.NoteData.SaveTitle
-                }.flowOn(Dispatchers.IO)
+                }.flowOn(Dispatchers.IO).shareWhileSubscribed()
 
             /** 笔记内容 */
             val noteContentChanges = filterIsInstance<ViewIntent.ContentChanged>()
                 .log("[笔记内容]:titleContentFlow")
-                .map { it.content }
-                .distinctUntilChanged()
+                .map { it.content }.shareWhileSubscribed()
+
             val noteContentChangesFlow = noteContentChanges.map { noteContent ->
                 val canSave = if (viewStateFlow.value.noteContent == noteContent) {
                     false
                 } else noteContent.isNotEmpty()
                 PartialChange.UI.Content(noteContent, canSave)
-            }.distinctUntilChanged()
+            }
 
             /** 收集笔记内容 */
             val noteContentEntityForm = combine(
@@ -197,7 +199,7 @@ class NoteDetailsViewModel @Inject internal constructor(
                     noteRepository.update(viewStateFlow.value.noteEntity!!)
                     //文件夹笔记内容条数 +1
                     val selectedFolder = viewStateFlow.value.selectedFolder
-                    if (selectedFolder!=null){
+                    if (selectedFolder != null) {
                         selectedFolder.noteContextCount += 1
                         folderRepository.update(selectedFolder)
                     }
@@ -233,7 +235,7 @@ class NoteDetailsViewModel @Inject internal constructor(
             val deleteContentFlow = filterIsInstance<ViewIntent.DeleteContent>()
                 .log("[删除笔记内容]")
                 .map {
-                   val note = it.noteContentEntity
+                    val note = it.noteContentEntity
                     note.isDelete = true
                     contentRepository.update(note)
                     PartialChange.NoteData.DeleteContent
@@ -244,9 +246,9 @@ class NoteDetailsViewModel @Inject internal constructor(
                 .log("[搜索笔记]")
                 .map {
                     val keyword = it.keyword
-                    val resultData = if (keyword.isNotEmpty()){
-                        contentRepository.searchContent(searchResultDataCache,keyword)
-                    }else{
+                    val resultData = if (keyword.isNotEmpty()) {
+                        contentRepository.searchContent(searchResultDataCache, keyword)
+                    } else {
                         searchResultDataCache
                     }
                     PartialChange.NoteData.SearchResultData(resultData)
@@ -260,7 +262,7 @@ class NoteDetailsViewModel @Inject internal constructor(
 
             return merge(
                 initFlow,
-                cleanFlow,uiStateFlow, recentUpdatesFlow,
+                cleanFlow, uiStateFlow, recentUpdatesFlow,
                 titleContentChangeFlow,
                 modifyTitleFlow,
                 noteContentChangesFlow,

@@ -62,7 +62,7 @@ class FolderManageViewModel @Inject internal constructor(
     }
 
     private fun Flow<ViewIntent>.toPartialChangeFlow(): Flow<PartialChange> =
-        shareWhileSubscribed().run {
+        run {
 
             val modifyFolderFlow = filterIsInstance<ViewIntent.ModifyFolder>()
                 .log("[修改]")

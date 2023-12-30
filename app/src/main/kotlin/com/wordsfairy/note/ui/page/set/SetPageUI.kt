@@ -20,6 +20,7 @@ import kotlinx.coroutines.flow.consumeAsFlow
 import kotlinx.coroutines.flow.onEach
 import androidx.compose.animation.*
 import androidx.compose.animation.core.*
+import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 
@@ -41,11 +42,13 @@ import com.google.accompanist.insets.statusBarsPadding
 import com.wordsfairy.base.tools.toastLONG
 import com.wordsfairy.base.utils.searchInBrowser
 import com.wordsfairy.note.MainActivity
+import com.wordsfairy.note.constants.Constants.URL_BiliBili_WordsFairy
 import com.wordsfairy.note.constants.Constants.URL_GITEE
 import com.wordsfairy.note.constants.Constants.URL_GITHUB
 
 import com.wordsfairy.note.constants.Constants.URL_JUEJIN
 import com.wordsfairy.note.constants.Constants.URL_PRIVACY_PROTECTION
+import com.wordsfairy.note.constants.Constants.URL_WordsFairyApp
 import com.wordsfairy.note.constants.EventBus
 import com.wordsfairy.note.constants.NavigateRouter
 import com.wordsfairy.note.data.AppSystemSetManage
@@ -100,124 +103,137 @@ fun SetPageUI(
         }
     }
 
-    Scaffold(
-        Modifier
+    Column(
+        modifier = Modifier
             .fillMaxSize()
-            .statusBarsPadding(),
-        containerColor = WordsFairyTheme.colors.background, content = {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(it)
-            ) {
-                Row(
-                    Modifier
-                        .fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Spacer(Modifier.width(12.dp))
-                    MyIconButton(imageVector = Icons.Rounded.KeyboardArrowLeft, size = 39.dp) {
-                        onBack.invoke()
+            .background(WordsFairyTheme.colors.background)
+            .systemBarsPadding()
+    ) {
+        Row(
+            Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Spacer(Modifier.width(12.dp))
+            MyIconButton(imageVector = Icons.Rounded.KeyboardArrowLeft, size = 39.dp) {
+                onBack.invoke()
+            }
+            Title(stringResource(id = AppResId.String.Set), fontSize = 21.sp)
+            Spacer(Modifier.weight(1f))
+            /** 切换主题 */
+            SwitchThemeButton(viewState.darkUI, onClick = { isDark ->
+                //切换主题
+                intentChannel.trySend(ViewIntent.SwitchTheme(isDark))
+                //关闭系统跟随
+                intentChannel.trySend(ViewIntent.ThemeFollowSystem(false))
+                feedback.vibration()
+
+            })
+            Spacer(Modifier.width(12.dp))
+        }
+
+        ImmerseCard(Modifier.padding(12.dp)) {
+            Column {
+                CommonItemSwitch(
+                    "夜间模式跟随系统",
+                    viewState.themeFollowSystem
+                ) { follow ->
+                    //  当前主题与系统主题模式不相符时，切换成对应主题
+                    if (AppSystemSetManage.darkUI != isSystemInDark) {
+                        intentChannel.trySend(ViewIntent.SwitchTheme(isSystemInDark))
                     }
-                    Title(stringResource(id = AppResId.String.Set), fontSize = 21.sp)
-                    Spacer(Modifier.weight(1f))
-                    /** 切换主题 */
-                    SwitchThemeButton(viewState.darkUI, onClick = { isDark ->
-                        //切换主题
-                        intentChannel.trySend(ViewIntent.SwitchTheme(isDark))
-                        //关闭系统跟随
-                        intentChannel.trySend(ViewIntent.ThemeFollowSystem(false))
-                        feedback.vibration()
-
-                    })
-
-                    Spacer(Modifier.width(12.dp))
+                    //  开启/关闭系统跟随
+                    intentChannel.trySend(ViewIntent.ThemeFollowSystem(follow))
+                }
+                ItemDivider()
+                CommonItemSwitch(
+                    "关闭部分动画提升流畅度",
+                    viewState.closeAnimation
+                ) { follow ->
+                    AppSystemSetManage.closeAnimation = follow
+                    intentChannel.trySend(ViewIntent.CloseAnimation(follow))
 
                 }
-                Spacer(Modifier.height(16.dp))
-                ImmerseCard(Modifier.padding(12.dp)) {
-                    Column {
-                        CommonItemSwitch(
-                            "夜间模式跟随系统",
-                            viewState.themeFollowSystem
-                        ) { follow ->
-                            //  当前主题与系统主题模式不相符时，切换成对应主题
-                            if (AppSystemSetManage.darkUI != isSystemInDark) {
-                                intentChannel.trySend(ViewIntent.SwitchTheme(isSystemInDark))
-                            }
-                            //  开启/关闭系统跟随
-                            intentChannel.trySend(ViewIntent.ThemeFollowSystem(follow))
-                        }
-                        ItemDivider()
-                        CommonItemSwitch(
-                            "关闭部分动画提升流畅度",
-                            viewState.closeAnimation
-                        ) { follow ->
-                            AppSystemSetManage.closeAnimation = follow
-                            intentChannel.trySend(ViewIntent.CloseAnimation(follow))
+                ItemDivider()
+                CommonItemIcon("数据恢复/备份") {
+                    postEventValue(
+                        EventBus.NavController,
+                        NavigateRouter.SetPage.NoteData
+                    )
+                }
+            }
+        }
+        ImmerseCard(Modifier.padding(12.dp)) {
+            Column {
 
-                        }
-                        ItemDivider()
-                        CommonItemIcon("数据恢复/备份") {
-                            postEventValue(
-                                EventBus.NavController,
-                                NavigateRouter.SetPage.NoteData
-                            )
-                        }
+                CommonItemIcon("隐私政策") {
+                    context.searchInBrowser(URL_PRIVACY_PROTECTION)
+                }
+                ItemDivider()
+
+                AnimateContentIcon("应用信息") {
+                    CommonTextItem(
+                        "版本号",
+                        "v${MainActivity.CONTEXT.getVersionName()}",
+                        horizontalPadding = 0.dp
+                    )
+                    CommonItemIcon("gitee源码") {
+                        context.searchInBrowser(URL_GITEE)
+                    }
+                    CommonItemIcon("github源码") {
+                        context.searchInBrowser(URL_GITHUB)
                     }
                 }
-                ImmerseCard(Modifier.padding(12.dp)) {
-                    Column {
+                ItemDivider()
+                AnimateContentIcon("联系作者") {
+                    CommonTextItem(
+                        "微信",
+                        "WordFairy",
+                        horizontalPadding = 0.dp
+                    )
+                    CommonTextItem(
+                        "QQ",
+                        "2021662556",
+                        horizontalPadding = 0.dp
+                    )
+                    CommonTextItem(
+                        "博客",
+                        "掘金",
+                        horizontalPadding = 0.dp
+                    ) {
+                        context.searchInBrowser(URL_JUEJIN)
+                    }
+                }
+                ItemDivider()
+                CommonTextItem("开发者", "九狼") {
 
-                        CommonItemIcon("隐私政策") {
-                            context.searchInBrowser(URL_PRIVACY_PROTECTION)
-                        }
-                        ItemDivider()
-
-                        AnimateContentIcon("应用信息") {
-                            CommonTextItem(
-                                "版本号",
-                                "v${MainActivity.CONTEXT.getVersionName()}",
-                                horizontalPadding = 0.dp
-                            )
-                            CommonItemIcon("gitee源码") {
-                                context.searchInBrowser(URL_GITEE)
-                            }
-                            CommonItemIcon("github源码") {
-                                context.searchInBrowser(URL_GITHUB)
-                            }
-                        }
-                        ItemDivider()
-                        AnimateContentIcon("联系作者") {
-                            CommonTextItem(
-                                "微信",
-                                "WordFairy",
-                                horizontalPadding = 0.dp
-                            )
-                            CommonTextItem(
-                                "QQ",
-                                "2021662556",
-                                horizontalPadding = 0.dp
-                            )
-                            CommonTextItem(
-                                "博客",
-                                "掘金",
-                                horizontalPadding = 0.dp
-                            ) {
-                                context.searchInBrowser(URL_JUEJIN)
-                            }
-                        }
-                        ItemDivider()
-                        CommonTextItem("开发者", "九狼WENJIE") {
-
-                            ToastModel(
-                                "祝你有美好的一天  ＼(^▽^＠)ノ ",
-                                ToastModel.Type.Success,
-                                2000L
-                            ).showToast()
-                        }
+                    ToastModel(
+                        "祝你有美好的一天  ＼(^▽^＠)ノ ",
+                        ToastModel.Type.Success,
+                        2000L
+                    ).showToast()
+                }
+            }
+        }
+        ImmerseCard(Modifier.padding(12.dp)) {
+            Column {
+                AnimateContentIcon("词仙-笔记加密共享版") {
+                    CommonTextItem(
+                        "官网下载",
+                        "测试版v1.0",
+                        horizontalPadding = 0.dp
+                    ){
+                        context.searchInBrowser(URL_WordsFairyApp)
+                    }
+                    CommonTextItem(
+                        "UI视频展示",
+                        "BiliBili",
+                        horizontalPadding = 0.dp
+                    ){
+                        context.searchInBrowser(URL_BiliBili_WordsFairy)
                     }
                 }
             }
-        })
+        }
+    }
+
 }

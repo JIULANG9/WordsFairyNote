@@ -1,5 +1,6 @@
 package com.wordsfairy.note.ui.page.detail
 
+import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.*
 import androidx.compose.animation.core.tween
@@ -18,6 +19,11 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavGraphBuilder
+import androidx.navigation.NavType
+import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
+import com.google.accompanist.navigation.animation.composable
 import com.wordsfairy.base.mvi.core.unit
 import com.wordsfairy.note.constants.EventBus
 import com.wordsfairy.note.constants.GlobalData
@@ -40,6 +46,7 @@ import com.wordsfairy.note.ui.widgets.toast.ToastUIState
 
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.consumeAsFlow
@@ -58,6 +65,7 @@ import kotlinx.coroutines.flow.onEach
 @Composable
 fun NoteDetailsUI(
     onBack: () -> Unit,
+    isSearch: Boolean = false,
     viewModel: NoteDetailsViewModel = hiltViewModel()
 ) {
 
@@ -79,6 +87,7 @@ fun NoteDetailsUI(
             isShowContentModifierDialog -> {
                 isShowContentModifierDialog = false
             }
+
             else -> {
                 intentChannel.trySend(ViewIntent.Clean)
                 onBack.invoke()
@@ -94,7 +103,6 @@ fun NoteDetailsUI(
             .onEach(viewModel::processIntent)
             .collect()
     }
-
     LaunchedEffect(singleEvent) {
         singleEvent.collectLatest { event ->
             when (event) {
@@ -124,7 +132,7 @@ fun NoteDetailsUI(
             ) {
                 Spacer(Modifier.width(12.dp))
                 /** 返回 */
-                MyIconButton(imageVector = Icons.Rounded.KeyboardArrowLeft,size = 36.dp) {
+                MyIconButton(imageVector = Icons.Rounded.KeyboardArrowLeft, size = 36.dp) {
                     feedback.vibration()
                     intentChannel.trySend(ViewIntent.Clean)
                     onBack.invoke()
@@ -133,12 +141,17 @@ fun NoteDetailsUI(
                 Box(Modifier.align(Alignment.CenterVertically)) {
                     var expanded by remember { mutableStateOf(false) }
                     /** 文件夹弹窗 */
-                    FolderDropdownMenu(expanded, noteFolders, viewState.selectedFolder, onDismiss = {
-                        expanded = false
-                    }, onClick = {
-                        //选择分类文件夹
-                        intentChannel.trySend(ViewIntent.SelectFolder(it))
-                    })
+                    FolderDropdownMenu(
+                        expanded,
+                        noteFolders,
+                        viewState.selectedFolder,
+                        onDismiss = {
+                            expanded = false
+                        },
+                        onClick = {
+                            //选择分类文件夹
+                            intentChannel.trySend(ViewIntent.SelectFolder(it))
+                        })
                     /** 选择文件夹 */
                     ChooseClassifyButton(viewState.selectedFolder?.name, onClick = {
                         expanded = true
@@ -154,7 +167,7 @@ fun NoteDetailsUI(
                     intentChannel.trySend(ViewIntent.UIStateChanged(state))
                     feedback.vibration()
                 }
-                /** 切换搜索模式 */
+                /** 切换 添加/搜索 模式 */
                 SearchButton(viewState.uiState == UIState.Search) {
                     val isAdd = viewState.uiState != UIState.Add
                     if (isAdd) {
@@ -171,7 +184,7 @@ fun NoteDetailsUI(
                 SaveTitleAndSet(viewState.canSaveTitle, saveClick = {
                     intentChannel.trySend(ViewIntent.ModifyTitle)
                 }, setClick = {
-                    postEventValue(EventBus.NavController,  NavigateRouter.DetailPage.Set)
+                    postEventValue(EventBus.NavController, NavigateRouter.DetailPage.Set)
 
                 })
                 Spacer(Modifier.width(16.dp))
@@ -215,12 +228,15 @@ fun NoteDetailsUI(
             /**
              * 笔记内容
              */
-            val searchResultTransition = updateTransition(viewState.uiState== UIState.Search, "showCommentArrangementTransition")
+            val searchResultTransition = updateTransition(
+                viewState.uiState == UIState.Search,
+                "showCommentArrangementTransition"
+            )
 
 
 
-            searchResultTransition.AnimatedContent { isSearchUI->
-                if (isSearchUI){
+            searchResultTransition.AnimatedContent { isSearchUI ->
+                if (isSearchUI) {
                     /**
                      * 搜索结果
                      */
@@ -231,7 +247,7 @@ fun NoteDetailsUI(
                         intentChannel.trySend(ViewIntent.ModifyContentChanged(it))
                         isShowContentModifierDialog = true
                     })
-                }else{
+                } else {
                     ContentList(noteContents,
                         onMove = { moveContents ->
                             intentChannel.trySend(ViewIntent.MovePosition(moveContents))
@@ -255,11 +271,13 @@ fun NoteDetailsUI(
             intentChannel.trySend(ViewIntent.ModifyContent(it))
         }
     )
+
+    LaunchedEffect(isSearch) {
+        if (isSearch && GlobalData.searchContent.isNotEmpty()){
+            intentChannel.trySend(ViewIntent.InitSearch)
+            intentChannel.trySend(ViewIntent.UIStateChanged(UIState.Search))
+            intentChannel.trySend(ViewIntent.ContentChanged(GlobalData.searchContent))
+            intentChannel.trySend(ViewIntent.SearchContent(GlobalData.searchContent))
+        }
+    }
 }
-
-
-fun ColumnScope.toNoteDetailsUI(it: NoteEntity) {
-    GlobalData.noteDetailsNoteEntity = it
-    postEventValue(EventBus.NavController, NavigateRouter.DetailPage.Detail)
-}
-

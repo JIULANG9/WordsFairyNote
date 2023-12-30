@@ -44,15 +44,14 @@ fun NoteDetailsPage(
     var animReady by remember { mutableStateOf(false) }
     var animFinish by remember { mutableStateOf(false) }
     var visible by remember { mutableStateOf(false) }
-    val cornerSize by animateDpAsState(if (animFinish) 0.dp else 16.dp)
+    val cornerSize by animateDpAsState(if (animFinish) 0.dp else 16.dp, label = "animateDpAsState")
 
     val DEPLOYMENT_DURATION = 560
 
     val size by animateIntSizeAsState(
         if (pageState > NoteDetailState.Closed) fullSize else cardSize,
-        animationSpec = tween(DEPLOYMENT_DURATION)
+        animationSpec = tween(DEPLOYMENT_DURATION), label = "animateIntSizeAsState"
     )
-    Log.d("NoteDetailsPage", "cardSize : $cardSize size : $size")
 
     val fullOffset = remember { IntOffset(0, 0) }
 

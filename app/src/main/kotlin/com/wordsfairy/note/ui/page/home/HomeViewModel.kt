@@ -83,7 +83,7 @@ class HomeViewModel @Inject internal constructor(
     }
 
     private fun Flow<HomeViewIntent>.toPartialChangeFlow(): Flow<HomePartialChange> =
-        shareWhileSubscribed().run {
+        run {
             /** 初始化 */
             val initFlow = filterIsInstance<HomeViewIntent.Initial>()
                 .log("[Intent]")

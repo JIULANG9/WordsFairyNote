@@ -31,18 +31,7 @@ android {
     }
 
     signingConfigs {
-        // 签名配置
-//        getByName("debug") {
-//            keyAlias = SigningConfigs.key_alias
-//            keyPassword = SigningConfigs.key_password
-//            storeFile = file(SigningConfigs.store_file)
-//            storePassword = SigningConfigs.store_password
-//            enableV1Signing = true
-//            enableV2Signing = true
-//            enableV3Signing = true
-//            enableV4Signing = true
-//
-//        }
+
         create("release") {
             keyAlias = SigningConfigs.key_alias
             keyPassword = SigningConfigs.key_password

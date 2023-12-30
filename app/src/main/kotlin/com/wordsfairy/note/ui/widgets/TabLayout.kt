@@ -62,7 +62,7 @@ fun HomeTab(
     val scope = rememberCoroutineScope()
     val feedback = LocalHapticFeedback.current
 
-    var isVibration by remember { mutableStateOf(0) }
+    var isVibration by remember { mutableIntStateOf(0) }
 
 
     val currentIndex = pagerState.currentPage
@@ -110,19 +110,7 @@ fun HomeTab(
                 }
             }
         }
-        IconButton(onClick = {
-            feedback.vibration()
-            context.postEventValue(
-                EventBus.NavController,
-                NavigateRouter.HomePage.FolderManage
-            )
-        }) {
-            Image(
-                painter = painterResource(AppResId.Drawable.Folder),
-                modifier = Modifier.size(26.dp),
-                contentDescription = "Folder"
-            )
-        }
+
         Spacer(Modifier.width(6.dp))
     }
 
@@ -166,46 +154,6 @@ fun HomeTab(
  * @param  height   指示器的高度
  * @param  color    指示器的颜色
  */
-
-@OptIn(ExperimentalFoundationApi::class)
-@Composable
-fun PagerTabIndicatorOld(
-    tabPositions: List<TabPosition>,
-    pagerState: PagerState,
-    color: Color = WordsFairyTheme.colors.themeUi,
-    @FloatRange(from = 0.0, to = 1.0) percent: Float = 0.6f,
-    height: Dp = 5.dp,
-) {
-    Canvas(modifier = Modifier.fillMaxSize()) {
-        val currentPage = minOf(tabPositions.lastIndex, pagerState.currentPage)
-        val currentTab = tabPositions[currentPage]
-        val previousTab = tabPositions.getOrNull(currentPage - 1)
-        val nextTab = tabPositions.getOrNull(currentPage + 1)
-        val fraction = pagerState.currentPageOffsetFraction
-
-        val indicatorWidth = currentTab.width.toPx() * percent
-
-        val indicatorOffset = if (fraction > 0 && nextTab != null) {
-            lerp(currentTab.left, nextTab.left, fraction).toPx()
-        } else if (fraction < 0 && previousTab != null) {
-            lerp(currentTab.left, previousTab.left, -fraction).toPx()
-        } else {
-            currentTab.left.toPx()
-        }
-
-        val canvasHeight = size.height
-        drawRoundRect(
-            color = color,
-            topLeft = Offset(
-                indicatorOffset + (currentTab.width.toPx() * (1 - percent) / 2),
-                canvasHeight - height.toPx()
-            ),
-            size = Size(indicatorWidth + indicatorWidth * abs(fraction), height.toPx()),
-            cornerRadius = CornerRadius(50f)
-        )
-    }
-}
-
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable

@@ -36,13 +36,12 @@ data class NoteEntity(
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id")
     var noteId: Long = 0
-
     companion object {
         fun create(
-             folderId: Long,
-             title: String,
-             noteContextCount: Int,
-             createdAt: Long
+            folderId: Long,
+            title: String,
+            noteContextCount: Int,
+            createdAt: Long
         ):NoteEntity {
             return NoteEntity(
                 folderId,
@@ -54,4 +53,5 @@ data class NoteEntity(
             )
         }
     }
+
 }

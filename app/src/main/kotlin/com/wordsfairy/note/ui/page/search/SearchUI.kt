@@ -18,6 +18,7 @@ import com.wordsfairy.note.ext.coreui.rememberFlowWithLifecycle
 import com.wordsfairy.note.ext.flow.noteStartWith
 import com.wordsfairy.note.ext.flowbus.postEventValue
 import com.wordsfairy.note.ui.common.clickableNoIndication
+import com.wordsfairy.note.ui.page.detail.toNoteDetailsUI
 import com.wordsfairy.note.ui.page.search.widgets.ResultList
 import com.wordsfairy.note.ui.page.search.widgets.SearchEdit
 import com.wordsfairy.note.ui.widgets.*
@@ -80,8 +81,8 @@ fun SearchUI(
         }
 
         ResultList(viewState.resultData,viewState.keyword){
-            GlobalData.noteDetailsNoteEntity = it
-            postEventValue(EventBus.NavController,  NavigateRouter.DetailPage.Detail)
+            toNoteDetailsUI(it,true)
+
         }
     }
 }

@@ -54,7 +54,7 @@ data class ViewState(
 sealed interface ViewIntent : MviIntent {
     object Initial : ViewIntent
     object Clean : ViewIntent
-    object CreateFolder : ViewIntent
+    data class CreateFolder(val folderName: String) : ViewIntent
 
     //创建笔记 实体
     object CreateNoteEntity : ViewIntent

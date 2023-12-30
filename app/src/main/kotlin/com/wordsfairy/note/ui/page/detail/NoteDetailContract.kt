@@ -55,11 +55,13 @@ data class ViewState(
 
 sealed interface ViewIntent : MviIntent {
     data class Initial(val noteEntity: NoteEntity) : ViewIntent
+
     object Clean : ViewIntent
     data class UIStateChanged(val uiState: UIState) : ViewIntent
     object RecentUpdates : ViewIntent
 
     //修改标题
+
 
     data class TitleChanged(val title: String) : ViewIntent
     object ModifyTitle : ViewIntent
@@ -101,6 +103,7 @@ internal sealed interface PartialChange {
                     selectedFolder = noteFolder,
                     title = noteEntity.title
                 )
+
                 is Clean -> vs.copy(canSaveTitle = false)
                 is UIStateChanged -> vs.copy(uiState = uiState)
                 is Title -> vs.copy(title = title, canSaveTitle = canSave)
@@ -109,7 +112,8 @@ internal sealed interface PartialChange {
             }
         }
 
-        data class Init(val noteEntity: NoteEntity, val noteFolder: NoteFolderEntity?) : UI()
+        data class Init(val noteEntity: NoteEntity, val noteFolder: NoteFolderEntity?, ) : UI()
+
         data class RecentUpdates(val recentUpdates: String) : UI()
         object Clean : UI()
         data class UIStateChanged(val uiState: UIState) : UI()

@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.wordsfairy.note.base.BaseViewModel
+import com.wordsfairy.note.constants.GlobalData
 import com.wordsfairy.note.data.entity.SearchNoteEntity
 import com.wordsfairy.note.data.room.repository.NoteRepository
 
@@ -58,7 +59,7 @@ class SearchViewModel @Inject internal constructor(
     }
 
     private fun Flow<ViewIntent>.toPartialChangeFlow(): Flow<PartialChange> =
-        shareWhileSubscribed().run {
+        run {
             /** 初始化 */
             val initFlow = filterIsInstance<ViewIntent.Initial>()
                 .log("[Intent]")
@@ -87,6 +88,7 @@ class SearchViewModel @Inject internal constructor(
                 .map {
                     val keyword = it.keyword
                     val resultData = if (keyword.isNotEmpty()){
+                        GlobalData.searchContent = keyword
                         noteRepository.searchNotes(keyword,resultDataCache)
                     }else{
                         resultDataCache

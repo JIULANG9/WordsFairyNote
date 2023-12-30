@@ -77,7 +77,7 @@ class NoteDataViewModel @Inject internal constructor(
     }
 
     private fun Flow<ViewIntent>.toPartialChangeFlow(): Flow<PartialChange> =
-        shareWhileSubscribed().run {
+        run {
 
 
             val importFileFlow = flow {

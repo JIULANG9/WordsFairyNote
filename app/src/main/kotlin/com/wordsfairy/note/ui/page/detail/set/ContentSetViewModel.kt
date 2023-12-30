@@ -68,7 +68,7 @@ class ContentSetViewModel @Inject internal constructor(
     }
 
     private fun Flow<ViewIntent>.toPartialChangeFlow(): Flow<PartialChange> =
-        shareWhileSubscribed().run {
+        run {
             /** 初始化 */
             val initFlow = filterIsInstance<ViewIntent.Initial>()
                 .log("[Intent]")

@@ -24,5 +24,7 @@ object GlobalData {
    var backupsSelectFolderUri : Uri? = null
    var importFolderUri : Uri? = null
 
+   //搜索的内容
+   var searchContent = ""
 }
 

@@ -64,7 +64,7 @@ class SetViewModel @Inject internal constructor(
     }
 
     private fun Flow<ViewIntent>.toPartialChangeFlow(): Flow<PartialChange> =
-        shareWhileSubscribed().run {
+        run {
             /**切换主题*/
             val switchThemeFlow = filterIsInstance<ViewIntent.SwitchTheme>()
                 .log("[切换主题]")

@@ -76,7 +76,7 @@ class CreateNoteViewModel @Inject internal constructor(
     }
 
     private fun Flow<ViewIntent>.toPartialChangeFlow(): Flow<PartialChange> =
-        shareWhileSubscribed().run {
+        run {
 
             /** 初始化 */
             val initFlow = filterIsInstance<ViewIntent.Initial>()
@@ -93,14 +93,14 @@ class CreateNoteViewModel @Inject internal constructor(
             val titleContentFlow = filterIsInstance<ViewIntent.TitleChanged>()
                 .log("[标题内容]:titleContentFlow")
                 .map { it.title }
-                .distinctUntilChanged()
+               
 
             val titleContentChangeFlow = titleContentFlow.map { title ->
                 val canSave = if (viewStateFlow.value.title == title) {
                     false
                 } else title.isNotEmpty()
                 PartialChange.UI.Title(title, canSave)
-            }.distinctUntilChanged()
+            }
 
             /** 笔记内容 */
             val noteContentChanges = filterIsInstance<ViewIntent.NoteContentChanged>()
@@ -136,13 +136,11 @@ class CreateNoteViewModel @Inject internal constructor(
             /**  创建笔记文件夹 */
             val createFolderFlow = filterIsInstance<ViewIntent.CreateFolder>()
                 .log("[创建笔记文件夹]")
-                .withLatestFrom(addFolderNameChanged) { _, title -> title }
-                .filter { it.isNotEmpty() }
-                .map { folderName ->
+                .map {
                     //文件夹位置递增
                     val position = folderRepository.getMaxPosition() + 1
                     val noteFolderEntity = NoteFolderEntity.create(
-                        folderName,
+                        it.folderName,
                         System.currentTimeMillis(),
                         position = position
                     )

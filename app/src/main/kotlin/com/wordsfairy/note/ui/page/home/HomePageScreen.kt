@@ -30,12 +30,12 @@ import com.wordsfairy.note.ui.page.create.CreateNoteState
 import com.wordsfairy.note.ui.page.create.CreateNotePage
 import com.wordsfairy.note.ui.page.detail.NoteDetailState
 import com.wordsfairy.note.ui.page.detail.NoteDetailsPage
-import com.wordsfairy.note.ui.page.detail.NoteDetailsUI
 import com.wordsfairy.note.ui.page.detail.set.ContentSetUI
 import com.wordsfairy.note.ui.page.backups.BackupsProgressBarUI
 import com.wordsfairy.note.ui.page.backups.NoteDataUI
 import com.wordsfairy.note.ui.page.backups.NoteDataViewModel
 import com.wordsfairy.note.ui.page.backups.ProgressBarUI
+import com.wordsfairy.note.ui.page.detail.noteDetailScreen
 import com.wordsfairy.note.ui.page.detail.toNoteDetailsUI
 import com.wordsfairy.note.ui.page.home.foldermanage.FolderManageUI
 import com.wordsfairy.note.ui.page.search.SearchPage
@@ -79,17 +79,11 @@ fun HomePageScreen(navController: NavHostController) {
             NavigateRouter.SetPage.Set
         ) {
             SetPageUI {
-
                 navController.navigateUp()
             }
         }
-        composable(
-            NavigateRouter.DetailPage.Detail
-        ) {
-            NoteDetailsUI(onBack = {
-                navController.navigateUp()
-            })
-        }
+        noteDetailScreen(navController)
+
         composable(
             NavigateRouter.DetailPage.Set
         ) {
@@ -194,9 +188,9 @@ fun HomePageUI(
                         GlobalData.noteDetailsNoteFolderEntity = it
                     }, itemOnClick = { entity, offset, cardSize ->
                         //关闭过度动画
-                        if (AppSystemSetManage.closeAnimation){
-                            toNoteDetailsUI(entity)
-                        }else{
+                        if (AppSystemSetManage.closeAnimation) {
+                            toNoteDetailsUI(entity,false)
+                        } else {
                             viewModel.noteDetailUISize = cardSize
                             viewModel.noteDetailUIOffset = offset
                             GlobalData.noteDetailsNoteEntity = entity

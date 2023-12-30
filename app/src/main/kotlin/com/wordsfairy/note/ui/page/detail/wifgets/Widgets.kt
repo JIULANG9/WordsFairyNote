@@ -287,7 +287,9 @@ fun ContentList(
                             )
                         )
                     ) {
-                        val elevation = animateDpAsState(if (isDragging) 16.dp else 0.dp)
+                        val elevation = animateDpAsState(if (isDragging) 16.dp else 0.dp,
+                            label = "elevation"
+                        )
                         ImmerseCard(
                             modifier = Modifier
                                 .fillMaxWidth()

@@ -98,7 +98,7 @@ fun AddFolderDialog(
     }) {
 
         LaunchedEffect(Unit) {
-            delay(500)
+            delay(100)
             focusRequester.requestFocus()
         }
         Column(

@@ -246,7 +246,7 @@ fun CreateNoteUI(
             intentChannel.trySend(ViewIntent.NoteFolderNameChanged(""))
         },
         onConfirm = { name ->
-            intentChannel.trySend(ViewIntent.CreateFolder)
+            intentChannel.trySend(ViewIntent.CreateFolder(name))
         })
     if (showDialog.value) {
         GeneralDialog(
