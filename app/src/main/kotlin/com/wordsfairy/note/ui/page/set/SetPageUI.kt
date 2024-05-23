@@ -31,15 +31,17 @@ import androidx.compose.material3.*
 import androidx.compose.ui.Alignment
 
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.ClipboardManager
+import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
 
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.AnnotatedString
 
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
-import com.google.accompanist.insets.statusBarsPadding
-import com.wordsfairy.base.tools.toastLONG
+
 import com.wordsfairy.base.utils.searchInBrowser
 import com.wordsfairy.note.MainActivity
 import com.wordsfairy.note.constants.Constants.URL_BiliBili_WordsFairy
@@ -68,7 +70,7 @@ import com.wordsfairy.note.utils.getVersionName
  * @Data: 2023/4/24 13:22
  */
 
-@OptIn(ExperimentalMaterial3Api::class)
+
 @Composable
 fun SetPageUI(
     viewModel: SetViewModel = hiltViewModel(),
@@ -84,6 +86,7 @@ fun SetPageUI(
     val focusManager = LocalFocusManager.current
     //当前系统是否深色模式
     val isSystemInDark = isSystemInDarkTheme()
+    val clipboardManager: ClipboardManager = LocalClipboardManager.current
 
     LaunchedEffect(viewModel) {
         intentChannel
@@ -189,12 +192,19 @@ fun SetPageUI(
                         "微信",
                         "WordFairy",
                         horizontalPadding = 0.dp
-                    )
+                    ){
+                        clipboardManager.setText(AnnotatedString("WordFairy"))
+                        ToastModel("已复制至剪贴板", ToastModel.Type.Normal).showToast()
+                    }
                     CommonTextItem(
                         "QQ",
                         "2021662556",
                         horizontalPadding = 0.dp
-                    )
+                    ){
+                        clipboardManager.setText(AnnotatedString("2021662556"))
+                        ToastModel("已复制至剪贴板", ToastModel.Type.Normal).showToast()
+
+                    }
                     CommonTextItem(
                         "博客",
                         "掘金",

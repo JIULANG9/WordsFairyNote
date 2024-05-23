@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.*
@@ -88,9 +89,9 @@ fun ModifyFolderDialog(
                 onValueChange = {
                     content = it
                 },
-                colors = TextFieldDefaults.outlinedTextFieldColors(
+                colors = OutlinedTextFieldDefaults.colors(
                     focusedBorderColor = WordsFairyTheme.colors.themeUi,
-                    textColor = WordsFairyTheme.colors.textPrimary
+                    focusedTextColor = WordsFairyTheme.colors.textPrimary
                 ),
                 label = { Text(stringResource(id = AppResId.String.NoteContentText)) },
                 isError = isError

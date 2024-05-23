@@ -150,10 +150,11 @@ fun ContentEditView(
         elevation = 2.dp
     ) {
         Column(
-            Modifier.padding(6.dp)
+            Modifier.padding(horizontal = 6.dp)
         ) {
             var appendTextValue by remember { mutableStateOf("") }
             /** 笔记输入框 */
+            Spacer(Modifier.height(6.dp))
             CreateNoteContentEditView(
                 text = noteContent,
                 addendText = appendTextValue,
@@ -166,19 +167,18 @@ fun ContentEditView(
                     onContentChange.invoke(it)
                 }
             }
-            Spacer(Modifier.height(6.dp))
             Row(Modifier.fillMaxWidth()) {
                 if (isSearch) {
                     NoteTag(string = "搜索模式", Modifier.align(Alignment.Bottom))
                 }
                 Spacer(Modifier.weight(1f))
-                MyButton("剪贴板", color = AppColor.blue) {
+                SmallButton("剪贴板", color = AppColor.blue) {
                     val clipboardText = clipboardManager.getText()?.text ?: ""
                     appendTextValue = clipboardText
                 }
                 Spacer(Modifier.width(6.dp))
                 if (!isSearch) {
-                    MyButton("保存", enabled = canSaved) {
+                    SmallButton("保存", enabled = canSaved) {
                         saveNote.invoke()
                         feedback.vibration()
                     }

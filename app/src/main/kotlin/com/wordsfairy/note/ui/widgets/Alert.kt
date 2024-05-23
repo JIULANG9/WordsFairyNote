@@ -15,21 +15,17 @@ import androidx.compose.material.icons.rounded.CheckCircle
 import androidx.compose.material.icons.rounded.Info
 import androidx.compose.material.icons.rounded.Star
 import androidx.compose.material.icons.rounded.Warning
-import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.layout.Layout
-import androidx.compose.material3.Text
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.wordsfairy.note.ui.theme.LocalAppColors
 import com.wordsfairy.note.ui.theme.WordsFairyTheme
 
 
@@ -256,7 +252,7 @@ fun AlertCriticalPreview() {
             TextContent("Content description")
         },
         actions = {
-            MyButton("AlertInfo", onClick = {})
+            SmallButton("AlertInfo", onClick = {})
 
         },
     )
@@ -268,7 +264,7 @@ fun AlertCriticalPreview() {
             TextContent("Content description")
         },
         actions = {
-            MyButton("AlertInfo", onClick = {})
+            SmallButton("AlertInfo", onClick = {})
         },
     )
 

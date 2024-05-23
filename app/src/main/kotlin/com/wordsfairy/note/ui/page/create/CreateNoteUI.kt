@@ -48,7 +48,6 @@ import com.wordsfairy.note.ui.widgets.*
 import com.wordsfairy.note.ui.widgets.dropdown.FolderDropdownMenu
 import com.wordsfairy.note.ui.widgets.toast.ToastModel
 import com.wordsfairy.note.ui.widgets.toast.showToast
-import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.*
 
@@ -283,8 +282,9 @@ fun NoteContentEditView(
         elevation = 2.dp
     ) {
         Column(
-            Modifier.padding(6.dp)
+            Modifier.padding(horizontal = 6.dp)
         ) {
+            Spacer(Modifier.height(6.dp))
             var appendTextValue by remember { mutableStateOf("") }
             /** 笔记输入框 */
             CreateNoteContentEditView(
@@ -294,70 +294,22 @@ fun NoteContentEditView(
             ) {
                 intentChannel.trySend(ViewIntent.NoteContentChanged(it))
             }
-            Spacer(Modifier.height(6.dp))
             Row(Modifier.fillMaxWidth()) {
                 Spacer(Modifier.width(6.dp))
                 if (viewState.noteEntity != null) {
-                    MyButton("批量创建") {
+                    SmallButton("批量创建") {
                         GlobalData.noteDetailsNoteEntity = viewState.noteEntity
                         txtSelector.invoke()
                     }
                 }
                 Spacer(Modifier.weight(1f))
-                MyButton("剪贴板", color = AppColor.blue) {
+                SmallButton("剪贴板", color = AppColor.blue) {
                     val clipboardText = clipboardManager.getText()?.text ?: ""
                     appendTextValue = clipboardText
                 }
                 Spacer(Modifier.width(6.dp))
-                MyButton("保存", enabled = viewState.canSaved) {
+                SmallButton("保存", enabled = viewState.canSaved) {
                     intentChannel.trySend(ViewIntent.SaveNote)
-                }
-                Spacer(Modifier.width(6.dp))
-            }
-        }
-    }
-}
-
-@OptIn(ExperimentalComposeUiApi::class)
-@Composable
-fun NoteContentEditView(
-    noteContent: String,
-    canSaved: Boolean,
-    onContentChange: (String) -> Unit = {},
-    saveNote: () -> Unit = {},
-) {
-    val clipboardManager = LocalClipboardManager.current
-    val feedback = LocalHapticFeedback.current
-
-    ImmerseCard(
-        modifier = Modifier.padding(12.dp),
-        elevation = 2.dp
-    ) {
-        Column(
-            Modifier.padding(6.dp)
-        ) {
-            var appendTextValue by remember { mutableStateOf("") }
-            /** 笔记输入框 */
-            CreateNoteContentEditView(
-                text = noteContent,
-                addendText = appendTextValue,
-                placeholder = "开始书学",
-                isAutoFocused = false
-            ) {
-                onContentChange.invoke(it)
-            }
-            Spacer(Modifier.height(6.dp))
-            Row(Modifier.fillMaxWidth()) {
-                Spacer(Modifier.weight(1f))
-                MyButton("剪贴板", color = AppColor.blue) {
-                    val clipboardText = clipboardManager.getText()?.text ?: ""
-                    appendTextValue = clipboardText
-
-                }
-                Spacer(Modifier.width(6.dp))
-                MyButton("保存", enabled = canSaved) {
-                    saveNote.invoke()
-                    feedback.vibration()
                 }
                 Spacer(Modifier.width(6.dp))
             }

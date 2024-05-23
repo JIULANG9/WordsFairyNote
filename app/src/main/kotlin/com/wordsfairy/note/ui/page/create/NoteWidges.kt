@@ -12,7 +12,6 @@ import androidx.compose.material.icons.rounded.Check
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -20,7 +19,6 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
@@ -33,7 +31,6 @@ import androidx.compose.ui.unit.sp
 import com.wordsfairy.note.data.entity.NoteContentEntity
 import com.wordsfairy.note.ui.common.click
 import com.wordsfairy.note.ui.common.vibration
-import com.wordsfairy.note.ui.theme.AppColor
 import com.wordsfairy.note.ui.theme.AppResId
 import com.wordsfairy.note.ui.theme.WordsFairyTheme
 import com.wordsfairy.note.ui.widgets.*
@@ -120,10 +117,10 @@ fun AddFolderDialog(
                     },
                 value = text,
                 onValueChange = onValueChange,
-                colors = TextFieldDefaults.outlinedTextFieldColors(
+                colors = OutlinedTextFieldDefaults.colors(
                     focusedBorderColor = WordsFairyTheme.colors.themeUi,
-                    textColor = WordsFairyTheme.colors.textPrimary
-                ),
+                    focusedTextColor = WordsFairyTheme.colors.textPrimary
+                ) ,
                 label = { Text(stringResource(id = AppResId.String.FolderName)) },
                 isError = isError
             )
@@ -213,7 +210,6 @@ fun CreateNoteContentEditView(
             text = textFieldValue.text + addendText,
             selection = TextRange(textFieldValue.text.length + addendText.length)
         )
-
         onValueChange.invoke(textFieldValue.text)
     }
     LaunchedEffect(text) {

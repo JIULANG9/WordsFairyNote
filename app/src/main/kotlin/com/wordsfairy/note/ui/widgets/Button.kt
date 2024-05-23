@@ -1,9 +1,10 @@
 package com.wordsfairy.note.ui.widgets
 
 import androidx.annotation.StringRes
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.AssistChip
+import androidx.compose.material3.AssistChipDefaults
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
@@ -11,7 +12,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -27,21 +27,25 @@ import com.wordsfairy.note.ui.theme.WordsFairyTheme
  * @Data: 2023/4/29 0:24
  */
 @Composable
-fun MyButton(
+fun SmallButton(
     name: String,
     color: Color = WordsFairyTheme.colors.themeUi,
     enabled: Boolean = true,
     onClick: () -> Unit
 ) {
-    Button(
-        modifier = Modifier.height(31.dp), onClick = composeClick {
-            onClick.invoke()
-        },
+
+    AssistChip(onClick = { onClick.invoke() },
+        colors = AssistChipDefaults.assistChipColors(color),
+        shape = RoundedCornerShape(16.dp),
         enabled = enabled,
-        colors = ButtonDefaults.buttonColors(color)
-    ) {
-        Text(text = name, fontSize = 12.sp, color = WordsFairyTheme.colors.textWhite)
-    }
+        border = AssistChipDefaults.assistChipBorder(
+            enabled,
+            borderColor = color,
+            disabledBorderColor = color
+        ),
+        label = {
+            Text(text = name, fontSize = 12.sp, color = if(enabled) WordsFairyTheme.colors.textWhite else WordsFairyTheme.colors.textPrimary)
+        })
 }
 
 @Composable
@@ -64,13 +68,13 @@ fun ButtonPrimitive(
         WordsFairyTheme.colors.textWhite
     }
     Button(
-        modifier =modifier, onClick = composeClick {
+        modifier = modifier, onClick = composeClick {
             onClick.invoke()
         },
         enabled = enabled,
         colors = ButtonDefaults.buttonColors(buttonColors)
     ) {
-        Text(text = name, fontSize = 16.sp, color = textColor,fontWeight = FontWeight.Bold)
+        Text(text = name, fontSize = 16.sp, color = textColor, fontWeight = FontWeight.Bold)
     }
 }
 

@@ -1,13 +1,13 @@
 package com.wordsfairy.note.ui.page.detail
 
-import android.util.Log
+
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.*
-import androidx.compose.animation.core.tween
 import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.rounded.KeyboardArrowLeft
 import androidx.compose.material.icons.rounded.KeyboardArrowLeft
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.*
@@ -19,16 +19,10 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavGraphBuilder
-import androidx.navigation.NavType
-import androidx.navigation.compose.composable
-import androidx.navigation.navArgument
-import com.google.accompanist.navigation.animation.composable
 import com.wordsfairy.base.mvi.core.unit
 import com.wordsfairy.note.constants.EventBus
 import com.wordsfairy.note.constants.GlobalData
 import com.wordsfairy.note.constants.NavigateRouter
-import com.wordsfairy.note.data.entity.NoteEntity
 import com.wordsfairy.note.ext.coreui.rememberFlowWithLifecycle
 import com.wordsfairy.note.ext.flow.noteStartWith
 import com.wordsfairy.note.ext.flowbus.postEventValue
@@ -41,12 +35,9 @@ import com.wordsfairy.note.ui.page.detail.wifgets.*
 import com.wordsfairy.note.ui.theme.WordsFairyTheme
 import com.wordsfairy.note.ui.widgets.*
 import com.wordsfairy.note.ui.widgets.dropdown.FolderDropdownMenu
-import com.wordsfairy.note.ui.widgets.toast.ToastUI
-import com.wordsfairy.note.ui.widgets.toast.ToastUIState
 
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.consumeAsFlow
@@ -132,7 +123,7 @@ fun NoteDetailsUI(
             ) {
                 Spacer(Modifier.width(12.dp))
                 /** 返回 */
-                MyIconButton(imageVector = Icons.Rounded.KeyboardArrowLeft, size = 36.dp) {
+                MyIconButton(imageVector = Icons.AutoMirrored.Rounded.KeyboardArrowLeft, size = 36.dp) {
                     feedback.vibration()
                     intentChannel.trySend(ViewIntent.Clean)
                     onBack.invoke()
@@ -232,9 +223,6 @@ fun NoteDetailsUI(
                 viewState.uiState == UIState.Search,
                 "showCommentArrangementTransition"
             )
-
-
-
             searchResultTransition.AnimatedContent { isSearchUI ->
                 if (isSearchUI) {
                     /**

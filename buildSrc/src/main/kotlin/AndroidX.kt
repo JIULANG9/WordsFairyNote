@@ -16,77 +16,44 @@ object AndroidX {
     const val appcompat = "androidx.appcompat:appcompat:1.4.0-alpha01"
 
     //core包+ktx扩展函数
-    const val coreKtx = "androidx.core:core-ktx:1.9.0"
+    const val coreKtx = "androidx.core:core-ktx:1.13.1"
     const val coresplashscreen = "androidx.core:core-splashscreen:1.0.0"
 
-    //activity+ktx扩展函数
-    const val activityKtx = "androidx.activity:activity-ktx:1.3.1"
-
-    //fragment+ktx扩展函数
-    const val fragmentKtx = "androidx.fragment:fragment-ktx:1.4.0-alpha04"
-
-    //约束布局
-    const val constraintlayout = "androidx.constraintlayout:constraintlayout:2.1.0"
-
-    //卡片控件
-    const val cardview = "androidx.cardview:cardview:1.0.0"
-
-    //recyclerView
-    const val recyclerView = "androidx.recyclerview:recyclerview:1.2.1"
-
-    //swiperefreshlayout
-    const val swiperefreshlayout = "androidx.swiperefreshlayout:swiperefreshlayout:1.2.0-alpha01"
-
     object Compose {
-        private const val version = "1.5.0-alpha03"
+        private const val version = "1.6.7"
         const val ui = "androidx.compose.ui:ui:$version"
-        const val foundation = "androidx.compose.foundation:foundation:1.3.1"
-        const val material = "androidx.compose.material:material:$version"
         const val tooling_preview = "androidx.compose.ui:ui-tooling-preview:$version"
 
         //use debugImplementation
         const val uiTooling = "androidx.compose.ui:ui-tooling:$version"
         const val ui_util = "androidx.compose.ui:ui-util:$version"
-        const val material3 = "androidx.compose.material3:material3:1.1.0-alpha02"
-        const val activity = "androidx.activity:activity-compose:1.6.1"
-        const val runtime = "androidx.compose.runtime:runtime:1.3.0-beta02"
+        const val material3 = "androidx.compose.material3:material3:1.2.1"
+        const val activity = "androidx.activity:activity-compose:1.9.0"
+        const val runtime = "androidx.compose.runtime:runtime:$version"
 
         const val ui_test_manifest = "androidx.compose.ui:ui-test-manifest:1.3.3"
 
-        object accompanist {
-            const val systemuicontroller =
-                "com.google.accompanist:accompanist-systemuicontroller:0.30.1"
-            const val insets = "com.google.accompanist:accompanist-insets:0.31.5-beta"
-            const val insets_ui = "com.google.accompanist:accompanist-insets-ui:0.31.5-beta"
-            const val placeholder =
-                "com.google.accompanist:accompanist-placeholder-material:0.24.7-alpha"
-        }
+        object Accompanist {
+            private const val Version = "0.34.0"
 
+            const val systemuicontroller =
+                "com.google.accompanist:accompanist-systemuicontroller:$Version"
+            const val insets = "com.google.accompanist:accompanist-insets:0.30.1"
+            const val placeholder =
+                "com.google.accompanist:accompanist-placeholder-material:$Version"
+        }
         //更多compose工具集查看 accompanist项目#https://github.com/google/accompanist
     }
 
-    object ViewPager {
-        //viewpager
-        const val viewpager = "androidx.viewpager:viewpager:1.0.0"
-
-        //viewpager2
-        const val viewpager2 = "androidx.viewpager2:viewpager2:1.1.0-beta01"
-    }
 
     object Paging {
-        private const val version = "3.2.0-alpha05"
+        private const val version = "3.2.1"
         const val runtime = "androidx.paging:paging-runtime:$version"
         const val runtimeKtx = "androidx.paging:paging-runtime-ktx:$version"
-
         // optional - Guava ListenableFuture support
         const val guava = "androidx.paging:paging-guava:$version"
-
-        // alternatively - without Android dependencies for tests
-        const val testingCommon = "androidx.paging:paging-common:$version"
-        const val testingCommonKtx = "androidx.paging:paging-common-ktx:$version"
-
         // optional - Jetpack Compose integration
-        const val compose = "androidx.paging:paging-compose:1.0.0-alpha19"
+        const val compose = "androidx.paging:paging-compose:$version"
     }
 
     object Hilt {
@@ -109,10 +76,8 @@ object AndroidX {
     }
 
     object Lifecycle {
-        private const val version = "2.5.1"
+        private const val version = "2.7.0"
 
-        @Deprecated("lifecycle-extensions 已弃用，截至到目前最后一个版本2.2.0，ViewModelProviders.of()被废弃了，使用ViewModelProvider(ViewModelStoreOwner)")
-        const val extensions = "androidx.lifecycle:lifecycle-extensions:2.2.0"
 
         const val livedata = "androidx.lifecycle:lifecycle-livedata:$version"
         const val liveDataKtx = "androidx.lifecycle:lifecycle-livedata-ktx:$version"
@@ -145,7 +110,7 @@ object AndroidX {
 
     object Navigation {
         //这个版本支持多返回栈了
-        private const val version = "2.6.0-beta01"
+        private const val version = "2.7.7"
 
         //const val fragment = "androidx.navigation:navigation-fragment:$version"
         const val fragmentKtx = "androidx.navigation:navigation-fragment-ktx:$version"
@@ -203,10 +168,9 @@ object AndroidX {
     }
 
     object DataStore {
-        private const val version = "1.1.0-dev01"
+        private const val version = "1.1.1"
         const val preferences = "androidx.datastore:datastore-preferences:$version"
         const val core = "androidx.datastore:datastore-core:$version"
-
 
     }
 

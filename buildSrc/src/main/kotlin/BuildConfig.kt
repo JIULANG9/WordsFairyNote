@@ -3,15 +3,15 @@
  * @description 编译配置信息
  */
 object BuildConfig {
-    const val compileSdk = 33
+    const val compileSdk = 34
     const val buildToolsVersion ="33"
     const val minSdkVersion = 21
-    const val targetSdkVersion = 33
+    const val targetSdkVersion = 34
 
     const val applicationId ="com.wordsfairy.note"
     const val testInstrumentationRunner="androidx.test.runner.AndroidJUnitRunner"
-    var versionName = "1.5.0"
-    var versionCode = 7
+    var versionName = "1.6.0"
+    var versionCode = 8
 }
 object SigningConfigs{
     /** 密钥别名 */

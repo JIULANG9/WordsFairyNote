@@ -70,6 +70,9 @@ fun FolderManageUI(
                 is SingleEvent.UI.Success -> {
                     focusManager.clearFocus()
                 }
+                is SingleEvent.UI.CreateFolder -> {
+                    intentChannel.trySend(ViewIntent.NoteFolderNameChanged("")).let { }
+                }
             }.unit
         }
     }
@@ -149,9 +152,6 @@ fun FolderManageUI(
         },
         onDismiss = {
             isShowAddFolderDialog = false
-            intentChannel.trySend(
-                ViewIntent.NoteFolderNameChanged("")
-            )
         },
         onConfirm = {
             intentChannel.trySend(ViewIntent.CreateFolder)

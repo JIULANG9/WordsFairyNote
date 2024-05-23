@@ -50,8 +50,6 @@ import com.wordsfairy.note.ui.theme.H5
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-
-@OptIn(ExperimentalComposeUiApi::class)
 @ExperimentalMaterial3Api
 @Composable
 fun SearchEditView(
@@ -91,9 +89,10 @@ fun SearchEditView(
         placeholder = {
             TextContent(hintText)
         },
-        colors = TextFieldDefaults.textFieldColors(
-            textColor = WordsFairyTheme.colors.textPrimary,
-            containerColor = WordsFairyTheme.colors.itemBackground,
+        colors = TextFieldDefaults.colors(
+            focusedTextColor = WordsFairyTheme.colors.textPrimary,
+            focusedContainerColor = WordsFairyTheme.colors.itemBackground,
+            unfocusedContainerColor = WordsFairyTheme.colors.itemBackground,
             focusedIndicatorColor = Color.Transparent, // 有焦点时的颜色，透明
             unfocusedIndicatorColor = Color.Transparent, // 无焦点时的颜色，绿色
         ),
@@ -162,9 +161,10 @@ fun CommentEditView(
         placeholder = {
             TextContent(hintText)
         },
-        colors = TextFieldDefaults.textFieldColors(
-            textColor = WordsFairyTheme.colors.textPrimary,
-            containerColor = WordsFairyTheme.colors.whiteBackground,
+        colors = TextFieldDefaults.colors(
+            focusedTextColor = WordsFairyTheme.colors.textPrimary,
+            focusedContainerColor = WordsFairyTheme.colors.itemBackground,
+            unfocusedContainerColor = WordsFairyTheme.colors.itemBackground,
             focusedIndicatorColor = Color.Transparent, // 有焦点时的颜色，透明
             unfocusedIndicatorColor = Color.Transparent, // 无焦点时的颜色，绿色
         ),
@@ -309,6 +309,8 @@ fun TextInputFieldOne(
     )
 }
 
+
+
 @OptIn(ExperimentalFoundationApi::class)
 @ExperimentalComposeUiApi
 @Composable
@@ -336,7 +338,6 @@ fun TextFieldInputField(
     val scope = rememberCoroutineScope()
     val ime = LocalWindowInsets.current.ime
 
-
     // Bring the composable into view (visible to user).
     LaunchedEffect(ime.isVisible, interactionSourceState.value) {
         if (ime.isVisible && interactionSourceState.value) {
@@ -346,7 +347,6 @@ fun TextFieldInputField(
             }
         }
     }
-
 
     val focusRequester = remember { FocusRequester() }
     val keyboardController = LocalSoftwareKeyboardController.current
@@ -390,7 +390,8 @@ fun TextFieldInputField(
             keyboardType = keyboardType,
             imeAction = imeAction ?: if (singleLine) ImeAction.Done else ImeAction.Default
         ),
-        interactionSource = interactionSource,
+        //导致回车换行，焦点消失，暂时注释，以后解决
+       // interactionSource = interactionSource,
         readOnly = readOnly,
         decorationBox = { innerTextField ->
             Box(
@@ -405,12 +406,11 @@ fun TextFieldInputField(
                     Modifier
                         .fillMaxWidth()
                         .padding(
-                            top = if (singleLine) 0.dp else 12.dp,
+                            top = if (singleLine) 2.dp else 12.dp,
                             bottom = if (singleLine) 2.dp else 12.dp
                         )
                 ) {
                     innerTextField()
-
                     if (textField.text.isEmpty()) {
                         Text(
                             text = placeholder,

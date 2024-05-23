@@ -56,9 +56,15 @@ class FolderManageViewModel @Inject internal constructor(
     }
 
     private fun Flow<PartialChange>.sendSingleEvent(): Flow<PartialChange> {
-        return onEach { change ->
 
-        }
+            return onEach { change ->
+                val event = when (change) {
+                    is PartialChange.NoteData.CreateFolder -> SingleEvent.UI.CreateFolder
+                    else -> return@onEach
+                }
+                sendEvent(event)
+            }
+
     }
 
     private fun Flow<ViewIntent>.toPartialChangeFlow(): Flow<PartialChange> =

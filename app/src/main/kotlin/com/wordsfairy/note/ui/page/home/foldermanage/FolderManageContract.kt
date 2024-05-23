@@ -41,7 +41,7 @@ data class ViewState(
 sealed interface SingleEvent : MviSingleEvent {
     sealed interface UI : SingleEvent {
         object Success : UI
-
+        object CreateFolder : UI
     }
 }
 

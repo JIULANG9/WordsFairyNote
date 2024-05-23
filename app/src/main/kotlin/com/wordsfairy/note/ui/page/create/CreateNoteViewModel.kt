@@ -193,7 +193,6 @@ class CreateNoteViewModel @Inject internal constructor(
                         if ((newNoteEntity.title != note.title) ||
                             (newNoteEntity.folderId != note.folderId)
                         ) {
-
                             newNoteEntity.title = note.title
                             newNoteEntity.folderId = note.folderId
                             noteEntityRepository.update(newNoteEntity)
