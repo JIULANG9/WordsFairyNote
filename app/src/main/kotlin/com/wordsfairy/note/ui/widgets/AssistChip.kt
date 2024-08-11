@@ -21,7 +21,7 @@ fun NoteTag(string: String, modifier: Modifier = Modifier,
 ) {
     Text(
         text = string,
-        modifier = modifier.background(AppColor.themeAccent, RoundedCornerShape(6.dp)).padding(2.dp),
+        modifier = modifier.background(AppColor.themeAccent, RoundedCornerShape(6.dp)).padding(horizontal = 5.dp),
         color = AppColor.themeColor,
         fontSize = 12.sp
     )

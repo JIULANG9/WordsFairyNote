@@ -1,4 +1,5 @@
 import kotlin.collections.*
+
 plugins {
     id("com.android.application")
     id("kotlin-android")
@@ -13,9 +14,9 @@ android {
     compileSdk = BuildConfig.compileSdk
 
 
-    defaultConfig{
+    defaultConfig {
         applicationId = BuildConfig.applicationId
-        minSdk=BuildConfig.minSdkVersion
+        minSdk = BuildConfig.minSdkVersion
         targetSdk = BuildConfig.targetSdkVersion
         versionCode = BuildConfig.versionCode
         versionName = BuildConfig.versionName
@@ -47,7 +48,6 @@ android {
     buildTypes {
         debug {
             isMinifyEnabled = false
-            isZipAlignEnabled = false
             isShrinkResources = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
@@ -58,13 +58,11 @@ android {
 
         release {
             isMinifyEnabled = true
-            isZipAlignEnabled = true
             isShrinkResources = true
             isDebuggable = false //是否debug
-            isJniDebuggable  = false // 是否打开jniDebuggable开关
-            isZipAlignEnabled = true //压缩优化
+            isJniDebuggable = false // 是否打开jniDebuggable开关
 
-            proguardFiles (
+            proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
@@ -96,47 +94,47 @@ android {
 
 dependencies {
 
-    implementation (AndroidX.coreKtx)
-    implementation (AndroidX.coresplashscreen)
-    implementation (AndroidX.Lifecycle.runtimeKtx)
-    implementation (AndroidX.Compose.activity)
-    implementation (AndroidX.Compose.ui)
-    implementation (AndroidX.Compose.tooling_preview)
-    implementation (AndroidX.Compose.material3)
-    implementation (AndroidX.Compose.runtime)
-    implementation (AndroidX.Compose.ui_util)
-    implementation (AndroidX.Compose.Accompanist.insets)
-    implementation (AndroidX.Compose.Accompanist.placeholder)
-    implementation (AndroidX.Compose.Accompanist.systemuicontroller)
-    implementation (AndroidX.Paging.compose)
-    implementation (AndroidX.Paging.runtimeKtx)
-    implementation (AndroidX.Navigation.compose)
-    implementation (AndroidX.Navigation.uiKtx)
-    implementation (AndroidX.Navigation.animation)
-    implementation (AndroidX.Work.runtime)
-    implementation (AndroidX.Work.runtime_ktx)
-    implementation (AndroidX.multidex)
-    implementation (AndroidX.Documentfile)
+    implementation(AndroidX.coreKtx)
+    implementation(AndroidX.coresplashscreen)
+    implementation(AndroidX.Lifecycle.runtimeKtx)
+    implementation(AndroidX.Compose.activity)
+    implementation(AndroidX.Compose.ui)
+    implementation(AndroidX.Compose.tooling_preview)
+    implementation(AndroidX.Compose.material3)
+    implementation(AndroidX.Compose.runtime)
+    implementation(AndroidX.Compose.ui_util)
+    implementation(AndroidX.Compose.Accompanist.insets)
+    implementation(AndroidX.Compose.Accompanist.placeholder)
+    implementation(AndroidX.Compose.Accompanist.systemuicontroller)
+    implementation(AndroidX.Paging.compose)
+    implementation(AndroidX.Paging.runtimeKtx)
+    implementation(AndroidX.Navigation.compose)
+    implementation(AndroidX.Navigation.uiKtx)
+    implementation(AndroidX.Navigation.animation)
+    implementation(AndroidX.Work.runtime)
+    implementation(AndroidX.Work.runtime_ktx)
+    implementation(AndroidX.multidex)
+    implementation(AndroidX.Documentfile)
     //Hilt
-    implementation (AndroidX.Hilt.common)
-    kapt (AndroidX.Hilt.compiler)
-    implementation (AndroidX.Hilt.navigation_compose)
+    implementation(AndroidX.Hilt.common)
+    kapt(AndroidX.Hilt.compiler)
+    implementation(AndroidX.Hilt.navigation_compose)
 
     //Room
     implementation(AndroidX.Room.runtime)
     kapt(AndroidX.Room.compiler)
     implementation(AndroidX.Room.ktx)
 
-   // debugImplementation(ThirdPart.leakcanary)
+    // debugImplementation(ThirdPart.leakcanary)
 
     implementation(project(Lib.base))
     implementation(project(Lib.common))
 
-    debugImplementation (AndroidX.Compose.uiTooling)
-    debugImplementation (AndroidX.Compose.ui_test_manifest)
+    debugImplementation(AndroidX.Compose.uiTooling)
+    debugImplementation(AndroidX.Compose.ui_test_manifest)
 
-    testImplementation (Testing.junit)
-    androidTestImplementation (Testing.androidJunit)
-    androidTestImplementation (Testing.espresso)
-    androidTestImplementation (Testing.compose_ui_test)
+    testImplementation(Testing.junit)
+    androidTestImplementation(Testing.androidJunit)
+    androidTestImplementation(Testing.espresso)
+    androidTestImplementation(Testing.compose_ui_test)
 }

@@ -16,6 +16,8 @@ sealed interface ViewIntent : MviIntent {
     object Initial : ViewIntent
     data class SearchEngines(val url: String) : ViewIntent
     data class CopyJumpToWeChat(val jump: Boolean) : ViewIntent
+//    长文本自动折叠
+    data class LongTextAutoFold(val fold: Boolean) : ViewIntent
     object RecycleNote : ViewIntent
     object RecycleNoteContents : ViewIntent
     data class ShowDialog(val  dialogDataBean: DialogDataBean) : ViewIntent
@@ -25,6 +27,7 @@ data class ViewState(
     val isLoading: Boolean,
     val currentUrl: String,
     val jumpToWeChat: Boolean,
+    val longTextAutoFold: Boolean,
     val dialogDataBean: DialogDataBean
 ) : MviViewState {
     companion object {
@@ -32,6 +35,7 @@ data class ViewState(
             isLoading = true,
             currentUrl = AppSystemSetManage.searchEngines,
             jumpToWeChat = AppSystemSetManage.jumpToWeChat,
+            longTextAutoFold = AppSystemSetManage.longTextAutoFold,
             dialogDataBean = DialogDataBean.create(),
         )
     }
@@ -53,12 +57,14 @@ internal sealed interface PartialChange {
                 is Dialog -> vs
                 is SetSearchEngines -> vs.copy(currentUrl = url)
                 is CopyJumpToWeChat -> vs.copy(jumpToWeChat = jump)
+                is LongTextAutoFold -> vs.copy(longTextAutoFold = fold)
                 is ShowDialog -> vs.copy(dialogDataBean = dialogDataBean)
             }
         }
         object Init : UI()
         data class SetSearchEngines(val url:String) : UI()
         data class CopyJumpToWeChat(val jump:Boolean) : UI()
+        data class LongTextAutoFold(val fold:Boolean) : UI()
         data class ShowDialog(val dialogDataBean :DialogDataBean) : UI()
         data class Dialog(val dialogDataBean :DialogDataBean) : UI()
     }

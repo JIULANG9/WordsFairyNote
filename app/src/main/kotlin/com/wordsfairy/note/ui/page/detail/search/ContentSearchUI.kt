@@ -24,6 +24,7 @@ import com.wordsfairy.note.ext.coreui.rememberFlowWithLifecycle
 import com.wordsfairy.note.ext.flow.noteStartWith
 import com.wordsfairy.note.ui.common.autoCloseKeyboard
 import com.wordsfairy.note.ui.common.clickableNoIndication
+import com.wordsfairy.note.ui.common.onPressNoIndication
 import com.wordsfairy.note.ui.theme.AppResId
 import com.wordsfairy.note.ui.widgets.SearchEditView
 import kotlinx.coroutines.channels.Channel
@@ -80,7 +81,7 @@ fun ContentSearchUI(
     Column(
         Modifier
             .fillMaxSize()
-            .clickableNoIndication(focusManager),
+            .onPressNoIndication(focusManager),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         SearchEditView(

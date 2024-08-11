@@ -60,7 +60,12 @@ object AppSystemSetManage {
     var jumpToWeChat: Boolean
         get() = DataStoreUtils.readBooleanData(JumpToWeChat, false)
         set(value) = DataStoreUtils.saveSyncBooleanData(JumpToWeChat, value = value)
-
+    /**
+     * 长文本自动折叠 默认开启
+     */
+    var longTextAutoFold: Boolean
+        get() = DataStoreUtils.readBooleanData("long_text_auto_fold", true)
+        set(value) = DataStoreUtils.saveSyncBooleanData("long_text_auto_fold", value = value)
     /**
      * 首页索引
      */

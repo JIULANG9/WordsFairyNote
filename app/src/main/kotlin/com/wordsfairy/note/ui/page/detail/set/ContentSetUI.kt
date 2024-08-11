@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.KeyboardArrowLeft
 import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -152,20 +153,18 @@ fun ContentSetUI(
 
         ImmerseCard(Modifier.padding(12.dp)) {
             Column {
-                AnimateContentIcon("数据批量导出/导入") {
-                    CommonItemIcon("导入 [txt]") {
-                        txtSelectorLauncher.launch(txtSelectorIntent)
-                    }
-                    CommonItemIcon("导出(即将开发)") {
-                        ToastModel("即将开发", ToastModel.Type.Normal).showToast()
-                    }
-                }
-                ItemDividerSetUI()
+
                 CommonItemSwitch(
                     "复制后转跳微信",
                     viewState.jumpToWeChat
                 ) { jump ->
                     intentChannel.trySend(ViewIntent.CopyJumpToWeChat(jump))
+                }
+                CommonItemSwitch(
+                    "长文本自动折叠",
+                    viewState.longTextAutoFold
+                ) { jump ->
+                    intentChannel.trySend(ViewIntent.LongTextAutoFold(jump))
                 }
                 ItemDividerSetUI()
 
@@ -188,6 +187,18 @@ fun ContentSetUI(
                         if (viewState.currentUrl == google) AppResId.Drawable.Correct else null
                     CommonItemIcon("谷歌", iconId = googleIcon) {
                         intentChannel.trySend(ViewIntent.SearchEngines(google))
+                    }
+                }
+            }
+        }
+        ImmerseCard(Modifier.padding(12.dp)) {
+            Column {
+                AnimateContentIcon("数据批量导出/导入") {
+                    CommonItemIcon("导入 [txt]") {
+                        txtSelectorLauncher.launch(txtSelectorIntent)
+                    }
+                    CommonItemIcon("导出(即将开发)") {
+                        ToastModel("即将开发", ToastModel.Type.Normal).showToast()
                     }
                 }
                 ItemDividerSetUI()
@@ -252,11 +263,11 @@ fun ContentSetUI(
  */
 @Composable
 private fun ItemDividerSetUI() {
-    Divider(
+    HorizontalDivider(
         Modifier
             .fillMaxWidth()
             .padding(horizontal = 20.dp),
-        color = WordsFairyTheme.colors.textSecondary,
-        thickness = 0.3.dp
+        thickness = 0.3.dp,
+        color = WordsFairyTheme.colors.textSecondary
     )
 }

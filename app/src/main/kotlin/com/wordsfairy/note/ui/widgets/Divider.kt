@@ -2,9 +2,10 @@ package com.wordsfairy.note.ui.widgets
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.wordsfairy.note.ui.theme.WordsFairyTheme
 
@@ -18,12 +19,12 @@ import com.wordsfairy.note.ui.theme.WordsFairyTheme
  * 分割线
  */
 @Composable
-fun ItemDivider() {
-    Divider(
+fun ItemDivider(hPadding: Dp = 20.dp) {
+    HorizontalDivider(
         Modifier
             .fillMaxWidth()
-            .padding(horizontal = 20.dp),
-        color = WordsFairyTheme.colors.textSecondary,
-        thickness = 0.3.dp
+            .padding(horizontal = hPadding),
+        thickness = 0.3.dp,
+        color = WordsFairyTheme.colors.textSecondary
     )
 }

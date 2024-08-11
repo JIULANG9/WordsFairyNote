@@ -1,8 +1,7 @@
 package com.wordsfairy.note.ui.common
 
+import android.annotation.SuppressLint
 import android.app.Activity
-import android.content.Context
-import android.view.inputmethod.InputMethodManager
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -14,9 +13,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.hapticfeedback.HapticFeedback
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.semantics.Role
-import androidx.core.content.ContextCompat.getSystemService
 import com.wordsfairy.base.tools.hideKeyboard
 import com.wordsfairy.note.MainActivity
 
@@ -29,6 +26,7 @@ const val VIEW_CLICK_INTERVAL_TIME = 800
 /**
  * 防止重复点击(有的人可能会手抖连点两次,造成奇怪的bug)
  */
+@SuppressLint("ModifierFactoryUnreferencedReceiver")
 @Composable
 inline fun Modifier.click(
     time: Int = VIEW_CLICK_INTERVAL_TIME,
@@ -113,7 +111,7 @@ fun Modifier.autoCloseKeyboard(activity: Activity = MainActivity.CONTEXT): Modif
         )
     }
 
-
+//不会触发水波纹之类的效果
 @Composable
 fun Modifier.clickableNoIndication(focusManager: FocusManager) =
     this.clickable(
@@ -126,6 +124,25 @@ fun Modifier.clickableNoIndication(focusManager: FocusManager) =
             MutableInteractionSource()
         }
     )
+/**
+ * 点击时,自动隐藏键盘
+ * 同时解决 输入框 换行时,输入法消失的问题
+ */
+@Composable
+fun Modifier.onPressNoIndication(focusManager: FocusManager) =
+    this.pointerInput(Unit) {
+        detectTapGestures(
+            onDoubleTap = {
+            },
+            onLongPress = {
+            },
+            onPress = {
+            },
+            onTap = {
+                focusManager.clearFocus()
+            }
+        )
+    }
 
 fun HapticFeedback.vibration() {
     this.performHapticFeedback(HapticFeedbackType.TextHandleMove)

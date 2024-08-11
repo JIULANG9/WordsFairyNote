@@ -7,6 +7,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -29,8 +30,11 @@ fun TextNoteContent(
     text: String,
     modifier: Modifier = Modifier,
     color: Color = WordsFairyTheme.colors.textPrimary,
-    textAlign: TextAlign = TextAlign.Start
+    textAlign: TextAlign = TextAlign.Start,
+    isFold: Boolean = false,
+    onTextLayout: ((TextLayoutResult) -> Unit)? = null,
 ) {
+
 //    SelectionContainer {
 //        Text(
 //            text = text,
@@ -45,7 +49,10 @@ fun TextNoteContent(
         modifier = modifier,
         fontSize = 17.sp,
         color = color,
-        textAlign = textAlign
+        textAlign = textAlign,
+        onTextLayout = onTextLayout,
+        maxLines = if (isFold) 6 else Int.MAX_VALUE, // 限制最多显示3行
+        overflow = TextOverflow.Ellipsis // 当文本超出时显示省
     )
 }
 
@@ -105,15 +112,18 @@ fun MiniText(
 }
 
 @Composable
-fun BigTitle( title: String,
-              modifier: Modifier = Modifier,) {
+fun BigTitle(
+    title: String,
+    modifier: Modifier = Modifier,
+) {
     Title(
         title = title,
         modifier = modifier,
         fontSize = H3,
-        color =  WordsFairyTheme.colors.textPrimary
+        color = WordsFairyTheme.colors.textPrimary
     )
 }
+
 @Composable
 fun TextSecondary(
     text: String,
@@ -127,12 +137,30 @@ fun TextSecondary(
         text = text,
         modifier = modifier.placeholder(
             visible = isLoading,
-        ),
+
+            ),
         fontSize = 15.sp,
         color = color,
         maxLines = maxLines,
         overflow = TextOverflow.Ellipsis,
         textAlign = textAlign
+    )
+}
+
+@Composable
+fun MiniTimeText(
+    text: String,
+    modifier: Modifier = Modifier,
+    fontSize: TextUnit = H8,
+    color: Color = WordsFairyTheme.colors.textSecondary,
+) {
+    Text(
+        text = text,
+        modifier = modifier,
+        fontWeight = FontWeight.Normal,
+        fontSize = fontSize,
+        color = color,
+        maxLines = 1,
     )
 }
 

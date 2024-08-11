@@ -39,6 +39,7 @@ import com.wordsfairy.note.ext.flow.noteStartWith
 import com.wordsfairy.note.ext.flowbus.observeEvent
 import com.wordsfairy.note.ext.flowbus.postEventValue
 import com.wordsfairy.note.ui.common.clickableNoIndication
+import com.wordsfairy.note.ui.common.onPressNoIndication
 import com.wordsfairy.note.ui.common.vibration
 
 import com.wordsfairy.note.ui.theme.AppColor
@@ -165,7 +166,7 @@ fun CreateNoteUI(
             .fillMaxSize()
             .blur(if (isShowAddFolderDialog) 6.dp else 0.dp)
             .background(WordsFairyTheme.colors.whiteBackground)
-            .clickableNoIndication(focusManager)
+            .onPressNoIndication(focusManager)
             .systemBarsPadding()
     ) {
         Row(
@@ -284,16 +285,9 @@ fun NoteContentEditView(
         Column(
             Modifier.padding(horizontal = 6.dp)
         ) {
-            Spacer(Modifier.height(6.dp))
+
             var appendTextValue by remember { mutableStateOf("") }
-            /** 笔记输入框 */
-            CreateNoteContentEditView(
-                text = viewState.noteContent,
-                addendText = appendTextValue,
-                placeholder = "开始书学"
-            ) {
-                intentChannel.trySend(ViewIntent.NoteContentChanged(it))
-            }
+
             Row(Modifier.fillMaxWidth()) {
                 Spacer(Modifier.width(6.dp))
                 if (viewState.noteEntity != null) {
@@ -313,6 +307,15 @@ fun NoteContentEditView(
                 }
                 Spacer(Modifier.width(6.dp))
             }
+            /** 笔记输入框 */
+            CreateNoteContentEditView(
+                text = viewState.noteContent,
+                addendText = appendTextValue,
+                placeholder = "开始书学"
+            ) {
+                intentChannel.trySend(ViewIntent.NoteContentChanged(it))
+            }
+            Spacer(Modifier.height(6.dp))
         }
     }
 }

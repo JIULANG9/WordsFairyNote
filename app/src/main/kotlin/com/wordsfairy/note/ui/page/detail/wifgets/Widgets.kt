@@ -4,7 +4,9 @@ import android.os.Parcelable
 import androidx.compose.animation.*
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -17,6 +19,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
@@ -154,22 +157,9 @@ fun ContentEditView(
         ) {
             var appendTextValue by remember { mutableStateOf("") }
             /** 笔记输入框 */
-            Spacer(Modifier.height(6.dp))
-            CreateNoteContentEditView(
-                text = noteContent,
-                addendText = appendTextValue,
-                placeholder = if (isSearch) "搜索笔记" else "开始书学",
-                isAutoFocused = false
-            ) {
-                if (isSearch) {
-                    onSearch.invoke(it)
-                } else {
-                    onContentChange.invoke(it)
-                }
-            }
             Row(Modifier.fillMaxWidth()) {
                 if (isSearch) {
-                    NoteTag(string = "搜索模式", Modifier.align(Alignment.Bottom))
+                    NoteTag(string = "搜索模式", Modifier.align(Alignment.CenterVertically))
                 }
                 Spacer(Modifier.weight(1f))
                 SmallButton("剪贴板", color = AppColor.blue) {
@@ -185,6 +175,19 @@ fun ContentEditView(
                 }
                 Spacer(Modifier.width(6.dp))
             }
+            CreateNoteContentEditView(
+                text = noteContent,
+                addendText = appendTextValue,
+                placeholder = if (isSearch) "搜索笔记" else "开始书学",
+                isAutoFocused = false
+            ) {
+                if (isSearch) {
+                    onSearch.invoke(it)
+                } else {
+                    onContentChange.invoke(it)
+                }
+            }
+            Spacer(Modifier.height(6.dp))
         }
     }
 }
@@ -199,7 +202,7 @@ fun ContentList(
     onDelete: (NoteContentEntity) -> Unit,
     onModify: (NoteContentEntity) -> Unit,
 ) {
-
+    val autoFold = AppSystemSetManage.longTextAutoFold
     var showProgress by remember { mutableStateOf(false) }
     LaunchedEffect(Unit) {
         delay(460)
@@ -258,6 +261,7 @@ fun ContentList(
             }
         }
         val deletedRouteList = remember { mutableStateListOf<Long>() }
+
         LazyColumn(
             state = state.listState,
             modifier = Modifier.reorderable(state)
@@ -287,7 +291,8 @@ fun ContentList(
                             )
                         )
                     ) {
-                        val elevation = animateDpAsState(if (isDragging) 16.dp else 0.dp,
+                        val elevation = animateDpAsState(
+                            if (isDragging) 16.dp else 0.dp,
                             label = "elevation"
                         )
                         ImmerseCard(
@@ -302,12 +307,15 @@ fun ContentList(
                             shape = RoundedCornerShape(6.dp),
                             backgroundColor = WordsFairyTheme.colors.itemImmerse,
                         ) {
-                            ContentLayout(item, state, onDelete = { id ->
-                                deletedRouteList.add(id)
-                                onDelete.invoke(noteContentsCache[index])
-                            }, onModify = {
-                                onModify.invoke(noteContentsCache[index])
-                            })
+                            ContentLayout(item = item,
+                                state = state,
+                                autoFold = autoFold,
+                                onDelete = { id ->
+                                    deletedRouteList.add(id)
+                                    onDelete.invoke(noteContentsCache[index])
+                                }, onModify = {
+                                    onModify.invoke(noteContentsCache[index])
+                                })
                         }
                     }
                 }
@@ -327,6 +335,7 @@ fun SearchResultList(
     onModify: (NoteContentEntity) -> Unit,
 ) {
     var data by remember { mutableStateOf<List<NoteContentItem>>(mutableListOf()) }
+    val autoFold = AppSystemSetManage.longTextAutoFold
 
     val isVisible = noteContents.isNotEmpty()
     if (isVisible) {
@@ -365,12 +374,14 @@ fun SearchResultList(
                         shape = RoundedCornerShape(6.dp),
                         backgroundColor = WordsFairyTheme.colors.itemImmerse,
                     ) {
-                        ContentLayout(item, null, onDelete = { id ->
-                            deletedRouteList.add(id)
-                            onDelete.invoke(noteContents[index])
-                        }, onModify = {
-                            onModify.invoke(noteContents[index])
-                        })
+                        ContentLayout(item = item, state = null,
+                            autoFold = autoFold,
+                            onDelete = { id ->
+                                deletedRouteList.add(id)
+                                onDelete.invoke(noteContents[index])
+                            }, onModify = {
+                                onModify.invoke(noteContents[index])
+                            })
                     }
                 }
             }
@@ -381,26 +392,87 @@ fun SearchResultList(
 
 @Composable
 private fun ContentLayout(
-    item: NoteContentItem, state: ReorderableLazyListState?,
+    item: NoteContentItem,
+    state: ReorderableLazyListState?,
+    autoFold: Boolean = true,
     onDelete: (Long) -> Unit,
     onModify: () -> Unit,
 ) {
     var expanded by remember { mutableStateOf(false) }
+
     val context = LocalContext.current
+    val scope = rememberCoroutineScope()
+    val feedback = LocalHapticFeedback.current
     val clipboardManager: ClipboardManager = LocalClipboardManager.current
 
+    //折叠
+    var isFold by remember { mutableStateOf(autoFold) }
+    //超出6行
+    var isExceed by remember { mutableStateOf(false) }
+    // 用于延迟更新状态
+    val rotationValue: Float by animateFloatAsState(
+        if (isFold) 0f else 180f,
+        label = "isFoldRotation",
+        animationSpec = tween(
+            durationMillis = 399,
+            easing = LinearEasing
+        )
+    )
     Box(
         Modifier
             .click { expanded = true }
-            .padding(start = 9.dp, top = 1.dp, bottom = 1.dp, end = 3.dp)
+            .padding(start = 9.dp, top = 1.dp, bottom = 1.dp, end = 6.dp)
             .fillMaxWidth(),
         contentAlignment = Alignment.CenterStart
     ) {
-        TextNoteContent(
-            text = item.content,
-            Modifier.padding(vertical = 9.dp),
-            color = WordsFairyTheme.colors.textPrimary
-        )
+        Column(
+            modifier = Modifier
+                .wrapContentSize(),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Spacer(modifier = Modifier.height(9.dp))
+            TextNoteContent(
+                text = item.content,
+                modifier = Modifier
+                    .fillMaxWidth(),
+                color = WordsFairyTheme.colors.textPrimary,
+                isFold = isFold,
+                onTextLayout = { result ->
+                    // 更新 isExceed 状态  如果折叠并且实际行数超过6行，则设置 isExceed 为 true
+                    scope.launch {
+                        if (isFold && (result.didOverflowWidth || result.didOverflowHeight)) {
+                            isExceed = true
+                        } else if (!isFold) {
+                            isExceed = result.lineCount > 6
+                        }
+                    }
+                }
+            )
+
+            if (isExceed && autoFold) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .click {
+                            isFold = !isFold
+                            feedback.vibration()
+                        },
+                ) {
+                    Image(
+                        painter = painterResource(id = AppResId.Drawable.Arrow_Down),
+                        contentDescription = "right",
+                        Modifier
+                            .size(24.dp)
+                            .rotate(rotationValue)
+                            .align(Alignment.Center)
+                    )
+                }
+            } else {
+                Spacer(modifier = Modifier.height(9.dp))
+            }
+
+        }
+
         if (state != null) {
             IconButtonWithHiddenIcon(
                 imageVector = Icons.Rounded.Menu,
@@ -409,7 +481,6 @@ private fun ContentLayout(
                     .align(Alignment.TopEnd)
             )
         }
-
         NoteContentDropdownMenu(expanded, onDismiss = {
             expanded = false
         }) {
@@ -444,6 +515,7 @@ private fun ContentLayout(
                 }
             }
         }
+
     }
 }
 

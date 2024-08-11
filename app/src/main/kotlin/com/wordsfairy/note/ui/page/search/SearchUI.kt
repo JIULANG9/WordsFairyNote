@@ -18,6 +18,7 @@ import com.wordsfairy.note.ext.coreui.rememberFlowWithLifecycle
 import com.wordsfairy.note.ext.flow.noteStartWith
 import com.wordsfairy.note.ext.flowbus.postEventValue
 import com.wordsfairy.note.ui.common.clickableNoIndication
+import com.wordsfairy.note.ui.common.onPressNoIndication
 import com.wordsfairy.note.ui.page.detail.toNoteDetailsUI
 import com.wordsfairy.note.ui.page.search.widgets.ResultList
 import com.wordsfairy.note.ui.page.search.widgets.SearchEdit
@@ -73,7 +74,7 @@ fun SearchUI(
         Modifier
             .fillMaxSize()
             .statusBarsPadding()
-            .clickableNoIndication(focusManager),
+            .onPressNoIndication(focusManager),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         SearchEdit(viewState.keyword){

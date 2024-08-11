@@ -27,6 +27,7 @@ import com.wordsfairy.note.ext.coreui.rememberFlowWithLifecycle
 import com.wordsfairy.note.ext.flow.noteStartWith
 import com.wordsfairy.note.ext.flowbus.postEventValue
 import com.wordsfairy.note.ui.common.clickableNoIndication
+import com.wordsfairy.note.ui.common.onPressNoIndication
 import com.wordsfairy.note.ui.common.vibration
 
 import com.wordsfairy.note.ui.page.create.ChooseClassifyButton
@@ -115,7 +116,7 @@ fun NoteDetailsUI(
                 .fillMaxSize()
                 .blur(if (isShowContentModifierDialog) 6.dp else 0.dp)
                 .background(WordsFairyTheme.colors.whiteBackground)
-                .clickableNoIndication(focusManager) //点击无涟漪效果
+                .onPressNoIndication(focusManager) //点击无涟漪效果
                 .systemBarsPadding()
         ) {
             Row(

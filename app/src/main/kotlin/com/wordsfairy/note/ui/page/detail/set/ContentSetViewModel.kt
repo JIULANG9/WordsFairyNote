@@ -85,13 +85,20 @@ class ContentSetViewModel @Inject internal constructor(
 
             /** 复制之后转跳微信 */
             val jumpToWeChatFlow = filterIsInstance<ViewIntent.CopyJumpToWeChat>()
-                .log("[SearchEngines]")
+                .log("[JumpToWeChatFlow]")
                 .map {
                     val jump =it.jump
                     AppSystemSetManage.jumpToWeChat =jump
                     PartialChange.UI.CopyJumpToWeChat(jump)
                 }.distinctUntilChanged()
-
+            /** 长文本自动折叠 */
+            val longTextAutoFoldFlow = filterIsInstance<ViewIntent.LongTextAutoFold>()
+                .log("[longTextAutoFoldFlow]")
+                .map {
+                    val fold =it.fold
+                    AppSystemSetManage.longTextAutoFold =fold
+                    PartialChange.UI.LongTextAutoFold(fold)
+                }.distinctUntilChanged()
             /** 回收笔记实体 */
             val recycleNoteFlow = filterIsInstance<ViewIntent.RecycleNote>()
                 .log("[回收笔记实体]")
@@ -120,6 +127,7 @@ class ContentSetViewModel @Inject internal constructor(
             return merge(
                 initFlow,searchEnginesFlow,
                 jumpToWeChatFlow,
+                longTextAutoFoldFlow,
                 recycleNoteFlow,
                 recycleNoteContentsFlow,
                 showDialogFlow

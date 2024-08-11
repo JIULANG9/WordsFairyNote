@@ -190,10 +190,18 @@ fun SetPageUI(
                 AnimateContentIcon("联系作者") {
                     CommonTextItem(
                         "微信",
-                        "WordFairy",
+                        "ISSWENJIE",
                         horizontalPadding = 0.dp
                     ){
-                        clipboardManager.setText(AnnotatedString("WordFairy"))
+                        clipboardManager.setText(AnnotatedString("ISSWENJIE"))
+                        ToastModel("已复制至剪贴板", ToastModel.Type.Normal).showToast()
+                    }
+                    CommonTextItem(
+                        "微信公众号",
+                        "九狼",
+                        horizontalPadding = 0.dp
+                    ){
+                        clipboardManager.setText(AnnotatedString("九狼"))
                         ToastModel("已复制至剪贴板", ToastModel.Type.Normal).showToast()
                     }
                     CommonTextItem(
@@ -203,7 +211,6 @@ fun SetPageUI(
                     ){
                         clipboardManager.setText(AnnotatedString("2021662556"))
                         ToastModel("已复制至剪贴板", ToastModel.Type.Normal).showToast()
-
                     }
                     CommonTextItem(
                         "博客",

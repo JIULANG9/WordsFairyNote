@@ -20,7 +20,7 @@ object AndroidX {
     const val coresplashscreen = "androidx.core:core-splashscreen:1.0.0"
 
     object Compose {
-        private const val version = "1.6.7"
+        private const val version = "1.6.8"
         const val ui = "androidx.compose.ui:ui:$version"
         const val tooling_preview = "androidx.compose.ui:ui-tooling-preview:$version"
 
@@ -28,19 +28,19 @@ object AndroidX {
         const val uiTooling = "androidx.compose.ui:ui-tooling:$version"
         const val ui_util = "androidx.compose.ui:ui-util:$version"
         const val material3 = "androidx.compose.material3:material3:1.2.1"
-        const val activity = "androidx.activity:activity-compose:1.9.0"
+        const val activity = "androidx.activity:activity-compose:1.9.1"
         const val runtime = "androidx.compose.runtime:runtime:$version"
 
         const val ui_test_manifest = "androidx.compose.ui:ui-test-manifest:1.3.3"
 
         object Accompanist {
-            private const val Version = "0.34.0"
+            private const val version = "0.34.0"
 
             const val systemuicontroller =
-                "com.google.accompanist:accompanist-systemuicontroller:$Version"
+                "com.google.accompanist:accompanist-systemuicontroller:$version"
             const val insets = "com.google.accompanist:accompanist-insets:0.30.1"
             const val placeholder =
-                "com.google.accompanist:accompanist-placeholder-material:$Version"
+                "com.google.accompanist:accompanist-placeholder-material:$version"
         }
         //更多compose工具集查看 accompanist项目#https://github.com/google/accompanist
     }
@@ -50,8 +50,10 @@ object AndroidX {
         private const val version = "3.2.1"
         const val runtime = "androidx.paging:paging-runtime:$version"
         const val runtimeKtx = "androidx.paging:paging-runtime-ktx:$version"
+
         // optional - Guava ListenableFuture support
         const val guava = "androidx.paging:paging-guava:$version"
+
         // optional - Jetpack Compose integration
         const val compose = "androidx.paging:paging-compose:$version"
     }
@@ -141,7 +143,7 @@ object AndroidX {
 
 
     object Room {
-        private const val version = "2.5.1"
+        private const val version = "2.6.1"
 
         const val runtime = "androidx.room:room-runtime:$version"
 
@@ -179,7 +181,6 @@ object AndroidX {
         const val runtime = "androidx.work:work-runtime:$version"
         const val runtime_ktx = "androidx.work:work-runtime-ktx:$version"
     }
-
 
 
     const val Documentfile = "androidx.documentfile:documentfile:1.0.1"

@@ -20,6 +20,7 @@ val H4 = 20.sp  //普通标题
 val H5 = 16.sp  //内容文本
 val H6 = 13.sp  //普通文字尺寸
 val H7 = 12.sp  //提示语尺寸
+val H8 = 10.sp  //提示语尺寸
 
 val ToolBarTitleSize = 18.sp
 

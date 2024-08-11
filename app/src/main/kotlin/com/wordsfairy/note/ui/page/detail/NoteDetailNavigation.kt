@@ -16,6 +16,7 @@ import com.wordsfairy.note.constants.GlobalData
 import com.wordsfairy.note.constants.NavigateRouter
 import com.wordsfairy.note.data.entity.NoteEntity
 import com.wordsfairy.note.ext.flowbus.postEventValue
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import java.net.URLDecoder
 
 
@@ -26,6 +27,8 @@ fun ColumnScope.toNoteDetailsUI(it: NoteEntity, isSearch: Boolean) {
     GlobalData.noteDetailsNoteEntity = it
     postEventValue(EventBus.NavController, NavigateRouter.DetailPage.Detail + "/$isSearch")
 }
+
+@OptIn(ExperimentalCoroutinesApi::class)
 @ExperimentalAnimationApi
 fun NavGraphBuilder.noteDetailScreen(
     navController: NavHostController
@@ -44,6 +47,6 @@ fun NavGraphBuilder.noteDetailScreen(
         val isSearch = backStackEntry.arguments?.getBoolean(Detail_Is_Search)
         NoteDetailsUI(onBack = {
             navController.navigateUp()
-        },  isSearch?:false)
+        }, isSearch ?: false)
     }
 }

@@ -20,6 +20,7 @@ object AppResId {
         var ReadMode =  R.drawable.app_ic_read_mode
         var Modify =  R.drawable.app_ic_modify
         var Arrow_Right =  R.drawable.app_ic_arrow_right
+        var Arrow_Down =  R.drawable.app_ic_arrow_down
         var Correct =  R.drawable.app_ic_correct
     }
     object Mipmap {

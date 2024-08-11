@@ -31,11 +31,12 @@ fun NoteContentDropdownMenu(
     onClick: (Int) -> Unit,
 ) {
     val list = listOf(
-        ContextItem(1,"",AppResId.Drawable.Search),
-        ContextItem(2,"复制",AppResId.Drawable.Copy),
-        ContextItem(3,"转发",AppResId.Drawable.Forward),
-        ContextItem(4,"删除",AppResId.Drawable.Delete),
-        ContextItem(5,"修改",AppResId.Drawable.Modify))
+        ContextItem(1, "", AppResId.Drawable.Search),
+        ContextItem(2, "复制", AppResId.Drawable.Copy),
+        ContextItem(3, "转发", AppResId.Drawable.Forward),
+        ContextItem(4, "删除", AppResId.Drawable.Delete),
+        ContextItem(5, "修改", AppResId.Drawable.Modify)
+    )
 
     DropdownMenu(
         expanded = expanded,
@@ -43,7 +44,7 @@ fun NoteContentDropdownMenu(
         offset = DpOffset(9.dp, 0.dp),
         onDismissRequest = onDismiss,
     ) {
-        Row(Modifier.padding(1.dp),verticalAlignment = Alignment.CenterVertically) {
+        Row(Modifier.padding(1.dp), verticalAlignment = Alignment.CenterVertically) {
             list.forEachIndexed { index, item ->
                 val haveName = item.name.isNotEmpty()
 
@@ -62,12 +63,18 @@ fun NoteContentDropdownMenu(
                     Image(
                         painter = painterResource(id = item.icon),
                         contentDescription = item.name,
-                        Modifier.size(if (haveName) 19.dp else 26.dp),
-                        colorFilter= ColorFilter.tint(color = WordsFairyTheme.colors.iconBlack)
+                        Modifier
+                            .padding(3.dp)
+                            .size(if (haveName) 19.dp else 26.dp),
+                        colorFilter = ColorFilter.tint(color = WordsFairyTheme.colors.iconBlack)
                     )
-                    if (haveName){
+                    if (haveName) {
                         Spacer(Modifier.height(2.dp))
-                        Title(item.name, color = WordsFairyTheme.colors.textPrimary, fontSize = 13.sp)
+                        Title(
+                            item.name,
+                            color = WordsFairyTheme.colors.textPrimary,
+                            fontSize = 13.sp
+                        )
                     }
                 }
             }
@@ -76,4 +83,4 @@ fun NoteContentDropdownMenu(
 }
 
 
-private data class ContextItem(val id: Int,val name: String,val icon:Int)
+private data class ContextItem(val id: Int, val name: String, val icon: Int)

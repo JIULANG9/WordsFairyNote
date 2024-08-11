@@ -18,7 +18,6 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.blur
 import androidx.compose.ui.input.pointer.pointerInput
 
 import androidx.compose.ui.tooling.preview.Preview
@@ -30,7 +29,6 @@ import com.wordsfairy.note.data.entity.NoteFolderEntity
 import com.wordsfairy.note.ui.common.click
 import com.wordsfairy.note.ui.theme.AppColor
 import com.wordsfairy.note.ui.theme.WordsFairyTheme
-import com.wordsfairy.note.ui.widgets.ImmerseCard
 import com.wordsfairy.note.ui.widgets.Title
 
 
