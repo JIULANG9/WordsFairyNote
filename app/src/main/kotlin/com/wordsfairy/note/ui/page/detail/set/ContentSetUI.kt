@@ -8,7 +8,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.KeyboardArrowLeft
-import androidx.compose.material3.Divider
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -40,8 +39,6 @@ import com.wordsfairy.note.ui.theme.AppResId
 import com.wordsfairy.note.ui.theme.WordsFairyTheme
 import com.wordsfairy.note.ui.widgets.*
 import com.wordsfairy.note.ui.widgets.toast.ToastModel
-import com.wordsfairy.note.ui.widgets.toast.ToastUI
-import com.wordsfairy.note.ui.widgets.toast.ToastUIState
 import com.wordsfairy.note.ui.widgets.toast.showToast
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.collect

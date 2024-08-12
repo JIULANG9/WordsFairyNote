@@ -1,11 +1,8 @@
 package com.wordsfairy.note.ui.page.detail
 
-import android.annotation.SuppressLint
-import android.util.Log
 import androidx.annotation.VisibleForTesting
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.layout.ColumnScope
-import androidx.lifecycle.SavedStateHandle
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.NavGraphBuilder
@@ -17,7 +14,6 @@ import com.wordsfairy.note.constants.NavigateRouter
 import com.wordsfairy.note.data.entity.NoteEntity
 import com.wordsfairy.note.ext.flowbus.postEventValue
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import java.net.URLDecoder
 
 
 @VisibleForTesting

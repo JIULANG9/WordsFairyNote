@@ -8,7 +8,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.KeyboardArrowLeft
-import androidx.compose.material.icons.rounded.KeyboardArrowLeft
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -26,7 +25,6 @@ import com.wordsfairy.note.constants.NavigateRouter
 import com.wordsfairy.note.ext.coreui.rememberFlowWithLifecycle
 import com.wordsfairy.note.ext.flow.noteStartWith
 import com.wordsfairy.note.ext.flowbus.postEventValue
-import com.wordsfairy.note.ui.common.clickableNoIndication
 import com.wordsfairy.note.ui.common.onPressNoIndication
 import com.wordsfairy.note.ui.common.vibration
 
@@ -124,7 +122,10 @@ fun NoteDetailsUI(
             ) {
                 Spacer(Modifier.width(12.dp))
                 /** 返回 */
-                MyIconButton(imageVector = Icons.AutoMirrored.Rounded.KeyboardArrowLeft, size = 36.dp) {
+                MyIconButton(
+                    imageVector = Icons.AutoMirrored.Rounded.KeyboardArrowLeft,
+                    size = 36.dp
+                ) {
                     feedback.vibration()
                     intentChannel.trySend(ViewIntent.Clean)
                     onBack.invoke()
@@ -262,7 +263,7 @@ fun NoteDetailsUI(
     )
 
     LaunchedEffect(isSearch) {
-        if (isSearch && GlobalData.searchContent.isNotEmpty()){
+        if (isSearch && GlobalData.searchContent.isNotEmpty()) {
             intentChannel.trySend(ViewIntent.InitSearch)
             intentChannel.trySend(ViewIntent.UIStateChanged(UIState.Search))
             intentChannel.trySend(ViewIntent.ContentChanged(GlobalData.searchContent))

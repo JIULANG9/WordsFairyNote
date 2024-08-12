@@ -18,8 +18,6 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.consumeAsFlow
 import kotlinx.coroutines.flow.onEach
-import androidx.compose.animation.*
-import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
@@ -27,7 +25,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.KeyboardArrowLeft
 
-import androidx.compose.material3.*
 import androidx.compose.ui.Alignment
 
 import androidx.compose.ui.Modifier
@@ -58,7 +55,6 @@ import com.wordsfairy.note.ext.flowbus.postEventValue
 import com.wordsfairy.note.ui.common.vibration
 import com.wordsfairy.note.ui.theme.AppResId
 import com.wordsfairy.note.ui.theme.WordsFairyTheme
-import com.wordsfairy.note.ui.theme.WordsFairyThemeLiveData
 import com.wordsfairy.note.ui.widgets.*
 import com.wordsfairy.note.ui.widgets.toast.ToastModel
 import com.wordsfairy.note.ui.widgets.toast.showToast
@@ -192,7 +188,7 @@ fun SetPageUI(
                         "微信",
                         "ISSWENJIE",
                         horizontalPadding = 0.dp
-                    ){
+                    ) {
                         clipboardManager.setText(AnnotatedString("ISSWENJIE"))
                         ToastModel("已复制至剪贴板", ToastModel.Type.Normal).showToast()
                     }
@@ -200,7 +196,7 @@ fun SetPageUI(
                         "微信公众号",
                         "九狼",
                         horizontalPadding = 0.dp
-                    ){
+                    ) {
                         clipboardManager.setText(AnnotatedString("九狼"))
                         ToastModel("已复制至剪贴板", ToastModel.Type.Normal).showToast()
                     }
@@ -208,7 +204,7 @@ fun SetPageUI(
                         "QQ",
                         "2021662556",
                         horizontalPadding = 0.dp
-                    ){
+                    ) {
                         clipboardManager.setText(AnnotatedString("2021662556"))
                         ToastModel("已复制至剪贴板", ToastModel.Type.Normal).showToast()
                     }
@@ -238,14 +234,14 @@ fun SetPageUI(
                         "官网下载",
                         "测试版v1.0",
                         horizontalPadding = 0.dp
-                    ){
+                    ) {
                         context.searchInBrowser(URL_WordsFairyApp)
                     }
                     CommonTextItem(
                         "UI视频展示",
                         "BiliBili",
                         horizontalPadding = 0.dp
-                    ){
+                    ) {
                         context.searchInBrowser(URL_BiliBili_WordsFairy)
                     }
                 }

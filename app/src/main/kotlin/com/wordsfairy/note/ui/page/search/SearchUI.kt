@@ -8,6 +8,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.unit.dp
 
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.wordsfairy.base.mvi.core.unit
@@ -24,6 +25,7 @@ import com.wordsfairy.note.ui.page.search.widgets.ResultList
 import com.wordsfairy.note.ui.page.search.widgets.SearchEdit
 import com.wordsfairy.note.ui.widgets.*
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.consumeAsFlow
@@ -59,31 +61,33 @@ fun SearchUI(
     LaunchedEffect(singleEvent) {
         singleEvent.collectLatest { event ->
             when (event) {
-                is SingleEvent.UI.Success ->{
+                is SingleEvent.UI.Success -> {
                     focusManager.clearFocus()
                 }
             }.unit
         }
     }
-
+    var isVisibility by remember { mutableStateOf(false) }
     BackHandler(true) {
         onBack()
+        isVisibility = false
     }
-
+    LaunchedEffect(Unit) {
+        delay(366)
+        isVisibility = true
+    }
     Column(
         Modifier
             .fillMaxSize()
-            .statusBarsPadding()
+            .systemBarsPadding()
             .onPressNoIndication(focusManager),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        SearchEdit(viewState.keyword){
+        SearchEdit(viewState.keyword) {
             intentChannel.trySend(ViewIntent.SearchKeyword(it))
         }
-
-        ResultList(viewState.resultData,viewState.keyword){
-            toNoteDetailsUI(it,true)
-
+        ResultList(viewState.resultData, viewState.keyword, isVisibility) {
+            toNoteDetailsUI(it, true)
         }
     }
 }

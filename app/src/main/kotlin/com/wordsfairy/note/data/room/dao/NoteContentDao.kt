@@ -20,11 +20,16 @@ interface NoteContentDao {
 
 
     @Query("SELECT MAX(position) FROM $NoteContentTableName WHERE note_id =:noteId")
-    fun getMaxPosition(noteId:Long): Int
+    fun getMaxPosition(noteId: Long): Int
 
     /** 最近更新 */
     @Query("SELECT MAX(updateAt) FROM $NoteContentTableName WHERE note_id =:noteId")
-    fun getRecentUpdates(noteId:Long): Long
+    fun getRecentUpdates(noteId: Long): Long
+
+    /** 通过NoteEntitId 查询 NoteContentEntity 并且 模糊查询 内容*/
+
+    @Query("SELECT * FROM $NoteContentTableName WHERE note_id = :noteId AND (is_delete = 0) AND content LIKE '%' || :keyword || '%'")
+    suspend fun searchNoteContents(noteId: Long, keyword: String): List<NoteContentEntity>
 
     @Insert
     suspend fun insert(noteContent: NoteContentEntity): Long

@@ -4,14 +4,12 @@ import com.wordsfairy.note.data.entity.NoteContentEntity
 import com.wordsfairy.note.data.entity.NoteFolderEntity
 import com.wordsfairy.note.data.entity.NoteInfo
 import com.wordsfairy.note.data.entity.SearchNoteEntity
+import com.wordsfairy.note.data.room.dao.NoteContentDao
 import com.wordsfairy.note.data.room.dao.NoteDao
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.Deferred
-import kotlinx.coroutines.async
-import kotlinx.coroutines.flow.buffer
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -23,6 +21,7 @@ import javax.inject.Singleton
 @Singleton
 class NoteRepository @Inject constructor(
     private val noteDao: NoteDao,
+    private val noteContentDao: NoteContentDao
 ) {
 
 
@@ -34,20 +33,23 @@ class NoteRepository @Inject constructor(
         return noteDao.getAllNoteInfo().map { noteInfoList ->
             val allNotes = noteDao.getHomeNoteAndNoteContents().map { noteAndNoteContent ->
                 noteAndNoteContent.copy(
-                    noteContents = noteAndNoteContent.noteContents.filter { !it.isDelete }.takeLast(5).reversed()
+                    noteContents = noteAndNoteContent.noteContents.filter { !it.isDelete }
+                        .takeLast(5).reversed()
                 )
             }
             val allNoteInfo = NoteInfo(
-                NoteFolderEntity.create(name = "全部",0L),
+                NoteFolderEntity.create(name = "全部", 0L),
                 allNotes
             )
             listOf(allNoteInfo) + noteInfoList.map { noteInfo ->
                 noteInfo.copy(
-                    noteAndNoteContents = noteInfo.noteAndNoteContents.filter { !it.noteEntity.isDelete }.map { noteAndNoteContent ->
-                        noteAndNoteContent.copy(
-                            noteContents = noteAndNoteContent.noteContents.filter { !it.isDelete }.takeLast(5).reversed()
-                        )
-                    }
+                    noteAndNoteContents = noteInfo.noteAndNoteContents.filter { !it.noteEntity.isDelete }
+                        .map { noteAndNoteContent ->
+                            noteAndNoteContent.copy(
+                                noteContents = noteAndNoteContent.noteContents.filter { !it.isDelete }
+                                    .takeLast(5).reversed()
+                            )
+                        }
                 )
             }
         }.flowOn(Dispatchers.IO)
@@ -60,14 +62,17 @@ class NoteRepository @Inject constructor(
     fun getAllNoteInfo(): Flow<List<NoteInfo>> {
         return noteDao.getAllNoteInfo().map { noteInfoList ->
 
-            val unclassifiedNotes = noteDao.getHomeNoteAndNoteContents().filter{ it.noteEntity.folderId ==0L }.map { noteAndNoteContent ->
-                noteAndNoteContent.copy(
-                    noteContents = noteAndNoteContent.noteContents.filter { !it.isDelete }.reversed()
-                )
-            }
+            val unclassifiedNotes =
+                noteDao.getHomeNoteAndNoteContents().filter { it.noteEntity.folderId == 0L }
+                    .map { noteAndNoteContent ->
+                        noteAndNoteContent.copy(
+                            noteContents = noteAndNoteContent.noteContents.filter { !it.isDelete }
+                                .reversed()
+                        )
+                    }
 
             val allNoteInfo = NoteInfo(
-                NoteFolderEntity.create(name = "未分类",0L),
+                NoteFolderEntity.create(name = "未分类", 0L),
                 unclassifiedNotes
             )
             listOf(allNoteInfo)
@@ -75,7 +80,8 @@ class NoteRepository @Inject constructor(
                 noteInfo.copy(
                     noteAndNoteContents = noteInfo.noteAndNoteContents.map { noteAndNoteContent ->
                         noteAndNoteContent.copy(
-                            noteContents = noteAndNoteContent.noteContents.filter { !it.isDelete }.reversed()
+                            noteContents = noteAndNoteContent.noteContents.filter { !it.isDelete }
+                                .reversed()
                         )
                     }
                 )
@@ -87,12 +93,28 @@ class NoteRepository @Inject constructor(
      * 搜索
      * @return List<SearchNoteEntity>
      */
-    suspend fun getSearchNotes(): List<SearchNoteEntity> {
-        return noteDao.getNotesWithNameAndContent()
+    suspend fun getSearchUIData(): List<SearchNoteEntity> {
+        // 从数据库获取所有 NoteEntity 及其关联的 NoteContentEntity
+        val searchUIData = noteDao.getSearchUIData()
+
+        // 处理每个 SearchNoteEntity 的 noteContents，保留最新的五条记录
+        val processedData = searchUIData.map { noteEntity ->
+            // 获取该 NoteEntity 的所有 NoteContentEntity
+            val contents = noteEntity.noteContents
+            // 按照 createdAt 排序并取前3条
+            val latestFiveContents = contents.sortedByDescending { it.createdAt }.take(3)
+            // 创建一个新的 SearchNoteEntity 对象，其中 noteContents 只包含最新的五条记录
+            SearchNoteEntity(
+                folderName = noteEntity.folderName,
+                noteEntity = noteEntity.noteEntity,
+                noteContents = latestFiveContents
+            )
+        }
+        return processedData
     }
 
     /**
-     主要的优化点有:
+    主要的优化点有:
     1. 使用HashSet代替ArrayList存储folderName和noteTitle,避免重复和加快查找速度。
     2. 使用HashMap代替ArrayList存储noteContents,key为noteId加快查找速度。
     3. 先分别检查folderName、noteTitle和noteContents,过滤出包含关键词的项。
@@ -105,7 +127,7 @@ class NoteRepository @Inject constructor(
      * @param noteList List<SearchNoteEntity>
      * @return List<SearchNoteEntity>
      */
-    fun searchNotes(
+    fun searchNotes_old(
         keyword: String,
         noteList: List<SearchNoteEntity>
     ): List<SearchNoteEntity> {
@@ -142,7 +164,27 @@ class NoteRepository @Inject constructor(
         return results.distinctBy { it.noteEntity.noteId }
     }
 
-    //查询所有数据
+    /**
+     * 搜索笔记
+     */
+    suspend fun searchNotes(keyword: String): List<SearchNoteEntity> {
+        val noteList = noteDao.searchNotes(keyword)
+        if (noteList.isEmpty()) {
+            return emptyList()
+        }
+        val results = noteList.map { searchNoteEntity ->
+            val noteEntity = searchNoteEntity.noteEntity
+            val noteContents = noteContentDao.searchNoteContents(noteEntity.noteId, keyword)
+            SearchNoteEntity(
+                folderName = searchNoteEntity.folderName,
+                noteEntity = searchNoteEntity.noteEntity,
+                noteContents = noteContents
+            )
+        }
+
+        return results.distinctBy { it.noteEntity.noteId }
+            .sortedByDescending { it.noteEntity.createdAt }
+    }
 
 
     companion object {
@@ -153,10 +195,11 @@ class NoteRepository @Inject constructor(
 
         fun getInstance(
             noteDao: NoteDao,
+            noteContentDao: NoteContentDao,
         ) =
             instance ?: synchronized(this) {
                 instance ?: NoteRepository(
-                    noteDao
+                    noteDao, noteContentDao
                 ).also { instance = it }
             }
     }

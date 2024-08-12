@@ -34,7 +34,7 @@ import kotlinx.coroutines.delay
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchEdit(
-    searchContent:String,
+    searchContent: String,
     onSearch: (String) -> Unit,
 ) {
 
@@ -66,15 +66,13 @@ fun SearchEdit(
 @Composable
 fun ResultList(
     searchNotes: List<SearchNoteEntity>, keyword: String,
+    isVisibility: Boolean,
     onClick: (NoteEntity) -> Unit
 ) {
 
-    var isVisibility by remember { mutableStateOf(false) }
+
     val scrollState = rememberScrollState()
-    LaunchedEffect(Unit) {
-        delay(360)
-        isVisibility = true
-    }
+
     VisibilityView(visible = isVisibility) {
         StaggeredVerticalGrid(
             maxColumnWidth = 220.dp,
@@ -95,21 +93,17 @@ fun ResultList(
 @ExperimentalMaterial3Api
 @Composable
 private fun SearchItemCard(
-    index: Int, entity: SearchNoteEntity, keyword: String,
+    index: Int,
+    entity: SearchNoteEntity,
+    keyword: String,
     onClick: () -> Unit
 ) {
 
-    var intOffset: IntOffset? by remember { mutableStateOf(null) }
-    var cardSize: IntSize? by remember { mutableStateOf(null) }
+
     ImmerseCard(
         Modifier
             .padding(6.dp)
-            .fillMaxWidth()
-            .onSizeChanged { cardSize = it }
-            .onGloballyPositioned {
-                val offset = it.localToRoot(Offset(0f, 0f))
-                intOffset = IntOffset(offset.x.toInt(), offset.y.toInt())
-            },
+            .fillMaxWidth(),
         onClick = onClick,
     ) {
         Column(Modifier.padding(9.dp)) {
@@ -123,8 +117,9 @@ private fun SearchItemCard(
                     NoteTag(entity.folderName, Modifier.align(Alignment.Bottom))
                 }
             }
-            // 能力有限只能在这里 不是很优雅 [过滤删除 isDelete] tag
-            val list = entity.noteContents.filter { !it.isDelete }.takeLast(7).reversed()
+
+//            val list = entity.noteContents.takeLast(7)
+            val list = entity.noteContents
             list.forEach { noteContent ->
                 /** 关键词高亮显示 */
                 HighlightedText(noteContent.content, keyword)

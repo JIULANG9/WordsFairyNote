@@ -189,7 +189,7 @@ fun HomePageUI(
                     }, itemOnClick = { entity, offset, cardSize ->
                         //关闭过度动画
                         if (AppSystemSetManage.closeAnimation) {
-                            toNoteDetailsUI(entity,false)
+                            toNoteDetailsUI(entity, false)
                         } else {
                             viewModel.noteDetailUISize = cardSize
                             viewModel.noteDetailUIOffset = offset

@@ -32,10 +32,10 @@ class SearchViewModel @Inject internal constructor(
 
     override val viewStateFlow: StateFlow<ViewState>
 
-    val resultDataCache : MutableList<SearchNoteEntity> = mutableListOf()
+    private val resultDataCache: MutableList<SearchNoteEntity> = mutableListOf()
 
     init {
-        val initialVS =  savedStateHandle.get<ViewState?>(VIEW_STATE)?.copy() ?:ViewState.initial()
+        val initialVS = savedStateHandle.get<ViewState?>(VIEW_STATE)?.copy() ?: ViewState.initial()
 
         viewStateFlow = intentFlow
             .toPartialChangeFlow()
@@ -43,7 +43,8 @@ class SearchViewModel @Inject internal constructor(
             .scan(initialVS) { vs, change -> change.reduce(vs) }
             .onEach { savedStateHandle[VIEW_STATE] = it }
             .catch {
-                Log.e(logTag, "[CreateNoteViewModel] Throwable:", it) }
+                Log.e(logTag, "[CreateNoteViewModel] Throwable:", it)
+            }
             .stateIn(
                 viewModelScope,
                 SharingStarted.Eagerly,
@@ -66,20 +67,22 @@ class SearchViewModel @Inject internal constructor(
                 .map {
                     PartialChange.UI.Init
                 }
+
             /**
              * 初始化所有数据
              */
             val getAllDataFlow = filterIsInstance<ViewIntent.InitAllDataFlow>()
                 .log("[初始化所有数据]")
                 .map {
-                   val data = viewStateFlow.value.resultData.ifEmpty {
-                      val allData= noteRepository.getSearchNotes()
-                       resultDataCache.clear()
-                       resultDataCache.addAll(allData)
-                       allData
-                   }
+                    val data = viewStateFlow.value.resultData.ifEmpty {
+                        val allData = noteRepository.getSearchUIData()
+                        resultDataCache.clear()
+                        resultDataCache.addAll(allData)
+                        allData
+                    }
                     PartialChange.NoteData.InitData(data)
-                } .flowOn(Dispatchers.IO)
+                }.flowOn(Dispatchers.IO)
+
             /**
              * 模糊搜索
              */
@@ -87,13 +90,13 @@ class SearchViewModel @Inject internal constructor(
                 .log("[模糊搜索]")
                 .map {
                     val keyword = it.keyword
-                    val resultData = if (keyword.isNotEmpty()){
+                    val resultData = if (keyword.isNotEmpty()) {
                         GlobalData.searchContent = keyword
-                        noteRepository.searchNotes(keyword,resultDataCache)
-                    }else{
+                        noteRepository.searchNotes(keyword)
+                    } else {
                         resultDataCache
                     }
-                    PartialChange.NoteData.SearchResultData(keyword,resultData)
+                    PartialChange.NoteData.SearchResultData(keyword, resultData)
                 }
 
             return merge(

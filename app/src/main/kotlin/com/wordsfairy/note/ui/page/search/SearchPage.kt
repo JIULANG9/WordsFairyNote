@@ -32,17 +32,19 @@ fun SearchPage(
     onPageClosing: () -> Unit,
     onPageClosed: () -> Unit
 ) {
+    val deploymentDuration = 500
+
     var animReady by remember { mutableStateOf(false) }
     var animFinish by remember { mutableStateOf(false) }
 
-    val background by animateColorAsState(if (pageState > SearchUIState.Closed) WordsFairyTheme.colors.background else WordsFairyTheme.colors.whiteBackground)
-
-    val cornerSize by animateDpAsState(if (animFinish) 0.dp else 26.dp)
-
-    val DEPLOYMENT_DURATION = 500
+    val background by animateColorAsState(
+        if (pageState > SearchUIState.Closed) WordsFairyTheme.colors.background else WordsFairyTheme.colors.whiteBackground,
+        label = "backgroundAnimate"
+    )
+    val cornerSize by animateDpAsState(if (animFinish) 0.dp else 26.dp, label = "cornerSizeAnimate")
     val size by animateIntSizeAsState(
         if (pageState > SearchUIState.Closed) fullSize else cardSize,
-        animationSpec = tween(DEPLOYMENT_DURATION)
+        animationSpec = tween(deploymentDuration), label = "sizeAnimation"
     )
     val fullOffset = remember { IntOffset(0, 0) }
     val offsetInimitable = remember { Animatable(IntOffset(0, 0), IntOffset.VectorConverter) }
@@ -51,16 +53,18 @@ fun SearchPage(
             SearchUIState.Opening -> {
                 animReady = true
                 offsetInimitable.snapTo(cardOffset)
-                offsetInimitable.animateTo(fullOffset, animationSpec = tween(DEPLOYMENT_DURATION))
+                offsetInimitable.animateTo(fullOffset, animationSpec = tween(deploymentDuration))
                 animFinish = true
             }
+
             SearchUIState.Closing -> {
                 animFinish = false
                 offsetInimitable.snapTo(fullOffset)
-                offsetInimitable.animateTo(cardOffset, animationSpec = tween(DEPLOYMENT_DURATION))
+                offsetInimitable.animateTo(cardOffset, animationSpec = tween(deploymentDuration))
                 onPageClosed()
                 animReady = false
             }
+
             else -> {}
         }
     }

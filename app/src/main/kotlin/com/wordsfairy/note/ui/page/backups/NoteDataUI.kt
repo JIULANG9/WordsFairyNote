@@ -2,7 +2,6 @@ package com.wordsfairy.note.ui.page.backups
 
 import android.content.Intent
 import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -52,8 +51,6 @@ import com.wordsfairy.note.ui.widgets.MyIconButton
 import com.wordsfairy.note.ui.widgets.TextContent
 import com.wordsfairy.note.ui.widgets.Title
 import com.wordsfairy.note.ui.widgets.toast.ToastModel
-import com.wordsfairy.note.ui.widgets.toast.ToastUI
-import com.wordsfairy.note.ui.widgets.toast.ToastUIState
 import com.wordsfairy.note.ui.widgets.toast.showToast
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.collect

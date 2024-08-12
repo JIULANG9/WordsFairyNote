@@ -38,9 +38,7 @@ import com.wordsfairy.note.ext.coreui.rememberFlowWithLifecycle
 import com.wordsfairy.note.ext.flow.noteStartWith
 import com.wordsfairy.note.ext.flowbus.observeEvent
 import com.wordsfairy.note.ext.flowbus.postEventValue
-import com.wordsfairy.note.ui.common.clickableNoIndication
 import com.wordsfairy.note.ui.common.onPressNoIndication
-import com.wordsfairy.note.ui.common.vibration
 
 import com.wordsfairy.note.ui.theme.AppColor
 import com.wordsfairy.note.ui.theme.AppResId

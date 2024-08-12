@@ -3,6 +3,10 @@ package com.wordsfairy.note.ui.widgets
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.AnnotatedString
@@ -17,6 +21,10 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.sp
 import com.google.accompanist.placeholder.material.placeholder
 import com.wordsfairy.note.ui.theme.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 /**
  * @Description:
@@ -232,29 +240,41 @@ fun Title(
     )
 }
 
-/** 关键词高亮显示 */
 @Composable
 fun HighlightedText(
     content: String,
     highlighted: String,
-    highlightColor: Color = AppColor.themeColor
 ) {
-    val splitContent = content.split(highlighted, ignoreCase = true)
-    val annotatedText = buildAnnotatedString {
-        for (i in splitContent.indices) {
-            withStyle(style = SpanStyle(color = WordsFairyTheme.colors.textSecondary)) {
-                append(splitContent[i])
-            }
-            if (i != splitContent.size - 1) {
-                withStyle(style = SpanStyle(color = highlightColor)) {
-                    append(highlighted)
+    // 创建一个变量来存储最终的 AnnotatedString
+    val annotatedText = remember { mutableStateOf(AnnotatedString(content)) }
+    val textColor = WordsFairyTheme.colors.textSecondary
+    val highlightColor = AppColor.themeColor
+    // 在协程中异步处理高亮逻辑
+    LaunchedEffect(Unit) {
+        val splitContent = content.split(highlighted, ignoreCase = true)
+        // 构建 AnnotatedString
+        val newAnnotatedText = withContext(Dispatchers.IO) {
+            buildAnnotatedString {
+                for (i in splitContent.indices) {
+                    withStyle(style = SpanStyle(color = textColor)) {
+                        append(splitContent[i])
+                    }
+                    if (i != splitContent.size - 1) {
+                        withStyle(style = SpanStyle(color = highlightColor)) {
+                            append(highlighted)
+                        }
+                    }
                 }
             }
         }
-    }
+        // 更新 AnnotatedString
+        annotatedText.value = newAnnotatedText
 
+    }
+    // 显示文本
     Text(
-        annotatedText, maxLines = 1,
+        text = annotatedText.value,
+        maxLines = 1,
         overflow = TextOverflow.Ellipsis,
     )
 }
