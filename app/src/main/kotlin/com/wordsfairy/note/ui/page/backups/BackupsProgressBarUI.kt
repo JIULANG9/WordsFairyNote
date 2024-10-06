@@ -22,6 +22,7 @@ import com.wordsfairy.note.ui.theme.WordsFairyTheme
 import com.wordsfairy.note.ui.widgets.IndicatorComponent
 import com.wordsfairy.note.ui.widgets.TextContent
 import com.wordsfairy.note.ui.widgets.toast.ToastModel
+import com.wordsfairy.note.ui.widgets.toast.ToastModelError
 import com.wordsfairy.note.ui.widgets.toast.ToastUI
 import com.wordsfairy.note.ui.widgets.toast.ToastUIState
 import com.wordsfairy.note.ui.widgets.toast.showToast
@@ -50,12 +51,15 @@ fun BackupsProgressBarUI(
             when (event) {
                 is SingleEvent.UI.Success -> {
                     feedback.performHapticFeedback(HapticFeedbackType.LongPress)
-
                     ToastModel("完成!", ToastModel.Type.Normal).showToast()
                     onBack.invoke()
                 }
 
-                else -> {}
+                is SingleEvent.UI.Error -> {
+                    ToastModelError(event.msg).showToast()
+                    delay(1000)
+                    onBack.invoke()
+                }
             }.unit
         }
     }
@@ -72,7 +76,7 @@ fun BackupsProgressBarUI(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-       // TextContent(text = viewState.progress)
+        // TextContent(text = viewState.progress)
 
         IndicatorComponent(progress)
     }

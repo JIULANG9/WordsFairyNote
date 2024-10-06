@@ -5,8 +5,10 @@ plugins {
     id("kotlin-android")
     id("kotlin-kapt")
     id("kotlin-parcelize")
+    id("kotlinx-serialization")
     id("dagger.hilt.android.plugin")
     id("org.jetbrains.kotlin.android")
+    id("org.jetbrains.kotlin.plugin.compose") version "2.0.0"
 }
 
 android {
@@ -80,9 +82,6 @@ android {
     buildFeatures {
         compose = true
     }
-    composeOptions {
-        kotlinCompilerExtensionVersion = "1.4.3"
-    }
 
     packaging {
         resources {
@@ -92,6 +91,9 @@ android {
 
 }
 
+composeCompiler {
+    enableStrongSkippingMode = true
+}
 dependencies {
 
     implementation(AndroidX.coreKtx)
@@ -115,6 +117,9 @@ dependencies {
     implementation(AndroidX.Work.runtime_ktx)
     implementation(AndroidX.multidex)
     implementation(AndroidX.Documentfile)
+
+    //kotlin serialization
+    implementation(Kotlin.serialization_json)
     //Hilt
     implementation(AndroidX.Hilt.common)
     kapt(AndroidX.Hilt.compiler)

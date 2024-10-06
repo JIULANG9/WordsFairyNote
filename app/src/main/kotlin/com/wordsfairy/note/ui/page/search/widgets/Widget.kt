@@ -67,7 +67,7 @@ fun SearchEdit(
 fun ResultList(
     searchNotes: List<SearchNoteEntity>, keyword: String,
     isVisibility: Boolean,
-    onClick: (NoteEntity) -> Unit
+    onClick: (NoteEntity) -> Unit,
 ) {
 
 
@@ -96,9 +96,8 @@ private fun SearchItemCard(
     index: Int,
     entity: SearchNoteEntity,
     keyword: String,
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
-
 
     ImmerseCard(
         Modifier

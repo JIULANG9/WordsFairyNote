@@ -11,12 +11,13 @@ buildscript {
     dependencies {
         classpath(Gradle.plugin)
         classpath(Kotlin.plugin)
+        classpath(Kotlin.serialization)
         classpath(AndroidX.Hilt.gradlePlugin)
 
     }
 }
 
-allprojects{
+allprojects {
     repositories {
         google()
         mavenCentral()

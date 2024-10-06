@@ -40,7 +40,7 @@ import kotlinx.coroutines.flow.onEach
 @Composable
 fun SearchUI(
     onBack: () -> Unit,
-    viewModel: SearchViewModel = hiltViewModel()
+    viewModel: SearchViewModel = hiltViewModel(),
 ) {
 
     val viewState by viewModel.viewStateFlow.collectAsState()
@@ -91,4 +91,3 @@ fun SearchUI(
         }
     }
 }
-

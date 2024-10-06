@@ -127,7 +127,7 @@ fun HomeTab(
 
     HorizontalPager(
         state = pagerState,
-        beyondBoundsPageCount = 20,
+        beyondViewportPageCount = 20,
         modifier = Modifier.fillMaxSize()
     ) { page ->
         val scrollState = rememberScrollState()

@@ -5,30 +5,50 @@ import androidx.hilt.navigation.compose.hiltViewModel
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Add
+import androidx.compose.material.icons.rounded.KeyboardArrowLeft
+import androidx.compose.material3.AssistChip
+import androidx.compose.material3.AssistChipDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Text
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.wordsfairy.base.mvi.core.unit
 import com.wordsfairy.note.ext.coreui.rememberFlowWithLifecycle
 import com.wordsfairy.note.ext.flow.noteStartWith
+import com.wordsfairy.note.ui.common.vibration
 import com.wordsfairy.note.ui.page.create.AddFolderDialog
 import com.wordsfairy.note.ui.page.home.foldermanage.widgets.FolderList
 import com.wordsfairy.note.ui.page.home.foldermanage.widgets.ModifyFolderDialog
 import com.wordsfairy.note.ui.theme.AppResId
 import com.wordsfairy.note.ui.theme.WordsFairyTheme
 import com.wordsfairy.note.ui.widgets.GeneralDialog
-import com.wordsfairy.note.ui.widgets.TopLayout
+import com.wordsfairy.note.ui.widgets.ImmerseCard
+import com.wordsfairy.note.ui.widgets.MyIconButton
+import com.wordsfairy.note.ui.widgets.TextContent
+import com.wordsfairy.note.ui.widgets.Title
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
@@ -70,6 +90,7 @@ fun FolderManageUI(
                 is SingleEvent.UI.Success -> {
                     focusManager.clearFocus()
                 }
+
                 is SingleEvent.UI.CreateFolder -> {
                     intentChannel.trySend(ViewIntent.NoteFolderNameChanged("")).let { }
                 }
@@ -103,15 +124,54 @@ fun FolderManageUI(
     Column(
         Modifier
             .fillMaxSize()
-            .blur(if (isBlur) 3.dp else 0.dp)
+            .blur(if (isBlur) 9.dp else 0.dp)
             .background(WordsFairyTheme.colors.background)
             .systemBarsPadding()
     ) {
-        TopLayout(
-            onBack = onBack,
-            titleId = AppResId.String.FolderManage
-        )
+        Row(
+            Modifier
+                .fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Spacer(Modifier.width(12.dp))
+            MyIconButton(
+                painter = painterResource(id = AppResId.Drawable.Arrow_Left),
+                size = 24.dp
+            ) {
+                onBack.invoke()
+            }
+            Title(stringResource(id = AppResId.String.FolderManage), fontSize = 19.sp)
+            Spacer(modifier = Modifier.weight(1F))
+            AssistChip(onClick = {
+                isShowAddFolderDialog = true
+                feedback.vibration()
 
+            },
+                border = AssistChipDefaults.assistChipBorder(
+                    true,
+                    borderColor = WordsFairyTheme.colors.themeAccent,
+                    disabledBorderColor = WordsFairyTheme.colors.themeAccent
+                ),
+                colors = AssistChipDefaults.assistChipColors(WordsFairyTheme.colors.themeUi),
+                shape = RoundedCornerShape(16.dp),
+                leadingIcon = {
+                    Icon(
+                        imageVector = Icons.Rounded.Add,
+                        contentDescription = "add",
+                        Modifier.size(24.dp),
+                        tint = WordsFairyTheme.colors.textWhite
+                    )
+                },
+                label = {
+                    Text(
+                        text = "创建",
+                        fontSize = 12.sp,
+                        color = WordsFairyTheme.colors.textWhite
+                    )
+                })
+            Spacer(Modifier.width(12.dp))
+
+        }
         Spacer(Modifier.width(12.dp))
 
         FolderList(noteInfoList,
@@ -128,7 +188,7 @@ fun FolderManageUI(
                 intentChannel.trySend(ViewIntent.MovePosition(it))
             },
             onCreate = {
-                isShowAddFolderDialog = true
+
             })
     }
     /** 修改笔记文件夹名称 */

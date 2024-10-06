@@ -2,6 +2,7 @@ package com.wordsfairy.note.ui.page.backups
 
 import android.content.Intent
 import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -14,7 +15,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.KeyboardArrowLeft
 import androidx.compose.runtime.Composable
@@ -31,20 +31,21 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.wordsfairy.note.constants.Constants
 import com.wordsfairy.note.constants.EventBus
 import com.wordsfairy.note.constants.GlobalData
 import com.wordsfairy.note.constants.NavigateRouter
 import com.wordsfairy.note.ext.coreui.rememberFlowWithLifecycle
 import com.wordsfairy.note.ext.flow.noteStartWith
 import com.wordsfairy.note.ext.flowbus.postEventValue
+import com.wordsfairy.note.ui.page.set.AnimateContentIcon
+import com.wordsfairy.note.ui.page.set.CommonItemIcon
+import com.wordsfairy.note.ui.page.set.CommonItemSwitch
 import com.wordsfairy.note.ui.theme.AppResId
 import com.wordsfairy.note.ui.theme.WordsFairyTheme
 import com.wordsfairy.note.ui.widgets.AlertWarning
 import com.wordsfairy.note.ui.widgets.ButtonPrimitive
-import com.wordsfairy.note.ui.widgets.CommonTextItem
 import com.wordsfairy.note.ui.widgets.GeneralDialog
-import com.wordsfairy.note.ui.widgets.ImmerseCardItem
+import com.wordsfairy.note.ui.widgets.ImmerseCard
 import com.wordsfairy.note.ui.widgets.ItemDivider
 import com.wordsfairy.note.ui.widgets.MiniText
 import com.wordsfairy.note.ui.widgets.MyIconButton
@@ -95,6 +96,7 @@ fun NoteDataUI(
     }
     val context = LocalContext.current
 
+
     val backupsResult =
         rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { data ->
             val uri = data.data?.data
@@ -130,7 +132,6 @@ fun NoteDataUI(
             }
         }
 
-    val scrollState = rememberScrollState()
     Box() {
         Column(
             Modifier
@@ -151,39 +152,51 @@ fun NoteDataUI(
                 Title(stringResource(id = AppResId.String.DataRecoveryBackup), fontSize = 21.sp)
             }
             Column {
-//            Spacer(Modifier.height(12.dp))
-//            MiniText(text = "二维码快捷导入", Modifier.padding(start = 32.dp))
-//            ImmerseCardItem(Modifier.padding(12.dp)) {
-//                CommonItemIcon("生成二维码") {
-//                    intentChannel.trySend(ViewIntent.DataToQRCode)
-//                    context.postEventValue(
-//                        EventBus.NavController,
-//                        NavigateRouter.SetPage.BackupsQRCode
-//                    )
-//                }
-//                ItemDivider()
-//                CommonItemIcon("扫描二维码导入") {
-//                }
-//            }
+
                 Spacer(Modifier.height(12.dp))
                 MiniText(text = "文件备份", Modifier.padding(start = 32.dp))
-                ImmerseCardItem(Modifier.padding(12.dp)) {
-                    CommonTextItem(
-                        "导出",
-                        "选择用于储存保存的数据的文件夹",
-                        horizontalPadding = 6.dp
-                    ) {
-                        val intent = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE)
-                        backupsResult.launch(intent)
-                    }
-                    ItemDivider()
-                    CommonTextItem(
-                        "导入",
-                        "选择${Constants.File.WordsFairyNote}文件夹",
-                        horizontalPadding = 6.dp
-                    ) {
-                        val intent = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE)
-                        importResult.launch(intent)
+                ImmerseCard(Modifier.padding(12.dp)) {
+                    Column {
+                        AnimateContentIcon("导出") {
+                            CommonItemIcon("txt数据文件夹") {
+                                viewModel.importType = ImportType.TXT
+                                val intent = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE)
+                                backupsResult.launch(intent)
+                            }
+                            CommonItemIcon(
+                                "json文件",
+                            ) {
+                                viewModel.importType = ImportType.JSON
+                                val intent = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE)
+                                backupsResult.launch(intent)
+                            }
+
+                        }
+                        ItemDivider()
+                        AnimateContentIcon("导入") {
+                            CommonItemSwitch(
+                                "导入后覆盖原始数据",
+                                viewState.importAndCover
+                            ) { follow ->
+                                //  当前主题与系统主题模式不相符时，切换成对应主题
+                                intentChannel.trySend(ViewIntent.ImportAndCover(follow))
+                            }
+                            ItemDivider()
+                            CommonItemIcon("txt数据文件夹") {
+                                viewModel.importType = ImportType.TXT
+                                val intent = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE)
+                                importResult.launch(intent)
+                            }
+                            CommonItemIcon(
+                                "json文件",
+                            ) {
+                                viewModel.importType = ImportType.JSON
+                                val intent = Intent(Intent.ACTION_GET_CONTENT)
+                                intent.type = "application/json" // 设置可选文件类型
+                                importResult.launch(intent)
+                            }
+
+                        }
                     }
                 }
 
@@ -220,7 +233,6 @@ fun NoteDataUI(
             onPositiveBtnClicked = {
                 viewModel.clearAllTables()
                 ToastModel("清除成功!", ToastModel.Type.Normal).showToast()
-
             },
             negativeBtnText = stringResource(id = AppResId.String.Cancel),
             onNegativeBtnClicked = {
@@ -231,6 +243,7 @@ fun NoteDataUI(
     }
 }
 
+typealias BackupResultHandler = (Long, ActivityResult?) -> Unit
 
 @Preview(showBackground = false)
 @Composable

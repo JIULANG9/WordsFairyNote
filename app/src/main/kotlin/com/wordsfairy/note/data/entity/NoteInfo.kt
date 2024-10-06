@@ -6,14 +6,14 @@ import androidx.room.Embedded
 import androidx.room.Relation
 import kotlinx.parcelize.Parceler
 import kotlinx.parcelize.Parcelize
-import java.io.Serializable
+
 
 /**
  * @Description:
  * @Author: JIULANG
  * @Data: 2023/5/7 22:35
  */
-
+@kotlinx.serialization.Serializable
 @Parcelize
 data class NoteInfo(
     @Embedded val noteFolder: NoteFolderEntity,
@@ -22,8 +22,8 @@ data class NoteInfo(
         parentColumn = "id",
         entityColumn = "folder_id"
     )
-    val noteAndNoteContents: List<NoteAndNoteContent>
-) : Parcelable,Serializable
+    val noteAndNoteContents: List<NoteAndNoteContent>,
+) : Parcelable, java.io.Serializable
 
 @Parcelize
 data class NoteAndFolder(
@@ -33,6 +33,6 @@ data class NoteAndFolder(
         parentColumn = "id",
         entityColumn = "folder_id"
     )
-    val notes: List<NoteEntity> ?= null
+    val notes: List<NoteEntity>? = null,
 ) : Parcelable
 

@@ -38,7 +38,7 @@ interface NoteDao {
     )
     suspend fun getSearchUIData(): List<SearchNoteEntity>
 
-
+    @RewriteQueriesToDropUnusedColumns
     @Transaction
     @Query(
         "SELECT nf.name AS folderName, noteEntity.*, noteContents.content " +

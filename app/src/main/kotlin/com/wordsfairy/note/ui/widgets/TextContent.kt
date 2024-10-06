@@ -72,7 +72,7 @@ fun TextContent(
     maxLines: Int = 99,
     textAlign: TextAlign = TextAlign.Start,
     canCopy: Boolean = false,
-    isLoading: Boolean = false
+    isLoading: Boolean = false,
 ) {
     if (canCopy) {
         SelectionContainer {
@@ -106,7 +106,7 @@ fun MiniText(
     color: Color = WordsFairyTheme.colors.textSecondary,
     maxLines: Int = 1,
     textAlign: TextAlign = TextAlign.Start,
-    isLoading: Boolean = false
+    isLoading: Boolean = false,
 ) {
     Title(
         title = text,
@@ -139,7 +139,7 @@ fun TextSecondary(
     color: Color = WordsFairyTheme.colors.textSecondary,
     maxLines: Int = 1,
     textAlign: TextAlign = TextAlign.Start,
-    isLoading: Boolean = false
+    isLoading: Boolean = false,
 ) {
     Text(
         text = text,
@@ -180,7 +180,7 @@ fun AnnotatedText(
     textAlign: TextAlign = TextAlign.Start,
     fontWeight: FontWeight = FontWeight.Normal,
     canCopy: Boolean = false,
-    isLoading: Boolean = false
+    isLoading: Boolean = false,
 ) {
     if (canCopy) {
         SelectionContainer {
@@ -222,7 +222,7 @@ fun Title(
     fontWeight: FontWeight = FontWeight.Bold,
     maxLine: Int = 1,
     textAlign: TextAlign = TextAlign.Start,
-    isLoading: Boolean = false
+    isLoading: Boolean = false,
 ) {
     Text(
         text = title,
@@ -250,7 +250,7 @@ fun HighlightedText(
     val textColor = WordsFairyTheme.colors.textSecondary
     val highlightColor = AppColor.themeColor
     // 在协程中异步处理高亮逻辑
-    LaunchedEffect(Unit) {
+    LaunchedEffect(highlighted) {
         val splitContent = content.split(highlighted, ignoreCase = true)
         // 构建 AnnotatedString
         val newAnnotatedText = withContext(Dispatchers.IO) {
@@ -269,7 +269,6 @@ fun HighlightedText(
         }
         // 更新 AnnotatedString
         annotatedText.value = newAnnotatedText
-
     }
     // 显示文本
     Text(

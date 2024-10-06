@@ -124,6 +124,7 @@ fun Modifier.clickableNoIndication(focusManager: FocusManager) =
             MutableInteractionSource()
         }
     )
+
 /**
  * 点击时,自动隐藏键盘
  * 同时解决 输入框 换行时,输入法消失的问题
@@ -144,9 +145,26 @@ fun Modifier.onPressNoIndication(focusManager: FocusManager) =
         )
     }
 
+@Composable
+fun Modifier.onPressNoIndication(onTap: () -> Unit) =
+    this.pointerInput(Unit) {
+        detectTapGestures(
+            onDoubleTap = {
+            },
+            onLongPress = {
+            },
+            onPress = {
+            },
+            onTap = {
+                onTap.invoke()
+            }
+        )
+    }
+
 fun HapticFeedback.vibration() {
     this.performHapticFeedback(HapticFeedbackType.TextHandleMove)
 }
+
 fun HapticFeedback.vibrationLongPress() {
     this.performHapticFeedback(HapticFeedbackType.LongPress)
 }

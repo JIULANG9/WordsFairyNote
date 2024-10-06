@@ -11,8 +11,10 @@ import java.io.Serializable
  * @Author: JIULANG
  * @Data: 2023/4/27 21:50
  */
+@kotlinx.serialization.Serializable
 @Parcelize
-@Entity(tableName = NoteTableName,
+@Entity(
+    tableName = NoteTableName,
 //    foreignKeys = [
 //        ForeignKey(entity = NoteFolderEntity::class, parentColumns = ["id"], childColumns = ["folder_id"])
 //    ],
@@ -32,20 +34,21 @@ data class NoteEntity(
     //删除
     @ColumnInfo(name = "is_delete")
     var isDelete: Boolean
-    ) : Parcelable , Serializable {
+) : Parcelable, Serializable {
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id")
     var noteId: Long = 0
+
     companion object {
         fun create(
             folderId: Long,
             title: String,
             noteContextCount: Int,
             createdAt: Long
-        ):NoteEntity {
+        ): NoteEntity {
             return NoteEntity(
                 folderId,
-                title,noteContextCount,
+                title, noteContextCount,
                 createdAt,
                 createdAt,
                 isTopping = false,

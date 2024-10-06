@@ -14,6 +14,7 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.lifecycleScope
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
+import com.wordsfairy.common.tools.AESEncryption
 import com.wordsfairy.note.constants.EventBus
 import com.wordsfairy.note.ext.flowbus.observeEvent
 import com.wordsfairy.note.ui.page.home.HomePageScreen
@@ -63,6 +64,19 @@ class MainActivity : ComponentActivity() {
             finish()
             exitProcess(0)
         }
+        test()
+    }
+
+    private fun test() {
+        //循环
+        for (i in 1..10) {
+            val encrypt = AESEncryption.encrypt("JIULANG")
+            println("encrypt:$encrypt")
+            val decrypt = AESEncryption.decrypt(encrypt)
+            println("decrypt:$decrypt")
+            println("---------- $i")
+        }
+
     }
 
     companion object {

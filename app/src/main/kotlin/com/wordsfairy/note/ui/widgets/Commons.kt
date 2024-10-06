@@ -1,7 +1,6 @@
 package com.wordsfairy.note.ui.widgets
 
 
-
 import androidx.annotation.StringRes
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Column
@@ -33,8 +32,10 @@ import com.wordsfairy.note.ui.theme.WordsFairyTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TopLayout(onBack: () -> Unit = {},
-              @StringRes titleId: Int) {
+fun TopLayout(
+    onBack: () -> Unit = {},
+    @StringRes titleId: Int
+) {
 
     Row(
         Modifier
@@ -43,20 +44,17 @@ fun TopLayout(onBack: () -> Unit = {},
     ) {
         Spacer(Modifier.width(12.dp))
         MyIconButton(imageVector = Icons.Rounded.KeyboardArrowLeft, size = 39.dp) {
-
             onBack.invoke()
-
         }
         Title(stringResource(id = titleId), fontSize = 21.sp)
     }
 }
 
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ImmerseCard(
     modifier: Modifier = Modifier,
-    onClick: () -> Unit ={},
+    onClick: () -> Unit = {},
     shape: Shape = RoundedCornerShape(16.dp),
     backgroundColor: Color = WordsFairyTheme.colors.itemBackground,
     contentColor: Color = contentColorFor(backgroundColor),
@@ -64,13 +62,18 @@ fun ImmerseCard(
     elevation: Dp = 0.dp,
     content: @Composable ColumnScope.() -> Unit
 ) {
-    Card(onClick = onClick,
+    Card(
+        onClick = onClick,
         modifier = modifier,
-        colors = CardDefaults.cardColors(containerColor = backgroundColor,contentColor = contentColor),
+        colors = CardDefaults.cardColors(
+            containerColor = backgroundColor,
+            contentColor = contentColor
+        ),
         shape = shape,
         elevation = CardDefaults.cardElevation(defaultElevation = elevation),
         border = border,
-        content = content)
+        content = content
+    )
 }
 
 @Composable
@@ -85,21 +88,27 @@ fun ImmerseCard(
 ) {
     Card(
         modifier = modifier,
-        colors = CardDefaults.cardColors(containerColor = backgroundColor,contentColor = contentColor),
+        colors = CardDefaults.cardColors(
+            containerColor = backgroundColor,
+            contentColor = contentColor
+        ),
         shape = shape,
         elevation = CardDefaults.cardElevation(defaultElevation = elevation),
         border = border,
-        content = content)
+        content = content
+    )
 }
 
 @Composable
-fun ImmerseCardItem( modifier: Modifier = Modifier,
+fun ImmerseCardItem(
+    modifier: Modifier = Modifier,
     content: @Composable ColumnScope.() -> Unit
-){
+) {
     ImmerseCard(modifier) {
-        Column(modifier = Modifier.padding(vertical = 6.dp),content = content)
+        Column(modifier = Modifier.padding(vertical = 6.dp), content = content)
     }
 }
+
 /**
  * 增加未读小红点
  */

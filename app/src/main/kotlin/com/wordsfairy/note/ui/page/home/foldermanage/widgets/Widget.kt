@@ -59,9 +59,9 @@ import java.util.Collections
 @Composable
 fun FolderList(
     folders: List<NoteFolderEntity>,
-    onMove: (List<NoteFolderEntity>) -> Unit ={},
-    onDelete: (NoteFolderEntity) -> Unit={},
-    onModify: (NoteFolderEntity) -> Unit={},
+    onMove: (List<NoteFolderEntity>) -> Unit = {},
+    onDelete: (NoteFolderEntity) -> Unit = {},
+    onModify: (NoteFolderEntity) -> Unit = {},
     onCreate: () -> Unit = {}
 ) {
     val feedback = LocalHapticFeedback.current
@@ -143,18 +143,6 @@ fun FolderList(
                 }
             }
         }
-        item {
-            //创建文件夹
-            ImmerseCard( Modifier .padding(horizontal = 66.dp, vertical = 5.dp),onClick ={
-                onCreate.invoke()
-                feedback.vibration()
-
-            }){
-                Box(Modifier.fillMaxWidth().padding(16.dp)) {
-                    TextContent(text = "创建文件夹",Modifier.align(Alignment.Center))
-                }
-            }
-        }
     }
 
 
@@ -171,7 +159,8 @@ private fun ItemView(
         Modifier
             .fillMaxWidth()
             .padding(horizontal = 2.dp),
-        verticalAlignment = Alignment.CenterVertically) {
+        verticalAlignment = Alignment.CenterVertically
+    ) {
         Spacer(Modifier.width(12.dp))
         TextContent(text = folderName)
         Spacer(Modifier.weight(1f))
@@ -189,6 +178,7 @@ private fun ItemView(
         )
     }
 }
+
 @Parcelize
 private data class FolderItemBean(
     var id: Long,

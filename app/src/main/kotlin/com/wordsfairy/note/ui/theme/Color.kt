@@ -11,6 +11,7 @@ val Pink80 = Color(0xFFEFB8C8)
 val Transparent = Color(0x00000000)
 
 val themeColor = Color(0xFF92E2c7)
+val themeSecondaryColor = Color(0XFF92E2C7)
 
 val white = Color(0xFFFFFFFF)
 val white3 = Color(0xFFAE5E5E)

@@ -150,7 +150,6 @@ fun SetPageUI(
                 ) { follow ->
                     AppSystemSetManage.closeAnimation = follow
                     intentChannel.trySend(ViewIntent.CloseAnimation(follow))
-
                 }
                 ItemDivider()
                 CommonItemIcon("数据恢复/备份") {

@@ -90,6 +90,8 @@ abstract class AppDataBase : RoomDatabase() {
                 database.execSQL("ALTER TABLE $NoteFolder_TableName ADD COLUMN `note_context_count` INTEGER NOT NULL DEFAULT 0")
             }
         }
+
+
     }
 
 }

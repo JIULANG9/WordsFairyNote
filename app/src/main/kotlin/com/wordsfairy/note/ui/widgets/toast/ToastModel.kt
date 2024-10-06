@@ -22,14 +22,14 @@ data class ToastModelSuccess(
 
 data class ToastModelInfo(
     override val message: String,
-) : ToastModel(message, Type.Success, null)
+) : ToastModel(message, Type.Info, null)
 
 data class ToastModelError(
     override val message: String,
-) : ToastModel(message, Type.Success, null)
+) : ToastModel(message, Type.Error, null)
 
 data class ToastModelWarning(
     override val message: String,
-) : ToastModel(message, Type.Success, null)
+) : ToastModel(message, Type.Warning, null)
 
 

@@ -11,7 +11,7 @@ import java.io.Serializable
  * @Author: JIULANG
  * @Data: 2023/4/27 21:19
  */
-
+@kotlinx.serialization.Serializable
 @Parcelize
 @Entity(tableName = NoteFolder_TableName)
 data class NoteFolderEntity(
@@ -28,8 +28,8 @@ data class NoteFolderEntity(
     val isTopping: Boolean,
     //删除
     @ColumnInfo(name = "is_delete")
-    var isDelete: Boolean
-) : Parcelable ,Serializable {
+    var isDelete: Boolean,
+) : Parcelable, Serializable {
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id")
     var folderId: Long = 0
@@ -39,14 +39,14 @@ data class NoteFolderEntity(
             name: String,
             createdAt: Long,
             position: Int = 0,
-        ):NoteFolderEntity {
+        ): NoteFolderEntity {
             return NoteFolderEntity(
                 name,
-                0,createdAt,
+                0, createdAt,
                 position,
                 0,
-                isTopping=false,
-                isDelete=false,
+                isTopping = false,
+                isDelete = false,
             )
         }
     }

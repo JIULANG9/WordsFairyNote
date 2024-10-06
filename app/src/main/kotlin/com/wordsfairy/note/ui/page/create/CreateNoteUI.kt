@@ -113,7 +113,6 @@ fun CreateNoteUI(
                     }
                 }
             } else {
-
                 ToastModel("清除成功!", ToastModel.Type.Normal).showToast()
             }
         }
@@ -229,7 +228,6 @@ fun CreateNoteUI(
         NoteContentEditView(viewState, intentChannel, txtSelector = {
             txtSelectorLauncher.launch("text/plain")
         })
-
         /** 笔记 列表 */
         NoteContentLazyColumn(noteContentItems)
 

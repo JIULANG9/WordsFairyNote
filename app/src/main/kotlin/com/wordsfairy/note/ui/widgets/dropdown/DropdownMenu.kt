@@ -7,6 +7,7 @@ import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectDragGestures
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.interaction.MutableInteractionSource
 
 import androidx.compose.foundation.layout.*
@@ -27,6 +28,7 @@ import androidx.compose.ui.unit.sp
 
 import com.wordsfairy.note.data.entity.NoteFolderEntity
 import com.wordsfairy.note.ui.common.click
+import com.wordsfairy.note.ui.common.onPressNoIndication
 import com.wordsfairy.note.ui.theme.AppColor
 import com.wordsfairy.note.ui.theme.WordsFairyTheme
 import com.wordsfairy.note.ui.widgets.Title
@@ -57,7 +59,8 @@ fun FolderDropdownMenu(
             val isSelect = selectedFolder?.folderId == item.folderId
             val background =
                 if (isSelect) WordsFairyTheme.colors.themeUi.copy(alpha = 0.3f) else WordsFairyTheme.colors.dialogBackground
-            val textColor = if (isSelect) AppColor.themeColor else WordsFairyTheme.colors.textPrimary
+            val textColor =
+                if (isSelect) AppColor.themeColor else WordsFairyTheme.colors.textPrimary
 
             Row(
                 Modifier
@@ -94,7 +97,7 @@ fun DefaultPreviews() {
 fun AnimatedVisibilitySlide(
     isVisible: Boolean,
     onDismiss: () -> Unit,
-    content: @Composable ColumnScope.() -> Unit
+    content: @Composable ColumnScope.() -> Unit,
 ) {
 
     Column(
@@ -127,13 +130,9 @@ fun AnimatedVisibilitySlide(
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .clickable(
-                        onClick = { onDismiss.invoke() },
-                        // 去除点击效果
-                        indication = null,
-                        interactionSource = remember {
-                            MutableInteractionSource()
-                        })
+                    .onPressNoIndication {
+                        onDismiss.invoke()
+                    }
             ) {
                 Card(
                     modifier = Modifier
@@ -167,7 +166,7 @@ fun AnimatedVisibilitySlide(
 fun AnimatedSlideFormBottom(
     isVisible: Boolean,
     onDismiss: () -> Unit,
-    content: @Composable ColumnScope.() -> Unit
+    content: @Composable ColumnScope.() -> Unit,
 ) {
 
     Column(
@@ -199,13 +198,9 @@ fun AnimatedSlideFormBottom(
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .clickable(
-                        onClick = { onDismiss.invoke() },
-                        // 去除点击效果
-                        indication = null,
-                        interactionSource = remember {
-                            MutableInteractionSource()
-                        })
+                    .onPressNoIndication {
+                        onDismiss.invoke()
+                    }
             ) {
                 Card(
                     modifier = Modifier

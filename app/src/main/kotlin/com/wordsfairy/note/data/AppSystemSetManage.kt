@@ -21,21 +21,27 @@ object AppSystemSetManage {
 
     private const val HomeTabRememberPage = "home_tab_remember_page"
 
+    //importAndDelete
+    private const val ImportAndCover_Key = "import_and_cover"
+
     /**
      * 深色模式
      */
     var darkUI: Boolean
         get() = DataStoreUtils.readBooleanData(Dark_Mode, false)
         set(value) = DataStoreUtils.saveSyncBooleanData(Dark_Mode, value = value)
+
     fun setDarkMode(follow: Boolean) {
         darkUI = follow
     }
+
     /**
      * 关闭动画
      */
     var closeAnimation: Boolean
         get() = DataStoreUtils.readBooleanData(Close_Animation, false)
         set(value) = DataStoreUtils.saveSyncBooleanData(Close_Animation, value = value)
+
     /**
      * 深色模式跟随系统
      */
@@ -60,12 +66,14 @@ object AppSystemSetManage {
     var jumpToWeChat: Boolean
         get() = DataStoreUtils.readBooleanData(JumpToWeChat, false)
         set(value) = DataStoreUtils.saveSyncBooleanData(JumpToWeChat, value = value)
+
     /**
      * 长文本自动折叠 默认开启
      */
     var longTextAutoFold: Boolean
         get() = DataStoreUtils.readBooleanData("long_text_auto_fold", true)
         set(value) = DataStoreUtils.saveSyncBooleanData("long_text_auto_fold", value = value)
+
     /**
      * 首页索引
      */
@@ -79,11 +87,20 @@ object AppSystemSetManage {
     var initialLoad: Boolean
         get() = DataStoreUtils.readBooleanData(InitialLoad, false)
         set(value) = DataStoreUtils.saveSyncBooleanData(InitialLoad, value = value)
+
     /**
      * 同意协议
      */
-    var consentAgreement : Boolean
+    var consentAgreement: Boolean
         get() = DataStoreUtils.readBooleanData(ConsentAgreement_Key, false)
         set(value) = DataStoreUtils.saveSyncBooleanData(ConsentAgreement_Key, value = value)
+
+    /**
+     * 导入并删除
+     * importAndDelete
+     */
+    var importAndCover: Boolean
+        get() = DataStoreUtils.readBooleanData(ImportAndCover_Key, false)
+        set(value) = DataStoreUtils.saveSyncBooleanData(ImportAndCover_Key, value = value)
 
 }

@@ -7,23 +7,22 @@ import androidx.documentfile.provider.DocumentFile
 import androidx.lifecycle.viewModelScope
 import com.wordsfairy.common.tools.DATE_FORMAT_Month_Day_Time_Second
 import com.wordsfairy.common.tools.timestampToString
-import com.wordsfairy.note.base.BaseApplication
 import com.wordsfairy.note.base.BaseViewModel
 import com.wordsfairy.note.constants.Constants
-import com.wordsfairy.note.constants.GlobalData
-import com.wordsfairy.note.data.entity.NoteAndNoteContent
-import com.wordsfairy.note.data.entity.NoteContentEntity
-import com.wordsfairy.note.data.entity.NoteEntity
-import com.wordsfairy.note.data.entity.NoteFolderEntity
+import com.wordsfairy.note.data.AppSystemSetManage
 import com.wordsfairy.note.data.room.db.AppDataBase
 import com.wordsfairy.note.data.room.repository.NoteContentRepository
 import com.wordsfairy.note.data.room.repository.NoteEntityRepository
 import com.wordsfairy.note.data.room.repository.NoteFolderRepository
 import com.wordsfairy.note.data.room.repository.NoteRepository
-import com.wordsfairy.note.utils.file.contentEntityToTxtFile
-import com.wordsfairy.note.utils.file.readTxtFilesFromUri
+import com.wordsfairy.note.ext.flow.flowFromSuspend
+import com.wordsfairy.note.ui.widgets.toast.ToastModel
+import com.wordsfairy.note.ui.widgets.toast.ToastModelError
+import com.wordsfairy.note.ui.widgets.toast.ToastModelSuccess
+import com.wordsfairy.note.ui.widgets.toast.showToast
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
@@ -36,6 +35,7 @@ import javax.inject.Inject
  * @Data: 2023/6/12 11:13
  */
 @HiltViewModel
+@OptIn(ExperimentalCoroutinesApi::class)
 class NoteDataViewModel @Inject internal constructor(
     private val noteRepository: NoteRepository,
     private val folderRepository: NoteFolderRepository,
@@ -45,6 +45,8 @@ class NoteDataViewModel @Inject internal constructor(
 
     override val viewStateFlow: StateFlow<ViewState>
 
+    var importType = ImportType.TXT
+
     init {
         val initialVS = ViewState.initial()
 
@@ -53,7 +55,7 @@ class NoteDataViewModel @Inject internal constructor(
             intentFlow.filterNot { it is ViewIntent.Initial })
             .toPartialChangeFlow()
             .sendSingleEvent().scan(initialVS) { vs, change -> change.reduce(vs) }.catch {
-                Log.e(logTag, "[CreateNoteViewModel] Throwable:", it)
+                Log.e(logTag, "[NoteDataViewModel] Throwable:", it)
             }.stateIn(
                 viewModelScope, SharingStarted.Eagerly, initialVS
             )
@@ -63,13 +65,13 @@ class NoteDataViewModel @Inject internal constructor(
         viewModelScope.launch(Dispatchers.IO) {
             AppDataBase.getInstance().clearAllTables()
         }
-
     }
 
     private fun Flow<PartialChange>.sendSingleEvent(): Flow<PartialChange> {
         return onEach { change ->
             val event = when (change) {
                 is PartialChange.UI.Success -> SingleEvent.UI.Success
+                is PartialChange.UI.Error -> SingleEvent.UI.Error(change.msg)
                 else -> return@onEach
             }
             sendEvent(event)
@@ -78,139 +80,84 @@ class NoteDataViewModel @Inject internal constructor(
 
     private fun Flow<ViewIntent>.toPartialChangeFlow(): Flow<PartialChange> =
         run {
-
-
-            val importFileFlow = flow {
-                importFile {
-                    emit(it)
-                    println("进度：$it")
-                }
-            }.cancellable().onCompletion {
-                println("导入完成")
-            }
-            val importFlow = filterIsInstance<ViewIntent.Import>().log("[导入]").flatMapLatest {
-                importFileFlow
-            }.flowOn(Dispatchers.IO).map {
+            val progressChange: (Float) -> PartialChange = {
                 when (it) {
                     100F -> PartialChange.UI.Success
                     else -> PartialChange.UI.Progress(it)
                 }
             }
+            val importFileFlow = flow {
+                if (viewStateFlow.value.importAndCover) {
+                    clearAllTables()
+                }
+                when (importType) {
+                    ImportType.TXT ->
+
+                        importFile(
+                            folderRepository = folderRepository,
+                            noteEntityRepository = noteEntityRepository,
+                            contentRepository = contentRepository
+                        ) {
+                            emit(progressChange(it))
+                            println("进度：$it")
+                        }
+
+                    ImportType.JSON ->
+                        importJsonFile(
+                            folderRepository = folderRepository,
+                            noteEntityRepository = noteEntityRepository,
+                            contentRepository = contentRepository,
+                            error = { msg ->
+                                emit(PartialChange.UI.Error(msg))
+                            }
+                        ) {
+                            emit(progressChange(it))
+                            println("进度：$it")
+                        }
+                }
+
+            }.cancellable().onCompletion {
+                println("导入完成")
+            }
+            val importFlow = filterIsInstance<ViewIntent.Import>()
+                .log("[导入]")
+                .flatMapLatest {
+                    importFileFlow
+                }.flowOn(Dispatchers.IO)
+
             val backupsFileFlow = flow {
-                exportFile {
-                    emit(it)
-                    println("进度：$it")
+                when (importType) {
+                    ImportType.TXT -> exportFile(noteRepository, error = {
+                        emit(PartialChange.UI.Error(it))
+                    }) {
+                        println("进度：$it")
+                        emit(progressChange(it))
+                    }
+
+                    ImportType.JSON -> exportToJsonFile(noteRepository, error = {
+                        emit(PartialChange.UI.Error(it))
+                    }, callBackSchedule = {
+                        println("进度：$it")
+                        emit(progressChange(it))
+                    })
                 }
             }.cancellable().onCompletion {
                 println("备份完成")
             }
+            val importAndCoverFlow = filterIsInstance<ViewIntent.ImportAndCover>()
+                .log("[切换主题]")
+                .map { it.isCover }.map { isCover ->
+                    AppSystemSetManage.importAndCover = isCover
+                    PartialChange.UI.ImportAndCover(isCover)
+                }.flowOn(Dispatchers.IO)
             val backupsFlow = filterIsInstance<ViewIntent.Backups>()
                 .log("[备份]")
-                .flatMapLatest { backupsFileFlow }.flowOn(Dispatchers.IO).map {
-                    when (it) {
-                        100F -> PartialChange.UI.Success
-                        else -> PartialChange.UI.Progress(it)
-                    }
-                }
+                .flatMapLatest { backupsFileFlow }.flowOn(Dispatchers.IO)
 
             return merge(
-                backupsFlow, importFlow
+                backupsFlow, importFlow, importAndCoverFlow
             )
         }
-    //全部数据转二维码
-
-    /**
-     * 导入文件
-     * @param callBackSchedule SuspendFunction1<Float, Unit>
-     */
-    private suspend fun importFile(callBackSchedule: suspend (Float) -> Unit) {
-        val folderUri = GlobalData.importFolderUri!!
-        val (total, files) = readTxtFilesFromUri(folderUri)
-        println("总行数:$total")
-        var currentSchedule = 0
-        val createdAt = System.currentTimeMillis()
-        files.forEach { (fileName, lines) ->
-            //文件夹位置递增
-            val folderPosition = folderRepository.getMaxPosition() + 1
-            val noteFolder = NoteFolderEntity.create(
-                fileName, createdAt, folderPosition
-            )
-            val folderId = folderRepository.insert(noteFolder)
-            var position = 0
-            lines.forEach { (title, contents) ->
-                val note = NoteEntity.create(
-                    folderId, title, contents.size, createdAt
-                )
-                val noteId = noteEntityRepository.insert(note)
-
-                val noteContents = contents.reversed().mapIndexed { _, content ->
-                    //进度递增,回调进度
-                    currentSchedule++
-                    callBackSchedule(
-                        currentSchedule.toFloat() / total.toFloat() * 100
-                    )
-                    //位置递增,解决排序问题
-                    position++
-                    NoteContentEntity.create(
-                        noteId, content, createdAt
-                    )
-                    NoteContentEntity.create(noteId, content, createdAt, position)
-                }
-                contentRepository.insert(noteContents)
-            }
-
-            lines.forEach(::println)
-        }
-    }
-
-    /**
-     *  导出文件
-     * @param callBackSchedule SuspendFunction1<Float, Unit>
-     */
-    private suspend fun exportFile(callBackSchedule: suspend (Float) -> Unit) {
-        //计算AllNoteInfo里面的NoteContents的数量
-        val allNoteInfo = noteRepository.getAllNoteInfo()
-        val total = allNoteInfo.map {
-            var count = 0
-            it.forEach { noteInfo ->
-                noteInfo.noteAndNoteContents.forEach { noteAndContent ->
-                    count += noteAndContent.noteContents.size
-                }
-            }
-            count
-        }.first()
-        //当前进度
-        var currentSchedule = 0
-        val path = GlobalData.backupsSelectFolderUri!!
-        val documentFile = DocumentFile.fromTreeUri(BaseApplication.CONTEXT, path)
-        if (documentFile == null) {
-            println("文件夹不存在")
-            return
-        }
-        println("NoteContents的数量：${total}")
-        allNoteInfo.map {
-
-            it.forEach { noteInfo ->
-                val noteFolder = documentFile.createDirectory(noteInfo.noteFolder.name)
-
-                noteInfo.noteAndNoteContents.forEach { noteAndContent ->
-                    noteFolder?.let {
-                        // 创建笔记文件夹
-                        val contentTitle = noteAndContentToTitle(noteAndContent)
-                        // 创建笔记内容txt文件
-                        contentEntityToTxtFile(
-                            noteAndContent.noteContents, contentTitle, noteFolder.uri
-                        ) {
-                            currentSchedule++
-                            callBackSchedule(
-                                (currentSchedule.toFloat() / total.toFloat()) * 100
-                            )
-                        }
-                    }
-                }
-            }
-        }.collect()
-    }
 
     /**
      * 创建文件夹  WordsFairy/Note
@@ -231,24 +178,12 @@ class NoteDataViewModel @Inject internal constructor(
         val noteFile = wordsFairFile?.createDirectory(noteFileName)
         return noteFile
     }
+
+
+    companion object {
+        private const val VIEW_STATE = "NoteDetailsViewModel"
+
+
+    }
 }
 
-private fun noteAndContentToTitle(noteAndContent: NoteAndNoteContent): String {
-    var contentTitle = noteAndContent.noteEntity.title
-    if (contentTitle.isEmpty()) {
-        contentTitle = if (noteAndContent.noteContents.isNotEmpty()) {
-            //判断内容字符是否大于5 大于就截取前5个字符作为标题  小于5就取全部
-            if (noteAndContent.noteContents[0].content.length > 5) {
-                noteAndContent.noteContents[0].content.substring(
-                    0, 5
-                )
-            } else {
-                noteAndContent.noteContents[0].content
-            }
-        } else {
-            //如果内容为空  无标题
-            "无标题"
-        }
-    }
-    return contentTitle
-}

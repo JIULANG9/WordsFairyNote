@@ -12,7 +12,7 @@ import java.io.Serializable
  * @Author: JIULANG
  * @Data: 2023/4/27 22:01
  */
-
+@kotlinx.serialization.Serializable
 @Parcelize
 @Entity(
     tableName = NoteContentTableName,
@@ -38,7 +38,7 @@ data class NoteContentEntity(
     var isDelete: Boolean,
     @ColumnInfo(name = "is_complete")
     val isComplete: Boolean
-) : Parcelable ,Serializable{
+) : Parcelable, Serializable {
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id")
     var noteContextId: Long = 0
@@ -64,7 +64,7 @@ data class NoteContentEntity(
     }
 }
 
-
+@kotlinx.serialization.Serializable
 @Parcelize
 @DatabaseView
 data class NoteAndNoteContent(
@@ -75,8 +75,9 @@ data class NoteAndNoteContent(
         entityColumn = "note_id"
     )
     val noteContents: List<NoteContentEntity>
-) : Parcelable , Serializable
+) : Parcelable, Serializable
 
+@kotlinx.serialization.Serializable
 @Parcelize
 data class SearchNoteEntity(
     val folderName: String? = null,
@@ -87,4 +88,4 @@ data class SearchNoteEntity(
         entityColumn = "note_id"
     )
     val noteContents: List<NoteContentEntity>
-): Parcelable
+) : Parcelable, java.io.Serializable

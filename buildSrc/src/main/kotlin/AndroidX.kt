@@ -20,21 +20,21 @@ object AndroidX {
     const val coresplashscreen = "androidx.core:core-splashscreen:1.0.0"
 
     object Compose {
-        private const val version = "1.6.8"
+        private const val version = "1.7.3"
         const val ui = "androidx.compose.ui:ui:$version"
         const val tooling_preview = "androidx.compose.ui:ui-tooling-preview:$version"
 
         //use debugImplementation
         const val uiTooling = "androidx.compose.ui:ui-tooling:$version"
         const val ui_util = "androidx.compose.ui:ui-util:$version"
-        const val material3 = "androidx.compose.material3:material3:1.2.1"
-        const val activity = "androidx.activity:activity-compose:1.9.1"
+        const val material3 = "androidx.compose.material3:material3:1.3.0"
+        const val activity = "androidx.activity:activity-compose:1.9.2"
         const val runtime = "androidx.compose.runtime:runtime:$version"
 
         const val ui_test_manifest = "androidx.compose.ui:ui-test-manifest:1.3.3"
 
         object Accompanist {
-            private const val version = "0.34.0"
+            private const val version = "0.36.0"
 
             const val systemuicontroller =
                 "com.google.accompanist:accompanist-systemuicontroller:$version"
@@ -59,7 +59,7 @@ object AndroidX {
     }
 
     object Hilt {
-        private const val version = "2.45"
+        private const val version = "2.52"
         const val hiltCompose = "1.0.0-alpha03"
         const val hiltCompiler = "1.0.0"
 
@@ -112,7 +112,7 @@ object AndroidX {
 
     object Navigation {
         //这个版本支持多返回栈了
-        private const val version = "2.7.7"
+        private const val version = "2.8.2"
 
         //const val fragment = "androidx.navigation:navigation-fragment:$version"
         const val fragmentKtx = "androidx.navigation:navigation-fragment-ktx:$version"
@@ -177,7 +177,7 @@ object AndroidX {
     }
 
     object Work {
-        private const val version = "2.8.1"
+        private const val version = "2.9.1"
         const val runtime = "androidx.work:work-runtime:$version"
         const val runtime_ktx = "androidx.work:work-runtime-ktx:$version"
     }

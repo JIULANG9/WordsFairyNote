@@ -18,7 +18,7 @@ private val LightColorScheme = WordsFairyColors(
     statusBarColor = statusBarColorLight,
     navigationBarColor = white,
     themeUi = themeColor,
-    themeAccent = themeAccent,
+    themeAccent = themeSecondaryColor,
     background = backgroundColorLight,
     backgroundSecondary = backgroundSecondaryColorLight,
     whiteBackground = whiteBackgroundColorLight,
@@ -185,13 +185,14 @@ fun WordsFairyNoteTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     content: @Composable () -> Unit
 ) {
-    val currentTheme = if (AppSystemSetManage.darkUI) WordsFairyTheme.Theme.Dark else WordsFairyTheme.Theme.Light
+    val currentTheme =
+        if (AppSystemSetManage.darkUI) WordsFairyTheme.Theme.Dark else WordsFairyTheme.Theme.Light
     val theme by themeChanges.observeAsState(currentTheme)
     val followSystem by followSystemChanges.observeAsState(AppSystemSetManage.darkModeFollowSystem)
 
-    val targetColors = if (followSystem){
+    val targetColors = if (followSystem) {
         if (darkTheme) DarkColorScheme else LightColorScheme
-    }else{
+    } else {
         when (theme) {
             WordsFairyTheme.Theme.Light -> LightColorScheme
             WordsFairyTheme.Theme.Dark -> DarkColorScheme
@@ -281,7 +282,7 @@ fun WordsFairyNoteTheme(
         val colors = if (darkTheme) {
             darkColorScheme(
                 primary = appColors.themeUi,
-                onPrimary =appColors.textWhite
+                onPrimary = appColors.textWhite
             )
         } else {
             lightColorScheme(primary = appColors.themeUi)

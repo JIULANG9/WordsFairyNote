@@ -21,7 +21,7 @@ import javax.inject.Singleton
 @Singleton
 class NoteRepository @Inject constructor(
     private val noteDao: NoteDao,
-    private val noteContentDao: NoteContentDao
+    private val noteContentDao: NoteContentDao,
 ) {
 
 
@@ -86,7 +86,7 @@ class NoteRepository @Inject constructor(
                     }
                 )
             }
-        }.flowOn(Dispatchers.IO)
+        }
     }
 
     /**
@@ -129,7 +129,7 @@ class NoteRepository @Inject constructor(
      */
     fun searchNotes_old(
         keyword: String,
-        noteList: List<SearchNoteEntity>
+        noteList: List<SearchNoteEntity>,
     ): List<SearchNoteEntity> {
         val results = arrayListOf<SearchNoteEntity>()
         val folderNames = hashSetOf<String>()

@@ -44,7 +44,11 @@ fun SmallButton(
             disabledBorderColor = color
         ),
         label = {
-            Text(text = name, fontSize = 12.sp, color = if(enabled) WordsFairyTheme.colors.textWhite else WordsFairyTheme.colors.textPrimary)
+            Text(
+                text = name,
+                fontSize = 12.sp,
+                color = if (enabled) WordsFairyTheme.colors.textWhite else WordsFairyTheme.colors.textPrimary
+            )
         })
 }
 
