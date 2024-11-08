@@ -112,7 +112,7 @@ internal sealed interface PartialChange {
             }
         }
 
-        data class Init(val noteEntity: NoteEntity, val noteFolder: NoteFolderEntity?, ) : UI()
+        data class Init(val noteEntity: NoteEntity, val noteFolder: NoteFolderEntity?) : UI()
 
         data class RecentUpdates(val recentUpdates: String) : UI()
         object Clean : UI()
@@ -137,12 +137,12 @@ internal sealed interface PartialChange {
         }
 
         data class SelectFolder(val noteFolder: NoteFolderEntity) : NoteData()
-        object SaveTitle : NoteData()
-        object AddNoteContent : NoteData()
-        object UpDataPosition : NoteData()
+        data object SaveTitle : NoteData()
+        data object AddNoteContent : NoteData()
+        data object UpDataPosition : NoteData()
         data class ModifyNoteContent(val contentEntity: NoteContentEntity) : NoteData()
-        object UpDataNoteContent : NoteData()
-        object DeleteContent : NoteData()
+        data object UpDataNoteContent : NoteData()
+        data object DeleteContent : NoteData()
         data class SearchResultData(val resultData: List<NoteContentEntity>) : NoteData()
         data class InitSearch(val resultData: List<NoteContentEntity>) : NoteData()
     }

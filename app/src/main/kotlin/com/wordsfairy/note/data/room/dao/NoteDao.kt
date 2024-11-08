@@ -24,6 +24,9 @@ interface NoteDao {
     @Query("SELECT * FROM $NoteFolder_TableName WHERE is_delete = 0 ORDER BY position ASC")
     fun getAllNoteInfo(): Flow<List<NoteInfo>>
 
+    @Transaction
+    @Query("SELECT * FROM $NoteTableName WHERE is_delete = 0")
+    suspend fun getAllNoteAndNoteContents(): List<NoteAndNoteContent>
 
     @Transaction
     @Query("SELECT * FROM $NoteTableName WHERE is_delete = 0")

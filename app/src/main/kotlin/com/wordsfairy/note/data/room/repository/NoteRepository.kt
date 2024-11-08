@@ -31,12 +31,16 @@ class NoteRepository @Inject constructor(
      */
     fun getHomeNoteInfo(): Flow<List<NoteInfo>> {
         return noteDao.getAllNoteInfo().map { noteInfoList ->
-            val allNotes = noteDao.getHomeNoteAndNoteContents().map { noteAndNoteContent ->
-                noteAndNoteContent.copy(
-                    noteContents = noteAndNoteContent.noteContents.filter { !it.isDelete }
-                        .takeLast(5).reversed()
-                )
-            }
+            val allNotes =
+                noteDao.getHomeNoteAndNoteContents().sortedByDescending { it.noteEntity.updateAt }
+                    .map { noteAndNoteContent ->
+                        noteAndNoteContent.copy(
+
+                            noteContents = noteAndNoteContent.noteContents.filter { !it.isDelete }
+                                .sortedByDescending { it.position }
+                                .take(5)
+                        )
+                    }
             val allNoteInfo = NoteInfo(
                 NoteFolderEntity.create(name = "全部", 0L),
                 allNotes
@@ -44,10 +48,12 @@ class NoteRepository @Inject constructor(
             listOf(allNoteInfo) + noteInfoList.map { noteInfo ->
                 noteInfo.copy(
                     noteAndNoteContents = noteInfo.noteAndNoteContents.filter { !it.noteEntity.isDelete }
-                        .map { noteAndNoteContent ->
+                        .sortedByDescending { it.noteEntity.updateAt }.map { noteAndNoteContent ->
                             noteAndNoteContent.copy(
                                 noteContents = noteAndNoteContent.noteContents.filter { !it.isDelete }
-                                    .takeLast(5).reversed()
+                                    //按照position
+                                    .sortedByDescending { it.position }
+                                    .take(5)
                             )
                         }
                 )
@@ -63,7 +69,7 @@ class NoteRepository @Inject constructor(
         return noteDao.getAllNoteInfo().map { noteInfoList ->
 
             val unclassifiedNotes =
-                noteDao.getHomeNoteAndNoteContents().filter { it.noteEntity.folderId == 0L }
+                noteDao.getAllNoteAndNoteContents().filter { it.noteEntity.folderId == 0L }
                     .map { noteAndNoteContent ->
                         noteAndNoteContent.copy(
                             noteContents = noteAndNoteContent.noteContents.filter { !it.isDelete }

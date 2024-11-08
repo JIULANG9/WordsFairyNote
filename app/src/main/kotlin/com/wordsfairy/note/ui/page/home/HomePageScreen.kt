@@ -53,7 +53,6 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
  * @Author: JIULANG
  * @Data: 2023/4/23 22:39
  */
-@OptIn(ExperimentalCoroutinesApi::class)
 @ExperimentalAnimationApi
 @Composable
 fun HomePageScreen(navController: NavHostController) {

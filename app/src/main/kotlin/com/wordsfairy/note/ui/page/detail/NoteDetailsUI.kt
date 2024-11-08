@@ -1,6 +1,7 @@
 package com.wordsfairy.note.ui.page.detail
 
 
+import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.*
 import androidx.compose.animation.core.updateTransition
@@ -56,7 +57,7 @@ import kotlinx.coroutines.flow.onEach
 fun NoteDetailsUI(
     onBack: () -> Unit,
     isSearch: Boolean = false,
-    viewModel: NoteDetailsViewModel = hiltViewModel()
+    viewModel: NoteDetailsViewModel = hiltViewModel(),
 ) {
 
     val viewState by viewModel.viewStateFlow.collectAsState()
@@ -258,6 +259,7 @@ fun NoteDetailsUI(
         onDismiss = {
             isShowContentModifierDialog = false
         }, onConfirm = {
+
             intentChannel.trySend(ViewIntent.ModifyContent(it))
         }
     )

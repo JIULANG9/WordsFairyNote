@@ -4,6 +4,7 @@ import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -60,7 +61,7 @@ import kotlinx.coroutines.flow.*
 @Composable
 fun CreateNoteUI(
     onBack: () -> Unit,
-    viewModel: CreateNoteViewModel = hiltViewModel()
+    viewModel: CreateNoteViewModel = hiltViewModel(),
 ) {
 
     val viewState by viewModel.viewStateFlow.collectAsState()
@@ -113,7 +114,7 @@ fun CreateNoteUI(
                     }
                 }
             } else {
-                ToastModel("清除成功!", ToastModel.Type.Normal).showToast()
+                ToastModel("选择困难!", ToastModel.Type.Normal).showToast()
             }
         }
 
@@ -229,7 +230,10 @@ fun CreateNoteUI(
             txtSelectorLauncher.launch("text/plain")
         })
         /** 笔记 列表 */
-        NoteContentLazyColumn(noteContentItems)
+        key(noteContentItems.hashCode()) {
+            NoteContentLazyColumn(noteContentItems)
+        }
+
 
     }
     /** 添加笔记文件夹名称 */
@@ -270,7 +274,7 @@ fun CreateNoteUI(
 fun NoteContentEditView(
     viewState: ViewState,
     intentChannel: Channel<ViewIntent>,
-    txtSelector: () -> Unit
+    txtSelector: () -> Unit,
 ) {
     val context = LocalContext.current
     val clipboardManager = LocalClipboardManager.current
@@ -324,7 +328,7 @@ fun CreateNotePage(
     fullSize: IntSize,
     cardOffset: IntOffset,
     onPageClosing: () -> Unit,
-    onPageClosed: () -> Unit
+    onPageClosed: () -> Unit,
 ) {
     var animReady by remember { mutableStateOf(false) }
     var animFinish by remember { mutableStateOf(false) }

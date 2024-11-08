@@ -18,6 +18,8 @@ import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextRange
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import com.wordsfairy.note.data.entity.NoteContentEntity
 import com.wordsfairy.note.ui.theme.AppResId
@@ -41,13 +43,19 @@ fun ModifyContentDialog(
     onDismiss: () -> Unit,
     onConfirm: (NoteContentEntity) -> Unit,
 ) {
-   if (entity==null){
-       return
-   }
+    if (entity == null) {
+        return
+    }
 
-    var content by rememberSaveable { mutableStateOf("") }
-    LaunchedEffect(entity) {
-        content = entity.content
+    var textFieldValue by remember {
+        mutableStateOf(TextFieldValue())
+    }
+
+    LaunchedEffect(entity.hashCode()) {
+        textFieldValue = TextFieldValue(
+            text = entity.content,
+            selection = TextRange(entity.content.length)
+        )
     }
     //错误
     var isError by rememberSaveable { mutableStateOf(false) }
@@ -78,9 +86,9 @@ fun ModifyContentDialog(
                             keyboardController?.show()
                         }
                     },
-                value = content,
+                value = textFieldValue,
                 onValueChange = {
-                    content = it
+                    textFieldValue = it
                 },
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedBorderColor = WordsFairyTheme.colors.themeUi,
@@ -97,7 +105,7 @@ fun ModifyContentDialog(
                 /** 取消按钮 */
                 CancelButton(Modifier.weight(1f)) {
                     isError = false
-                    content = ""
+                    textFieldValue = TextFieldValue()
                     onDismiss.invoke()
                     focusRequester.freeFocus()
                 }
@@ -105,19 +113,19 @@ fun ModifyContentDialog(
                 /** 确认按钮 */
                 val feedback = LocalHapticFeedback.current
                 ConfirmButton(Modifier.weight(1f)) {
-                    if (content.isEmpty()) {
+                    if (textFieldValue.text.isEmpty()) {
                         isError = true
                     } else {
                         isError = false
 
-                        entity.content = content
+                        entity.content = textFieldValue.text
                         onConfirm.invoke(entity)
                         onDismiss.invoke()
                     }
                     //震动
                     feedback.performHapticFeedback(HapticFeedbackType.TextHandleMove)
                     focusRequester.freeFocus()
-                    content = ""
+                    textFieldValue = TextFieldValue()
                 }
             }
         }

@@ -9,8 +9,8 @@ object BuildConfig {
     const val targetSdkVersion = 34
     const val applicationId = "com.wordsfairy.note"
     const val testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-    var versionName = "1.6.3"
-    var versionCode = 11
+    var versionName = "1.6.6"
+    var versionCode = 13
 }
 
 object SigningConfigs {

@@ -93,7 +93,7 @@ class CreateNoteViewModel @Inject internal constructor(
             val titleContentFlow = filterIsInstance<ViewIntent.TitleChanged>()
                 .log("[标题内容]:titleContentFlow")
                 .map { it.title }
-               
+
 
             val titleContentChangeFlow = titleContentFlow.map { title ->
                 val canSave = if (viewStateFlow.value.title == title) {
@@ -230,9 +230,7 @@ class CreateNoteViewModel @Inject internal constructor(
                         newNoteEntity
                     }
                     noteEntity
-                }
-                .flowOn(Dispatchers.IO)
-                .withLatestFrom(noteContentEntityForm) { noteEntity, noteContent ->
+                }.withLatestFrom(noteContentEntityForm) { noteEntity, noteContent ->
                     noteContent.noteId = noteEntity.noteId
                     val maxPosition = contentRepository.getMaxPosition(noteEntity.noteId)
                     noteContent.position = maxPosition + 1
@@ -244,7 +242,6 @@ class CreateNoteViewModel @Inject internal constructor(
                         selectedFolder.noteContextCount += 1
                         folderRepository.update(selectedFolder)
                     }
-
                     PartialChange.NoteData.SaveNote(noteContent, noteEntity)
                 }.flowOn(Dispatchers.IO)
 

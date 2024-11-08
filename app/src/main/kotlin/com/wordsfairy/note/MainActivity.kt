@@ -64,19 +64,6 @@ class MainActivity : ComponentActivity() {
             finish()
             exitProcess(0)
         }
-        test()
-    }
-
-    private fun test() {
-        //循环
-        for (i in 1..10) {
-            val encrypt = AESEncryption.encrypt("JIULANG")
-            println("encrypt:$encrypt")
-            val decrypt = AESEncryption.decrypt(encrypt)
-            println("decrypt:$decrypt")
-            println("---------- $i")
-        }
-
     }
 
     companion object {

@@ -1,6 +1,7 @@
 package com.wordsfairy.note.ui.page.detail.wifgets
 
 import android.os.Parcelable
+import android.util.Log
 import androidx.compose.animation.*
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.animateDpAsState
@@ -67,7 +68,7 @@ import java.util.*
 @Composable
 fun SearchButton(
     isHighlight: Boolean = false,
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
     MyIconButton(
         painter = painterResource(id = AppResId.Drawable.Search),
@@ -85,7 +86,7 @@ fun SearchButton(
 @Composable
 fun ReadButton(
     isHighlight: Boolean = false,
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
     MyIconButton(
         painter = painterResource(id = AppResId.Drawable.ReadMode),
@@ -125,7 +126,7 @@ fun SaveTitleAndSet(
 @Composable
 fun VisibilityViewColumn(
     visible: Boolean,
-    content: @Composable ColumnScope.() -> Unit
+    content: @Composable ColumnScope.() -> Unit,
 ) {
     Column(modifier = Modifier.animateContentSize()) {
         if (visible) {
@@ -195,6 +196,7 @@ fun ContentEditView(
 /**
  * 内容列表
  */
+@NonSkippableComposable
 @Composable
 fun ContentList(
     noteContents: List<NoteContentEntity>,
@@ -202,19 +204,21 @@ fun ContentList(
     onDelete: (NoteContentEntity) -> Unit,
     onModify: (NoteContentEntity) -> Unit,
 ) {
+
     val autoFold = AppSystemSetManage.longTextAutoFold
     var showProgress by remember { mutableStateOf(false) }
+
     LaunchedEffect(Unit) {
         delay(460)
         showProgress = true
     }
+    var noteContentsCache by remember { mutableStateOf(noteContents) }
     var data by remember { mutableStateOf<List<NoteContentItem>>(mutableListOf()) }
 
     val isVisible = noteContents.isNotEmpty() && showProgress
+    val feedback = LocalHapticFeedback.current
+    val mutex = Mutex()
     if (isVisible) {
-        var noteContentsCache by remember { mutableStateOf(noteContents) }
-        val feedback = LocalHapticFeedback.current
-        val mutex = Mutex()
 
         val state = rememberReorderableLazyListState(onDragStart = {
             feedback.performHapticFeedback(HapticFeedbackType.TextHandleMove)
@@ -245,9 +249,9 @@ fun ContentList(
         })
         LaunchedEffect(noteContents.hashCode()) {
             val isChange = noteContents.size != noteContentsCache.size
-
             //过滤其他数据 减少内存开销
             data = noteContents.map {
+                Log.d("ContentList", "XLog >> ${it.content}")
                 NoteContentItem(it.noteContextId, it.content)
             }
             if (isChange) {
@@ -267,7 +271,6 @@ fun ContentList(
             modifier = Modifier.reorderable(state)
         ) {
             itemsIndexed(data, { _, item -> item }) { index, item ->
-
                 //显示动画
                 val animatedProgress = remember {
                     androidx.compose.animation.core.Animatable(
@@ -523,5 +526,5 @@ private fun ContentLayout(
 @Parcelize
 private data class NoteContentItem(
     var id: Long,
-    var content: String
+    var content: String,
 ) : Parcelable

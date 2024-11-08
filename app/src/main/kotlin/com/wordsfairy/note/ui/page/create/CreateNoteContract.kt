@@ -29,7 +29,7 @@ data class ViewState(
     val canSaveTitle: Boolean,
     val isLoading: Boolean,
     val isRefreshing: Boolean,
-    val dialogDataBean: DialogDataBean
+    val dialogDataBean: DialogDataBean,
 ) : MviViewState {
     companion object {
         fun initial() = ViewState(
@@ -89,7 +89,7 @@ sealed interface SingleEvent : MviSingleEvent {
     sealed interface UI : SingleEvent {
         data class Toast(val content: String) : UI
         data class AddNoteContent(val noteContent: NoteContentEntity) : UI
-        object ShowDialog : UI
+        data object ShowDialog : UI
     }
 }
 

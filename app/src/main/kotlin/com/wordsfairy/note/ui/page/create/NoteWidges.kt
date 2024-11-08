@@ -2,6 +2,8 @@ package com.wordsfairy.note.ui.page.create
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -19,6 +21,7 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
@@ -120,7 +123,7 @@ fun AddFolderDialog(
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedBorderColor = WordsFairyTheme.colors.themeUi,
                     focusedTextColor = WordsFairyTheme.colors.textPrimary
-                ) ,
+                ),
                 label = { Text(stringResource(id = AppResId.String.FolderName)) },
                 isError = isError
             )
@@ -234,14 +237,13 @@ fun CreateNoteContentEditView(
     )
 }
 
+@NonSkippableComposable
 @Composable
 fun NoteContentLazyColumn(noteContentItems: List<NoteContentEntity>) {
     LazyColumn(
-        Modifier
-            .fillMaxWidth()
-            .animateContentSize()
+        Modifier.fillMaxWidth()
     ) {
-        itemsIndexed(items = noteContentItems) { index, item ->
+        itemsIndexed(items = noteContentItems, { _, item -> item }) { index, item ->
             ImmerseCard(
                 modifier = Modifier
                     .fillMaxWidth()
